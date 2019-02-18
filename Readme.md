@@ -1,7 +1,7 @@
 # Личный проект «Киноман» [![Build status][travis-image]][travis-url]
 
 * Студент: [Елена Пименова](https://up.htmlacademy.ru/ecmascript/8/user/657095).
-* Наставник: https://github.com/Donnyyyyy.
+* Наставник: [Дмитрий Донецкий](https://htmlacademy.ru/profile/id497669).
 
 ---
 
