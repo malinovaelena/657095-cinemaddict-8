@@ -3,6 +3,7 @@
 * Студент: [Елена Пименова](https://up.htmlacademy.ru/ecmascript/8/user/657095).
 * Наставник: [Дмитрий Донецкий](https://htmlacademy.ru/profile/id497669).
 
+
 ---
 
 _Не удаляйте и не изменяйте папки и файлы:_
