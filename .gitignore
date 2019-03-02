@@ -12,6 +12,8 @@ Thumbs.db
 node_modules/
 
 # Папка с собранными файлами проекта
+.bundle.js
+.bundle.js.map
 .editorconfig
 .eslintrc.yml
 .gitattributes
