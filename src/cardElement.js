@@ -14,6 +14,13 @@ const cards = () => {
       const arrContainersforFilm = document.querySelectorAll('.films-list__container');
       const randomNumber = Math.ceil(Math.random()*10);
       for (let l = 0; l < arrContainersforFilm.length; l++) {
+        const renderFilterElement = (filter) => {
+          filter.onclick = () => {
+            removeCards();
+            renderCard();
+          }
+        };
+        renderFilterElement(filtersArr[i]);
         for (let t = 0; t < randomNumber; t++) {
           const cardHtml = () => {
             return ` <article class="film-card">
@@ -39,13 +46,6 @@ const cards = () => {
         }
       }
     };
-    const renderFilterElement = (filter) => {
-      filter.onclick = () => {
-        removeCards();
-        renderCard();
-      }
-    };
-    renderFilterElement(filtersArr[i]);
   }
 };
 export {cards};
