@@ -1,5 +1,4 @@
-'use strict';
-const Cards = () => {
+const cards = () => {
   const filtersArr = document.querySelectorAll('.main-navigation__item');
   for (let i = 0; i < filtersArr.length; i++) {
     const removeCards = () => {
@@ -49,4 +48,4 @@ const Cards = () => {
     renderFilterElement(filtersArr[i]);
   }
 };
-export {Cards};
+export {cards};

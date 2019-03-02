@@ -1,5 +1,4 @@
 import {getFilterElement} from './filterElement';
-import {Cards} from './cardElement';
-
+import {cards} from './cardElement';
 getFilterElement();
-Cards();
+cards();

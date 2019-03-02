@@ -1,4 +1,3 @@
-'use strict';
 const getFilterElement = () => {
   const container = document.querySelector('.main-navigation');
   const filter = {
