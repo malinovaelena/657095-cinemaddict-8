@@ -86,18 +86,17 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "./src/cardElement.js":
-/*!****************************!*\
-  !*** ./src/cardElement.js ***!
-  \****************************/
-/*! exports provided: Cards */
+/***/ "./src/card-element.js":
+/*!*****************************!*\
+  !*** ./src/card-element.js ***!
+  \*****************************/
+/*! exports provided: cards */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Cards", function() { return Cards; });
-
-const Cards = () => {
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "cards", function() { return cards; });
+const cards = () => {
   const filtersArr = document.querySelectorAll('.main-navigation__item');
   for (let i = 0; i < filtersArr.length; i++) {
     const removeCards = () => {
@@ -113,19 +112,88 @@ const Cards = () => {
       const arrContainersforFilm = document.querySelectorAll('.films-list__container');
       const randomNumber = Math.ceil(Math.random()*10);
       for (let l = 0; l < arrContainersforFilm.length; l++) {
+        const renderFilterElement = (filter) => {
+          filter.onclick = () => {
+            removeCards();
+            renderCard();
+          }
+        };
+        renderFilterElement(filtersArr[i]);
+
         for (let t = 0; t < randomNumber; t++) {
-          const cardHtml = () => {
+          const getFilmCard = () => ({
+            title: () => {
+              const titleArr = ['Harry Potter',
+                'Intouchables',
+                'Inception',
+                'Fight Club',
+                'Knockin\' on Heaven\'s Door',
+                'Pulp Fiction',
+                'Interstellar',
+                'Lock, Stock and Two Smoking Barrels',
+                'The Matrix',
+                'Catch Me If You Can',
+                'The Departed',
+                'Snatch.',
+                'Shutter Island',
+                'The Dark Knight'
+              ];
+              const getRandomTitle = Math.round(Math.random()*(titleArr)-1);
+              return titleArr[getRandomTitle];
+            },
+            //rating: Math.round(Math.random()*10),
+            year:'1995',
+            duration: '1 h 26 m',
+            genre: function() {
+              const arrGenre = ['Comedy', 'Thriller', 'Detective', 'Action', 'Drama'];
+              const getRandomAmout = Math.round(Math.random()* (arrGenre.length));
+              return arrGenre[getRandomAmout];
+            },
+            picture:function(){
+              const arrPicture = [`accused`,`blackmail`,`blue-blazes`,`fuga-da-new-york`,`moonrise`,`three-friends`];
+              const getRandomAmout = Math.round(Math.random()* (arrPicture.length));
+              return './public/images/posters/' + arrPicture[getRandomAmout] + '.jpg';
+            },
+            decription:function(){
+              const descriptionArr = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget.
+      Fusce tristique felis at fermentum pharetra.
+      Aliquam id orci ut lectus varius viverra.
+      Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.
+      Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.
+      Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.
+      Sed sed nisi sed augue convallis suscipit in sed felis.
+      Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus.
+      In rutrum ac purus sit amet tempus.`.split('.');
+              const getRandomAmount = Math.round((Math.random()*2)+1);
+              for(let i = 0; i < getRandomAmount; i++) {
+                const getRandomSentence = Math.round(Math.random()*(descriptionArr.length - 1)+1);
+                return descriptionArr[getRandomSentence];
+              }
+            },
+            comments:Math.round(Math.random()*10)
+          });
+          const objFilmCard = {
+            title:getFilmCard.title(), //и тд.
+            rating:getFilmCard.rating(),
+            year:getFilmCard.year,
+            duration: getFilmCard.duration,
+            genre:getFilmCard.genre(),
+            picture:getFilmCard.picture(),
+            description:getFilmCard.description(),
+            comments:getFilmCard.comments()
+          };
+          const cardHtml = (objFilmCard) => {
             return ` <article class="film-card">
-      <h3 class="film-card__title">The Assassination Of Jessie James By The Coward Robert Ford</h3>
-    <p class="film-card__rating">9.8</p>
+      <h3 class="film-card__title">${objFilmCard.title}</h3>
+    <p class="film-card__rating">${objFilmCard.rating}</p>
       <p class="film-card__info">
-      <span class="film-card__year">2018</span>
-      <span class="film-card__duration">1h&nbsp;13m</span>
-    <span class="film-card__genre">Comedy</span>
+      <span class="film-card__year">${objFilmCard.year}</span>
+      <span class="film-card__duration">${objFilmCard.duration}</span>
+    <span class="film-card__genre">${objFilmCard.genre}</span>
       </p>
-      <img src="./images/posters/three-friends.jpg" alt="" class="film-card__poster">
+      <img src="${objFilmCard.picture}" alt="" class="film-card__poster">
       <p class="film-card__description">A priest with a haunted past and a novice on the threshold of her final vows are sent by the Vatican to investigate the death of a young nun in Romania and confront a malevolent force in the form of a demonic nun.</p>
-    <button class="film-card__comments">13 comments</button>
+    <button class="film-card__comments">${objFilmCard.comments} comments</button>
 
     <form class="film-card__controls">
       <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist"><!--Add to watchlist--> WL</button>
@@ -138,33 +206,78 @@ const Cards = () => {
         }
       }
     };
-    const renderFilterElement = (filter) => {
-      filter.onclick = () => {
-        removeCards();
-        renderCard();
-      }
-    };
-    renderFilterElement(filtersArr[i]);
   }
 };
+const getFilmCard = {
+  title: () => {
+    const titleArr = ['Harry Potter',
+      'Intouchables',
+      'Inception',
+      'Fight Club',
+      'Knockin\' on Heaven\'s Door',
+      'Pulp Fiction',
+      'Interstellar',
+      'Lock, Stock and Two Smoking Barrels',
+      'The Matrix',
+      'Catch Me If You Can',
+      'The Departed',
+      'Snatch.',
+      'Shutter Island',
+      'The Dark Knight'
+    ];
+    const getRandomTitle = Math.round(Math.random()*(titleArr)-1);
+    return titleArr[getRandomTitle];
+  },
+    rating: Math.round(Math.random()*10),
+    year:'1995',
+    duration: '1 h 26 m',
+    genre: function() {
+    const arrGenre = ['Comedy', 'Thriller', 'Detective', 'Action', 'Drama'];
+    const getRandomAmout = Math.round(Math.random()* (arrGenre.length));
+    return arrGenre[getRandomAmout];
+  },
+  picture:function(){
+    const arrPicture = [`accused`,`blackmail`,`blue-blazes`,`fuga-da-new-york`,`moonrise`,`three-friends`];
+    const getRandomAmout = Math.round(Math.random()* (arrPicture.length));
+    return './public/images/posters/' + arrPicture[getRandomAmout] + '.jpg';
+  },
+  decription:function(){
+    const descriptionArr = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget.
+      Fusce tristique felis at fermentum pharetra.
+      Aliquam id orci ut lectus varius viverra.
+      Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.
+      Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.
+      Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.
+      Sed sed nisi sed augue convallis suscipit in sed felis.
+      Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus.
+      In rutrum ac purus sit amet tempus.`.split('.');
+    const getRandomAmount = Math.round((Math.random()*2)+1);
+    for(let i = 0; i < getRandomAmount; i++) {
+      const getRandomSentence = Math.round(Math.random()*(descriptionArr.length - 1)+1);
+      return descriptionArr[getRandomSentence];
+    }
+  },
+  comments:Math.round(Math.random()*10)
+};
+
 
 
 
 /***/ }),
 
-/***/ "./src/filterElement.js":
-/*!******************************!*\
-  !*** ./src/filterElement.js ***!
-  \******************************/
+/***/ "./src/filter-element.js":
+/*!*******************************!*\
+  !*** ./src/filter-element.js ***!
+  \*******************************/
 /*! exports provided: getFilterElement */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getFilterElement", function() { return getFilterElement; });
-
 const getFilterElement = () => {
   const container = document.querySelector('.main-navigation');
+  const amountFilters = 4;
   const filter = {
     HREF:[`all`, `watchlist`, `history`, `favorites`],
     NAME:[`All movies` ,`Watchlist`, `History`, `Favorites`],
@@ -175,7 +288,7 @@ const getFilterElement = () => {
     <a href="#${href}" class="main-navigation__item">${name}<span class="main-navigation__item-count">${amount}</span></a>
         `;
   };
-  for (let i = 0; i < 4; i++ ) {
+  for (let i = 0; i < amountFilters; i++ ) {
     container.insertAdjacentHTML(`beforeEnd`, elementHtml(filter.HREF[i],filter.NAME[i],filter.AMOUNT[i]));
   };
 };
@@ -193,13 +306,12 @@ const getFilterElement = () => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _filterElement__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./filterElement */ "./src/filterElement.js");
-/* harmony import */ var _cardElement__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./cardElement */ "./src/cardElement.js");
+/* harmony import */ var _filter_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./filter-element */ "./src/filter-element.js");
+/* harmony import */ var _card_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./card-element */ "./src/card-element.js");
 
 
-
-Object(_filterElement__WEBPACK_IMPORTED_MODULE_0__["getFilterElement"])();
-Object(_cardElement__WEBPACK_IMPORTED_MODULE_1__["Cards"])();
+Object(_filter_element__WEBPACK_IMPORTED_MODULE_0__["getFilterElement"])();
+Object(_card_element__WEBPACK_IMPORTED_MODULE_1__["cards"])();
 
 
 /***/ })
