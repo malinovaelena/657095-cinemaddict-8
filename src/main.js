@@ -1,13 +1,11 @@
 import {getFilterElement} from './filter-element';
 import {Popup} from './Pop-up';
 import {data} from './data';
-import {createElement} from './createElem';
 import {Card} from './Card';
-import {Component} from './component';
 
 getFilterElement();
 
-const filmContainer = document.querySelector('.films-list__container');
+const filmContainer = document.querySelector(`.films-list__container`);
 const cardElement = new Card(data);
 const popUpElement = new Popup(data);
 const body = document.querySelector(`body`);
