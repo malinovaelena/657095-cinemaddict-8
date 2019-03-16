@@ -1,3 +1,4 @@
+import createElement from './createElem';
 class Component {
   constructor() {
     if (new.target === Component) {
@@ -6,6 +7,12 @@ class Component {
   }
   get template() {
     throw new Error(`You have to define template.`);
+  }
+  _onOpenButtonClick() {
+    return typeof this._onClick === `function` && this._onClick();
+  }
+  _onCloseButtonClick() {
+    return typeof this._onClick === `function` && this._onClick();
   }
   set onClick(fn) {
     this._onClick = fn;
@@ -18,5 +25,5 @@ class Component {
     this.bind();
     return this._element;
   }
-
-}
+};
+export {Component};

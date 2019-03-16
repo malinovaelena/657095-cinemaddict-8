@@ -3,6 +3,7 @@ import {Popup} from './Pop-up';
 import {data} from './data';
 import {createElement} from './createElem';
 import {Card} from './Card';
+import {Component} from './component';
 
 getFilterElement();
 

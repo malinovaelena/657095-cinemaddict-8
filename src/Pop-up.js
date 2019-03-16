@@ -1,8 +1,9 @@
-import {data} from './data';
 import createElement from './createElem';
+import {Component} from './component';
 
-class Popup {
+class Popup extends Component {
   constructor(data) {
+    super();
       this._title = data.title;
       this._rating = data.rating;
       this._year = data.year;
@@ -14,9 +15,6 @@ class Popup {
   }
   get element() {
     return this._element;
-  }
-  _onCloseButtonClick() {
-    return typeof this._onClick === `function` && this._onClick();
   }
   set onClick(fn) {
     this._onClick = fn;
@@ -191,10 +189,6 @@ class Popup {
   </form>
 </section>`;
   }
-  render() {
-    this._element = createElement(this.template);
-    this.bind();
-    return this._element;
-  }
+
 }
 export {Popup};
