@@ -86,114 +86,51 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "./src/card-element.js":
-/*!*****************************!*\
-  !*** ./src/card-element.js ***!
-  \*****************************/
-/*! exports provided: cards */
+/***/ "./src/Card.js":
+/*!*********************!*\
+  !*** ./src/Card.js ***!
+  \*********************/
+/*! exports provided: Card */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "cards", function() { return cards; });
-const cards = () => {
-  const filtersArr = document.querySelectorAll('.main-navigation__item');
-  for (let i = 0; i < filtersArr.length; i++) {
-    const removeCards = () => {
-      const arrContainers = document.querySelectorAll('.films-list__container');
-      for (let j = 0; j < arrContainers.length; j++) {
-        const arrCards = arrContainers[j].querySelectorAll('.film-card');
-        for (let k = 0; k < arrCards.length; k++) {
-          arrContainers[j].removeChild(arrCards[k]);
-        }
-      }
-    };
-    const renderCard = () => {
-      const arrContainersforFilm = document.querySelectorAll('.films-list__container');
-      const randomNumber = Math.ceil(Math.random()*10);
-      for (let l = 0; l < arrContainersforFilm.length; l++) {
-        const renderFilterElement = (filter) => {
-          filter.onclick = () => {
-            removeCards();
-            renderCard();
-          }
-        };
-        renderFilterElement(filtersArr[i]);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Card", function() { return Card; });
+/* harmony import */ var _createElem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./createElem */ "./src/createElem.js");
+/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./component */ "./src/component.js");
 
-        for (let t = 0; t < randomNumber; t++) {
-          const getFilmCard = () => ({
-            title: () => {
-              const titleArr = ['Harry Potter',
-                'Intouchables',
-                'Inception',
-                'Fight Club',
-                'Knockin\' on Heaven\'s Door',
-                'Pulp Fiction',
-                'Interstellar',
-                'Lock, Stock and Two Smoking Barrels',
-                'The Matrix',
-                'Catch Me If You Can',
-                'The Departed',
-                'Snatch.',
-                'Shutter Island',
-                'The Dark Knight'
-              ];
-              const getRandomTitle = Math.round(Math.random()*(titleArr)-1);
-              return titleArr[getRandomTitle];
-            },
-            //rating: Math.round(Math.random()*10),
-            year:'1995',
-            duration: '1 h 26 m',
-            genre: function() {
-              const arrGenre = ['Comedy', 'Thriller', 'Detective', 'Action', 'Drama'];
-              const getRandomAmout = Math.round(Math.random()* (arrGenre.length));
-              return arrGenre[getRandomAmout];
-            },
-            picture:function(){
-              const arrPicture = [`accused`,`blackmail`,`blue-blazes`,`fuga-da-new-york`,`moonrise`,`three-friends`];
-              const getRandomAmout = Math.round(Math.random()* (arrPicture.length));
-              return './public/images/posters/' + arrPicture[getRandomAmout] + '.jpg';
-            },
-            decription:function(){
-              const descriptionArr = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget.
-      Fusce tristique felis at fermentum pharetra.
-      Aliquam id orci ut lectus varius viverra.
-      Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.
-      Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.
-      Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.
-      Sed sed nisi sed augue convallis suscipit in sed felis.
-      Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus.
-      In rutrum ac purus sit amet tempus.`.split('.');
-              const getRandomAmount = Math.round((Math.random()*2)+1);
-              for(let i = 0; i < getRandomAmount; i++) {
-                const getRandomSentence = Math.round(Math.random()*(descriptionArr.length - 1)+1);
-                return descriptionArr[getRandomSentence];
-              }
-            },
-            comments:Math.round(Math.random()*10)
-          });
-          const objFilmCard = {
-            title:getFilmCard.title(), //и тд.
-            rating:getFilmCard.rating(),
-            year:getFilmCard.year,
-            duration: getFilmCard.duration,
-            genre:getFilmCard.genre(),
-            picture:getFilmCard.picture(),
-            description:getFilmCard.description(),
-            comments:getFilmCard.comments()
-          };
-          const cardHtml = (objFilmCard) => {
-            return ` <article class="film-card">
-      <h3 class="film-card__title">${objFilmCard.title}</h3>
-    <p class="film-card__rating">${objFilmCard.rating}</p>
+
+
+class Card extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
+  constructor(data) {
+    super();
+      this._title = data.title;
+      this._rating = data.rating;
+      this._year = data.year;
+      this._duration = data.duration;
+      this._genre = data.genre;
+      this._picture = data.picture;
+      this._description = data.description;
+      this._comments = data.comments;
+  }
+  set onClick(fn) {
+    this._onClick = fn;
+  }
+  bind() {
+    this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
+  }
+  get template() {
+    return `<article class="film-card">
+      <h3 class="film-card__title">${this._title}</h3>
+    <p class="film-card__rating">${this._rating}</p>
       <p class="film-card__info">
-      <span class="film-card__year">${objFilmCard.year}</span>
-      <span class="film-card__duration">${objFilmCard.duration}</span>
-    <span class="film-card__genre">${objFilmCard.genre}</span>
+      <span class="film-card__year">${this._year}</span>
+      <span class="film-card__duration">${this._duration}</span>
+    <span class="film-card__genre">${this._genre}</span>
       </p>
-      <img src="${objFilmCard.picture}" alt="" class="film-card__poster">
-      <p class="film-card__description">A priest with a haunted past and a novice on the threshold of her final vows are sent by the Vatican to investigate the death of a young nun in Romania and confront a malevolent force in the form of a demonic nun.</p>
-    <button class="film-card__comments">${objFilmCard.comments} comments</button>
+      <img src="${this._picture}" alt="" class="film-card__poster">
+      <p class="film-card__description">${this._description}</p>
+    <button class="film-card__comments">${this._comments} comments</button>
 
     <form class="film-card__controls">
       <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist"><!--Add to watchlist--> WL</button>
@@ -201,64 +138,353 @@ const cards = () => {
       <button class="film-card__controls-item button film-card__controls-item--favorite"><!--Mark as favorite-->FAV</button>
       </form>
       </article>`;
-          };
-          arrContainersforFilm[l].insertAdjacentHTML(`beforeEnd` ,cardHtml());
-        }
-      }
-    };
+  }
+}
+
+
+
+
+/***/ }),
+
+/***/ "./src/Pop-up.js":
+/*!***********************!*\
+  !*** ./src/Pop-up.js ***!
+  \***********************/
+/*! exports provided: Popup */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Popup", function() { return Popup; });
+/* harmony import */ var _createElem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./createElem */ "./src/createElem.js");
+/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./component */ "./src/component.js");
+
+
+
+class Popup extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
+  constructor(data) {
+    super();
+      this._title = data.title;
+      this._rating = data.rating;
+      this._year = data.year;
+      this._duration = data.duration;
+      this._genre = data.genre;
+      this._picture = data.picture;
+      this._description = data.description;
+      this._comments = data.comments;
+  }
+  get element() {
+    return this._element;
+  }
+  set onClick(fn) {
+    this._onClick = fn;
+  }
+  bind() {
+    this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick.bind(this));
+  }
+  get template() {
+    return `<section class="film-details">
+  <form class="film-details__inner" action="" method="get">
+    <div class="film-details__close">
+      <button class="film-details__close-btn" type="button">close</button>
+    </div>
+    <div class="film-details__info-wrap">
+      <div class="film-details__poster">
+        <img class="film-details__poster-img" src="${this._picture}" alt="incredables-2">
+
+        <p class="film-details__age">18+</p>
+      </div>
+
+      <div class="film-details__info">
+        <div class="film-details__info-head">
+          <div class="film-details__title-wrap">
+            <h3 class="film-details__title">${this._title}</h3>
+            <p class="film-details__title-original">${this._title}</p>
+          </div>
+
+          <div class="film-details__rating">
+            <p class="film-details__total-rating">${this._rating}</p>
+            <p class="film-details__user-rating">Your rate 8</p>
+          </div>
+        </div>
+
+        <table class="film-details__table">
+          <tr class="film-details__row">
+            <td class="film-details__term">Director</td>
+            <td class="film-details__cell">Brad Bird</td>
+          </tr>
+          <tr class="film-details__row">
+            <td class="film-details__term">Writers</td>
+            <td class="film-details__cell">Brad Bird</td>
+          </tr>
+          <tr class="film-details__row">
+            <td class="film-details__term">Actors</td>
+            <td class="film-details__cell">Samuel L. Jackson, Catherine Keener, Sophia Bush</td>
+          </tr>
+          <tr class="film-details__row">
+            <td class="film-details__term">Release Date</td>
+            <td class="film-details__cell">15 June 2018 (USA)</td>
+          </tr>
+          <tr class="film-details__row">
+            <td class="film-details__term">Runtime</td>
+            <td class="film-details__cell">118 min</td>
+          </tr>
+          <tr class="film-details__row">
+            <td class="film-details__term">Country</td>
+            <td class="film-details__cell">USA</td>
+          </tr>
+          <tr class="film-details__row">
+            <td class="film-details__term">Genres</td>
+            <td class="film-details__cell">
+              <span class="film-details__genre">Animation</span>
+              <span class="film-details__genre">Action</span>
+              <span class="film-details__genre">Adventure</span></td>
+          </tr>
+        </table>
+
+        <p class="film-details__film-description">
+          The Incredibles hero family takes on a new mission, which involves a change in family roles:
+          Bob Parr (Mr Incredible) must manage the house while his wife Helen (Elastigirl) goes out to save the world.
+        </p>
+      </div>
+    </div>
+
+    <section class="film-details__controls">
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
+      <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
+
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" checked>
+      <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
+
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
+      <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
+    </section>
+
+    <section class="film-details__comments-wrap">
+      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._comments}</span></h3>
+
+      <ul class="film-details__comments-list">
+        <li class="film-details__comment">
+          <span class="film-details__comment-emoji">😴</span>
+          <div>
+            <p class="film-details__comment-text">So long-long story, boring!</p>
+            <p class="film-details__comment-info">
+              <span class="film-details__comment-author">Tim Macoveev</span>
+              <span class="film-details__comment-day">3 days ago</span>
+            </p>
+          </div>
+        </li>
+      </ul>
+
+      <div class="film-details__new-comment">
+        <div>
+          <label for="add-emoji" class="film-details__add-emoji-label">😐</label>
+          <input type="checkbox" class="film-details__add-emoji visually-hidden" id="add-emoji">
+
+          <div class="film-details__emoji-list">
+            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
+            <label class="film-details__emoji-label" for="emoji-sleeping">😴</label>
+
+            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-neutral-face" value="neutral-face" checked>
+            <label class="film-details__emoji-label" for="emoji-neutral-face">😐</label>
+
+            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-grinning" value="grinning">
+            <label class="film-details__emoji-label" for="emoji-grinning">😀</label>
+          </div>
+        </div>
+        <label class="film-details__comment-label">
+          <textarea class="film-details__comment-input" placeholder="← Select reaction, add comment here" name="comment"></textarea>
+        </label>
+      </div>
+    </section>
+
+    <section class="film-details__user-rating-wrap">
+      <div class="film-details__user-rating-controls">
+        <span class="film-details__watched-status film-details__watched-status--active">Already watched</span>
+        <button class="film-details__watched-reset" type="button">undo</button>
+      </div>
+
+      <div class="film-details__user-score">
+        <div class="film-details__user-rating-poster">
+          <img src="images/posters/blackmail.jpg" alt="film-poster" class="film-details__user-rating-img">
+        </div>
+
+        <section class="film-details__user-rating-inner">
+          <h3 class="film-details__user-rating-title">Incredibles 2</h3>
+
+          <p class="film-details__user-rating-feelings">How you feel it?</p>
+
+          <div class="film-details__user-rating-score">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1">
+            <label class="film-details__user-rating-label" for="rating-1">1</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2">
+            <label class="film-details__user-rating-label" for="rating-2">2</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3">
+            <label class="film-details__user-rating-label" for="rating-3">3</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4">
+            <label class="film-details__user-rating-label" for="rating-4">4</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5" checked>
+            <label class="film-details__user-rating-label" for="rating-5">5</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6">
+            <label class="film-details__user-rating-label" for="rating-6">6</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7">
+            <label class="film-details__user-rating-label" for="rating-7">7</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8">
+            <label class="film-details__user-rating-label" for="rating-8">8</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9">
+            <label class="film-details__user-rating-label" for="rating-9">9</label>
+
+          </div>
+        </section>
+      </div>
+    </section>
+  </form>
+</section>`;
+  }
+
+}
+
+
+
+/***/ }),
+
+/***/ "./src/component.js":
+/*!**************************!*\
+  !*** ./src/component.js ***!
+  \**************************/
+/*! exports provided: Component */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Component", function() { return Component; });
+/* harmony import */ var _createElem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./createElem */ "./src/createElem.js");
+
+class Component {
+  constructor() {
+    if (new.target === Component) {
+      throw new Error(`Can't instantiate Component, only concrete one.`);
+    }
+  }
+  get template() {
+    throw new Error(`You have to define template.`);
+  }
+  _onOpenButtonClick() {
+    return typeof this._onClick === `function` && this._onClick();
+  }
+  _onCloseButtonClick() {
+    return typeof this._onClick === `function` && this._onClick();
+  }
+  set onClick(fn) {
+    this._onClick = fn;
+  }
+  bind() {
+    this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
+  }
+  render() {
+    this._element = Object(_createElem__WEBPACK_IMPORTED_MODULE_0__["default"])(this.template);
+    this.bind();
+    return this._element;
   }
 };
-const getFilmCard = {
+
+
+
+/***/ }),
+
+/***/ "./src/createElem.js":
+/*!***************************!*\
+  !*** ./src/createElem.js ***!
+  \***************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ((template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+  return newElement.firstChild;
+});
+
+
+/***/ }),
+
+/***/ "./src/data.js":
+/*!*********************!*\
+  !*** ./src/data.js ***!
+  \*********************/
+/*! exports provided: data */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "data", function() { return data; });
+const AMOUNT_OF_CARDS = 15;
+
+
+const generateData = {
   title: () => {
-    const titleArr = ['Harry Potter',
-      'Intouchables',
-      'Inception',
-      'Fight Club',
-      'Knockin\' on Heaven\'s Door',
-      'Pulp Fiction',
-      'Interstellar',
-      'Lock, Stock and Two Smoking Barrels',
-      'The Matrix',
-      'Catch Me If You Can',
-      'The Departed',
-      'Snatch.',
-      'Shutter Island',
-      'The Dark Knight'
-    ];
-    const getRandomTitle = Math.round(Math.random()*(titleArr)-1);
-    return titleArr[getRandomTitle];
+    const arrOfTitles = ['Harry Potter','Intouchables','Inception','Fight Club','Knockin\' on Heaven\'s Door','Pulp Fiction','Interstellar','Lock, Stock and Two Smoking Barrels','The Matrix','Catch Me If You Can','The Departed','Snatch.','Shutter Island','The Dark Knight'];
+    const randomIndexOfArrOfName = Math.round(Math.random()*(arrOfTitles.length));
+    return arrOfTitles[randomIndexOfArrOfName];
+    },
+  rating: () => {
+    let rating = Math.random()*10;
+    return rating.toFixed(1);
   },
-    rating: Math.round(Math.random()*10),
-    year:'1995',
-    duration: '1 h 26 m',
-    genre: function() {
+  year: () => {
+    const  dateOfFilm = '199' + Math.floor(Math.random()*10);
+    return dateOfFilm;
+  },
+  duration: () => {
+    const time = '1 h ' + Math.floor(Math.random()*59)+ ' m';
+    return time;
+  },
+  genre: () => {
     const arrGenre = ['Comedy', 'Thriller', 'Detective', 'Action', 'Drama'];
     const getRandomAmout = Math.round(Math.random()* (arrGenre.length));
     return arrGenre[getRandomAmout];
   },
-  picture:function(){
+  picture: () => {
     const arrPicture = [`accused`,`blackmail`,`blue-blazes`,`fuga-da-new-york`,`moonrise`,`three-friends`];
-    const getRandomAmout = Math.round(Math.random()* (arrPicture.length));
-    return './public/images/posters/' + arrPicture[getRandomAmout] + '.jpg';
+    const getRandomAmout = Math.floor(Math.random() * ((arrPicture.length - 1) + 1));
+    return '/images/posters/' + arrPicture[getRandomAmout] + '.jpg';
   },
-  decription:function(){
-    const descriptionArr = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget.
-      Fusce tristique felis at fermentum pharetra.
-      Aliquam id orci ut lectus varius viverra.
-      Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.
-      Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.
-      Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.
-      Sed sed nisi sed augue convallis suscipit in sed felis.
-      Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus.
-      In rutrum ac purus sit amet tempus.`.split('.');
-    const getRandomAmount = Math.round((Math.random()*2)+1);
-    for(let i = 0; i < getRandomAmount; i++) {
-      const getRandomSentence = Math.round(Math.random()*(descriptionArr.length - 1)+1);
-      return descriptionArr[getRandomSentence];
-    }
-  },
-  comments:Math.round(Math.random()*10)
+  description: () => {
+    const textForDescription = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus`;
+    const arrOfSentences = textForDescription.split('.');
+    const randomAmountSentences = Math.floor(Math.random() * (3 - 1 + 1)) + 1;
+    const description = [];
+    for (let i = 0; i < randomAmountSentences; i++) {
+      const getRandomSentence = Math.floor(Math.random() * (arrOfSentences.length + 1));
+      description.push(arrOfSentences[getRandomSentence]);
+     }
+    return description;
+    },
+  comments:() => {
+    const setRandomAmountComments = Math.round(Math.random()*10);
+    return setRandomAmountComments;
+  }
 };
+const data = {
+  title: '1955',
+  rating: generateData.rating(),
+  year: generateData.year(),
+  duration:generateData.duration(),
+  genre:generateData.genre(),
+  picture:generateData.picture(),
+  description:generateData.description(),
+  comments:generateData.comments()
+}
 
 
 
@@ -307,11 +533,32 @@ const getFilterElement = () => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _filter_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./filter-element */ "./src/filter-element.js");
-/* harmony import */ var _card_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./card-element */ "./src/card-element.js");
+/* harmony import */ var _Pop_up__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Pop-up */ "./src/Pop-up.js");
+/* harmony import */ var _data__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./data */ "./src/data.js");
+/* harmony import */ var _Card__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Card */ "./src/Card.js");
+
+
+
 
 
 Object(_filter_element__WEBPACK_IMPORTED_MODULE_0__["getFilterElement"])();
-Object(_card_element__WEBPACK_IMPORTED_MODULE_1__["cards"])();
+
+const filmContainer = document.querySelector(`.films-list__container`);
+const cardElement = new _Card__WEBPACK_IMPORTED_MODULE_3__["Card"](_data__WEBPACK_IMPORTED_MODULE_2__["data"]);
+const popUpElement = new _Pop_up__WEBPACK_IMPORTED_MODULE_1__["Popup"](_data__WEBPACK_IMPORTED_MODULE_2__["data"]);
+const body = document.querySelector(`body`);
+
+const renderAll = () => {
+  filmContainer.appendChild(cardElement.render());
+  cardElement.onClick = () => {
+    popUpElement.render();
+    body.appendChild(popUpElement.element);
+  };
+  popUpElement.onClick = () => {
+    body.removeChild(popUpElement.element);
+  };
+};
+renderAll();
 
 
 /***/ })
