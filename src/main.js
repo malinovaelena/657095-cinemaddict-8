@@ -1,4 +1,23 @@
 import {getFilterElement} from './filter-element';
-import {cards} from './card-element';
+import {Popup} from './Pop-up';
+import {data} from './data';
+import {Card} from './Card';
+
 getFilterElement();
-cards();
+
+const filmContainer = document.querySelector(`.films-list__container`);
+const cardElement = new Card(data);
+const popUpElement = new Popup(data);
+const body = document.querySelector(`body`);
+
+const renderAll = () => {
+  filmContainer.appendChild(cardElement.render());
+  cardElement.onClick = () => {
+    popUpElement.render();
+    body.appendChild(popUpElement.element);
+  };
+  popUpElement.onClick = () => {
+    body.removeChild(popUpElement.element);
+  };
+};
+renderAll();
