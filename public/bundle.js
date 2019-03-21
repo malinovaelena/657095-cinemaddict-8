@@ -120,7 +120,7 @@ class Card {
     this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
   }
   get template() {
-    return ` <article class="film-card">
+    return `<article class="film-card">
       <h3 class="film-card__title">${this._title}</h3>
     <p class="film-card__rating">${this._rating}</p>
       <p class="film-card__info">
@@ -143,7 +143,6 @@ class Card {
     this._element = Object(_createElem__WEBPACK_IMPORTED_MODULE_0__["default"])(this.template);
     console.log(this._element);
     this.bind();
-
     return this._element;
   }
 }
@@ -164,31 +163,35 @@ class Card {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Popup", function() { return Popup; });
 /* harmony import */ var _data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./data */ "./src/data.js");
+/* harmony import */ var _createElem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./createElem */ "./src/createElem.js");
+
 
 
 class Popup {
   constructor(data) {
-      this._title = data.title,
-      this._rating = data.rating,
-      this._year = data.year,
-      this._duration = data.duration,
-      this._genre = data.genre,
-      this._picture = data.picture,
-      this._description = data.description,
-      this._comments = data.comments
+      this._title = data.title;
+      this._rating = data.rating;
+      this._year = data.year;
+      this._duration = data.duration;
+      this._genre = data.genre;
+      this._picture = data.picture;
+      this._description = data.description;
+      this._comments = data.comments;
   }
-
-  render() {
-    this._element = createElement(this.template);
-    this.bind();
+  get element() {
     return this._element;
+  }
+  _onCloseButtonClick() {
+    return typeof this._onClick === `function` && this._onClick();
   }
   set onClick(fn) {
     this._onClick = fn;
   }
+  bind() {
+    this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick.bind(this));
+  }
   get template() {
-    return `
-    <section class="film-details">
+    return `<section class="film-details">
   <form class="film-details__inner" action="" method="get">
     <div class="film-details__close">
       <button class="film-details__close-btn" type="button">close</button>
@@ -354,7 +357,11 @@ class Popup {
   </form>
 </section>`;
   }
-
+  render() {
+    this._element = Object(_createElem__WEBPACK_IMPORTED_MODULE_1__["default"])(this.template);
+    this.bind();
+    return this._element;
+  }
 }
 
 
@@ -496,9 +503,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _filter_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./filter-element */ "./src/filter-element.js");
 /* harmony import */ var _Pop_up__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Pop-up */ "./src/Pop-up.js");
 /* harmony import */ var _data__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./data */ "./src/data.js");
-/* harmony import */ var _createElem__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./createElem */ "./src/createElem.js");
-/* harmony import */ var _Card__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Card */ "./src/Card.js");
-
+/* harmony import */ var _Card__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Card */ "./src/Card.js");
 
 
 
@@ -506,12 +511,20 @@ __webpack_require__.r(__webpack_exports__);
 
 Object(_filter_element__WEBPACK_IMPORTED_MODULE_0__["getFilterElement"])();
 
-const filmContainer = document.querySelector('.films-list__container');
-const cardElement = new _Card__WEBPACK_IMPORTED_MODULE_4__["Card"](_data__WEBPACK_IMPORTED_MODULE_2__["data"]);
+const filmContainer = document.querySelector(`.films-list__container`);
+const cardElement = new _Card__WEBPACK_IMPORTED_MODULE_3__["Card"](_data__WEBPACK_IMPORTED_MODULE_2__["data"]);
 const popUpElement = new _Pop_up__WEBPACK_IMPORTED_MODULE_1__["Popup"](_data__WEBPACK_IMPORTED_MODULE_2__["data"]);
+const body = document.querySelector(`body`);
 
 const renderAll = () => {
   filmContainer.appendChild(cardElement.render());
+  cardElement.onClick = () => {
+    popUpElement.render();
+    body.appendChild(popUpElement.element);
+  };
+  popUpElement.onClick = () => {
+    body.removeChild(popUpElement.element);
+  };
 };
 renderAll();
 
