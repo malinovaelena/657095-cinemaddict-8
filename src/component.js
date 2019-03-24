@@ -14,6 +14,12 @@ class Component {
   _onCloseButtonClick() {
     return typeof this._onClick === `function` && this._onClick();
   }
+  _addComment() {
+    //return typeof this.
+  }
+  _addRating() {
+    return typeof this._onClick === `function` && this._onClick();
+  }
   set onClick(fn) {
     this._onClick = fn;
   }

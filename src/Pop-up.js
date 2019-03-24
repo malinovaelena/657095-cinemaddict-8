@@ -21,6 +21,9 @@ class Popup extends Component {
   }
   bind() {
     this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick.bind(this));
+    //this._element.querySelectorAll(`.film-details__user-rating-label`).addEventListener(`click`, this.//////////.bind(this));!!!!!!!!!!!
+    //this._element.querySelector(`.film-details__comment-input`).addEventListener(`click`, this.////.bind(this));
+    ////ctrl enter по нажатию  -- keydown / .при закрытии, score  - для рейтинга фильма
   }
   get template() {
     return `<section class="film-details">
