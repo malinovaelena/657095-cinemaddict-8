@@ -97,13 +97,10 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Card", function() { return Card; });
 /* harmony import */ var _createElem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./createElem */ "./src/createElem.js");
-/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./component */ "./src/component.js");
 
 
-
-class Card extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
+class Card {
   constructor(data) {
-    super();
       this._title = data.title;
       this._rating = data.rating;
       this._year = data.year;
@@ -112,6 +109,9 @@ class Card extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
       this._picture = data.picture;
       this._description = data.description;
       this._comments = data.comments;
+  }
+  _onOpenButtonClick() {
+    return typeof this._onClick === `function` && this._onClick();
   }
   set onClick(fn) {
     this._onClick = fn;
@@ -139,6 +139,12 @@ class Card extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
       </form>
       </article>`;
   }
+  render() {
+    this._element = Object(_createElem__WEBPACK_IMPORTED_MODULE_0__["default"])(this.template);
+    console.log(this._element);
+    this.bind();
+    return this._element;
+  }
 }
 
 
@@ -156,14 +162,13 @@ class Card extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Popup", function() { return Popup; });
-/* harmony import */ var _createElem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./createElem */ "./src/createElem.js");
-/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./component */ "./src/component.js");
+/* harmony import */ var _data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./data */ "./src/data.js");
+/* harmony import */ var _createElem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./createElem */ "./src/createElem.js");
 
 
 
-class Popup extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
+class Popup {
   constructor(data) {
-    super();
       this._title = data.title;
       this._rating = data.rating;
       this._year = data.year;
@@ -175,6 +180,9 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
   }
   get element() {
     return this._element;
+  }
+  _onCloseButtonClick() {
+    return typeof this._onClick === `function` && this._onClick();
   }
   set onClick(fn) {
     this._onClick = fn;
@@ -349,52 +357,12 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
   </form>
 </section>`;
   }
-
-}
-
-
-
-/***/ }),
-
-/***/ "./src/component.js":
-/*!**************************!*\
-  !*** ./src/component.js ***!
-  \**************************/
-/*! exports provided: Component */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Component", function() { return Component; });
-/* harmony import */ var _createElem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./createElem */ "./src/createElem.js");
-
-class Component {
-  constructor() {
-    if (new.target === Component) {
-      throw new Error(`Can't instantiate Component, only concrete one.`);
-    }
-  }
-  get template() {
-    throw new Error(`You have to define template.`);
-  }
-  _onOpenButtonClick() {
-    return typeof this._onClick === `function` && this._onClick();
-  }
-  _onCloseButtonClick() {
-    return typeof this._onClick === `function` && this._onClick();
-  }
-  set onClick(fn) {
-    this._onClick = fn;
-  }
-  bind() {
-    this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
-  }
   render() {
-    this._element = Object(_createElem__WEBPACK_IMPORTED_MODULE_0__["default"])(this.template);
+    this._element = Object(_createElem__WEBPACK_IMPORTED_MODULE_1__["default"])(this.template);
     this.bind();
     return this._element;
   }
-};
+}
 
 
 
@@ -432,34 +400,34 @@ const AMOUNT_OF_CARDS = 15;
 
 
 const generateData = {
-  title: () => {
+  title: function() {
     const arrOfTitles = ['Harry Potter','Intouchables','Inception','Fight Club','Knockin\' on Heaven\'s Door','Pulp Fiction','Interstellar','Lock, Stock and Two Smoking Barrels','The Matrix','Catch Me If You Can','The Departed','Snatch.','Shutter Island','The Dark Knight'];
     const randomIndexOfArrOfName = Math.round(Math.random()*(arrOfTitles.length));
     return arrOfTitles[randomIndexOfArrOfName];
     },
-  rating: () => {
+  rating: function() {
     let rating = Math.random()*10;
     return rating.toFixed(1);
   },
-  year: () => {
+  year: function () {
     const  dateOfFilm = '199' + Math.floor(Math.random()*10);
     return dateOfFilm;
   },
-  duration: () => {
+  duration: function() {
     const time = '1 h ' + Math.floor(Math.random()*59)+ ' m';
     return time;
   },
-  genre: () => {
+  genre: function() {
     const arrGenre = ['Comedy', 'Thriller', 'Detective', 'Action', 'Drama'];
     const getRandomAmout = Math.round(Math.random()* (arrGenre.length));
     return arrGenre[getRandomAmout];
   },
-  picture: () => {
+  picture:function(){
     const arrPicture = [`accused`,`blackmail`,`blue-blazes`,`fuga-da-new-york`,`moonrise`,`three-friends`];
     const getRandomAmout = Math.floor(Math.random() * ((arrPicture.length - 1) + 1));
     return '/images/posters/' + arrPicture[getRandomAmout] + '.jpg';
   },
-  description: () => {
+  description: function() {
     const textForDescription = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus`;
     const arrOfSentences = textForDescription.split('.');
     const randomAmountSentences = Math.floor(Math.random() * (3 - 1 + 1)) + 1;
@@ -470,7 +438,7 @@ const generateData = {
      }
     return description;
     },
-  comments:() => {
+  comments:function() {
     const setRandomAmountComments = Math.round(Math.random()*10);
     return setRandomAmountComments;
   }
