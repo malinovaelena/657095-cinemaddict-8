@@ -14,11 +14,8 @@ class Component {
   _onCloseButtonClick() {
     return typeof this._onClick === `function` && this._onClick();
   }
-  _addComment() {
-    //return typeof this.
-  }
-  _addRating() {
-    return typeof this._onClick === `function` && this._onClick();
+  _onSubmitButton() {
+    this._onSubmit = this._onSubmit.bind(this);
   }
   set onClick(fn) {
     this._onClick = fn;
@@ -26,10 +23,19 @@ class Component {
   bind() {
     this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
   }
+  unbind() {
+    this._element.querySelector(`.film-card__comments`).removeEventListener(`click`, this._onOpenButtonClick.bind(this));
+  }
+
   render() {
     this._element = createElement(this.template);
     this.bind();
     return this._element;
+  }
+  unrender() {
+    this.unbind();
+    this._element.remove();
+    this._element = null;
   }
 };
 export {Component};

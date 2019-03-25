@@ -12,18 +12,56 @@ class Popup extends Component {
       this._picture = data.picture;
       this._description = data.description;
       this._comments = data.comments;
+      this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
+      this._onSubmit = null;
   }
+  _processForm(formData) {
+    const entry = {
+      title: ``,
+      color: ``
+    };
+    const popUpMapper = Popup.createMapper(entry);
+
+    for (const pair of formData.entries()) {
+      const [property, value] = pair;
+      popUpMapper[property] && popUpMapper[property](value);
+    }
+
+    return entry;
+  }
+  //важно!!!!!!!!!!!
+  _onSubmitButtonClick(evt) {
+    if (evt.keyCode === (13 && 17)) {
+      console.log('hhhh');
+      const formData = new FormData(this._element.querySelector(`.film-details__inner`));
+      const newData = this._processForm(formData);
+      typeof this._onSubmit === `function` && this._onSubmit(newData);
+
+      //this.update(newData);
+    };
+  }
+
   get element() {
     return this._element;
   }
   set onClick(fn) {
     this._onClick = fn;
   }
+  set onSubmit(fn) {
+    this._onSubmit = fn;
+  }
   bind() {
     this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick.bind(this));
-    //this._element.querySelectorAll(`.film-details__user-rating-label`).addEventListener(`click`, this.//////////.bind(this));!!!!!!!!!!!
-    //this._element.querySelector(`.film-details__comment-input`).addEventListener(`click`, this.////.bind(this));
-    ////ctrl enter по нажатию  -- keydown / .при закрытии, score  - для рейтинга фильма
+    this._element.querySelector(`.film-details__inner`).addEventListener(`keydown`, this._onSubmitButtonClick.bind(this));
+  }
+  unbind() {
+    this._element.querySelector(`.film-details__close-btn`).removeEventListener(`click`, this._onCloseButtonClick.bind(this));
+  }
+  static createMapper(target) {
+    return {
+      comments: (value) => target.comments.add(value),
+      rating: (value) => target.rating.add(value)
+    }
   }
   get template() {
     return `<section class="film-details">
@@ -66,11 +104,11 @@ class Popup extends Component {
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Release Date</td>
-            <td class="film-details__cell">15 June 2018 (USA)</td>
+            <td class="film-details__cell">${moment().add(7, 'days').subtract(1, 'months').year(2019).format('DD MMMM YYYY')}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Runtime</td>
-            <td class="film-details__cell">118 min</td>
+            <td class="film-details__cell">${moment().add().subtract().hours(1).minutes(50).format('h:mm')}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Country</td>
@@ -113,7 +151,7 @@ class Popup extends Component {
             <p class="film-details__comment-text">So long-long story, boring!</p>
             <p class="film-details__comment-info">
               <span class="film-details__comment-author">Tim Macoveev</span>
-              <span class="film-details__comment-day">3 days ago</span>
+              <span class="film-details__comment-day">${moment().add(12, 'days').subtract(1, 'months').year(2019).hours(0).minutes(0).seconds(0).format('DD.MM.YYYY')}</span>
             </p>
           </div>
         </li>
@@ -191,7 +229,9 @@ class Popup extends Component {
     </section>
   </form>
 </section>`;
-  }
+  };
 
 }
 export {Popup};
+
+

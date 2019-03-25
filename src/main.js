@@ -15,9 +15,18 @@ const renderAll = () => {
   cardElement.onClick = () => {
     popUpElement.render();
     body.appendChild(popUpElement.element);
+    //popUpElement.onSubmit();
   };
   popUpElement.onClick = () => {
     body.removeChild(popUpElement.element);
+  };
+  popUpElement.onSubmit = (newObject) => {
+    console.log('bbbbb');
+    data.comments = newObject.comments;
+    data.rating = newObject.rating;
+
+    cardElement.render();
+    popUpElement.unrender();
   };
 };
 renderAll();

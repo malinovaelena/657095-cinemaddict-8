@@ -119,13 +119,15 @@ class Card extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
   bind() {
     this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
   }
+  update(data) {
+  }
   get template() {
     return `<article class="film-card">
       <h3 class="film-card__title">${this._title}</h3>
     <p class="film-card__rating">${this._rating}</p>
       <p class="film-card__info">
       <span class="film-card__year">${this._year}</span>
-      <span class="film-card__duration">${this._duration}</span>
+      <span class="film-card__duration">${moment().format('dddd')}</span>
     <span class="film-card__genre">${this._genre}</span>
       </p>
       <img src="${this._picture}" alt="" class="film-card__poster">
@@ -172,15 +174,56 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
       this._picture = data.picture;
       this._description = data.description;
       this._comments = data.comments;
+      this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
+      this._onSubmit = null;
   }
+  _processForm(formData) {
+    const entry = {
+      title: ``,
+      color: ``
+    };
+    const popUpMapper = Popup.createMapper(entry);
+
+    for (const pair of formData.entries()) {
+      const [property, value] = pair;
+      popUpMapper[property] && popUpMapper[property](value);
+    }
+
+    return entry;
+  }
+  //важно!!!!!!!!!!!
+  _onSubmitButtonClick(evt) {
+    if (evt.keyCode === ( true && 17)) {
+      console.log('hhhh');
+      const formData = new FormData(this._element.querySelector(`.film-details__inner`));
+      const newData = this._processForm(formData);
+      typeof this._onSubmit === `function` && this._onSubmit(newData);
+
+      //this.update(newData);
+    };
+  }
+
   get element() {
     return this._element;
   }
   set onClick(fn) {
     this._onClick = fn;
   }
+  set onSubmit(fn) {
+    this._onSubmit = fn;
+  }
   bind() {
     this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick.bind(this));
+    this._element.querySelector(`.film-details__inner`).addEventListener(`keydown`, this._onSubmitButtonClick.bind(this));
+  }
+  unbind() {
+    this._element.querySelector(`.film-details__close-btn`).removeEventListener(`click`, this._onCloseButtonClick.bind(this));
+  }
+  static createMapper(target) {
+    return {
+      comments: (value) => target.comments.add(value),
+      rating: (value) => target.rating.add(value)
+    }
   }
   get template() {
     return `<section class="film-details">
@@ -348,9 +391,11 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
     </section>
   </form>
 </section>`;
-  }
+  };
 
 }
+
+
 
 
 
@@ -383,16 +428,28 @@ class Component {
   _onCloseButtonClick() {
     return typeof this._onClick === `function` && this._onClick();
   }
+  _onSubmitButton() {
+    this._onSubmit = this._onSubmit.bind(this);
+  }
   set onClick(fn) {
     this._onClick = fn;
   }
   bind() {
     this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
   }
+  unbind() {
+    this._element.querySelector(`.film-card__comments`).removeEventListener(`click`, this._onOpenButtonClick.bind(this));
+  }
+
   render() {
     this._element = Object(_createElem__WEBPACK_IMPORTED_MODULE_0__["default"])(this.template);
     this.bind();
     return this._element;
+  }
+  unrender() {
+    this.unbind();
+    this._element.remove();
+    this._element = null;
   }
 };
 
@@ -553,9 +610,18 @@ const renderAll = () => {
   cardElement.onClick = () => {
     popUpElement.render();
     body.appendChild(popUpElement.element);
+    //popUpElement.onSubmit();
   };
   popUpElement.onClick = () => {
     body.removeChild(popUpElement.element);
+  };
+  popUpElement.onSubmit = (newObject) => {
+    console.log('bbbbb');
+    _data__WEBPACK_IMPORTED_MODULE_2__["data"].comments = newObject.comments;
+    _data__WEBPACK_IMPORTED_MODULE_2__["data"].rating = newObject.rating;
+
+    cardElement.render();
+    popUpElement.unrender();
   };
 };
 renderAll();
