@@ -168,6 +168,8 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
   constructor(data) {
     super();
       this._title = data.title;
+      this._text = data.text;
+      this._userrating = data.userrating;
       this._rating = data.rating;
       this._year = data.year;
       this._duration = data.duration;
@@ -178,10 +180,10 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
       this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
       this._onSubmit = null;
   }
-  _processForm(formData) {
+  _processForm(formData) { //объект в котором будет записанна новая обновленная сущность...
     const entry = {
-      comments: ``,
-      rating: ``
+      text: ``,
+      score: ``
     };
     const popUpMapper = Popup.createMapper(entry);
 
@@ -189,6 +191,7 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
       const [property, value] = pair;
       popUpMapper[property] && popUpMapper[property](value);
     }
+    
     return entry;
   }
 
@@ -202,8 +205,8 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
     };
   }
   update(data) {
-    this._rating = data.rating;
-    this._comments = data.comments;
+    this._text = data.text;
+    this._userrating = data.userrating;
   }
 
   get element() {
@@ -221,12 +224,12 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
   }
   unbind() {
     this._element.querySelector(`.film-details__close-btn`).removeEventListener(`click`, this._onCloseButtonClick.bind(this));
+    this._element.querySelector(`.film-details__inner`).removeEventListener(`keydown`, this._onSubmitButtonClick.bind(this));
   }
-  static createMapper(target) {
+  static createMapper(target) { //Его задача - сопоставить поля формы с полями структуры и записать в них полученные значения
     return {
-      comments: (value) => target.comments.add(value),
-      rating: (value) => target.rating.add(value),
-      //text: (value) => target.title = value,
+      comment: (value) => target.text = value,
+      score: (value) => target.userrating = value,
     }
   }
   get template() {
@@ -340,7 +343,7 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
           </div>
         </div>
         <label class="film-details__comment-label">
-          <textarea class="film-details__comment-input" placeholder="← Select reaction, add comment here" name="comment"></textarea>
+          <textarea class="film-details__comment-input" placeholder="← Select reaction, add comment here" name="comment">${this._text}</textarea>
         </label>
       </div>
     </section>
@@ -362,31 +365,31 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
           <p class="film-details__user-rating-feelings">How you feel it?</p>
 
           <div class="film-details__user-rating-score">
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1" ${this._userrating === `1` && 'checked'} >
             <label class="film-details__user-rating-label" for="rating-1">1</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2" ${this._userrating === `2` && 'checked'}>
             <label class="film-details__user-rating-label" for="rating-2">2</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3" ${this._userrating === `3` && 'checked'}>
             <label class="film-details__user-rating-label" for="rating-3">3</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4" ${this._userrating === `4` && 'checked'}>
             <label class="film-details__user-rating-label" for="rating-4">4</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5" checked>
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5" ${this._userrating === `5` && 'checked'}>
             <label class="film-details__user-rating-label" for="rating-5">5</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6" ${this._userrating === `6` && 'checked'}>
             <label class="film-details__user-rating-label" for="rating-6">6</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7" ${this._userrating === `7` && 'checked'}>
             <label class="film-details__user-rating-label" for="rating-7">7</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8" ${this._userrating === `8` && 'checked'}>
             <label class="film-details__user-rating-label" for="rating-8">8</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9" ${this._userrating === `9` && 'checked'}>
             <label class="film-details__user-rating-label" for="rating-9">9</label>
 
           </div>
@@ -426,13 +429,16 @@ class Component {
   get template() {
     throw new Error(`You have to define template.`);
   }
+  get element() {
+    return this._element;
+  }
   _onOpenButtonClick() {
     return typeof this._onClick === `function` && this._onClick();
   }
   _onCloseButtonClick() {
     return typeof this._onClick === `function` && this._onClick();
   }
-  _onSubmitButton() {
+  _onSubmitButtonClick() {
     this._onSubmit = this._onSubmit.bind(this);
   }
   set onClick(fn) {
@@ -497,6 +503,14 @@ const generateData = {
     const randomIndexOfArrOfName = Math.round(Math.random()*(arrOfTitles.length));
     return arrOfTitles[randomIndexOfArrOfName];
     },
+  text: () => {
+    const textInTextarea = 'example';
+    return textInTextarea;
+  },
+  userrating: () => {
+    const randomNumber = 2;
+    return randomNumber;
+  },
   rating: () => {
     let rating = Math.random()*10;
     return rating.toFixed(1);
@@ -537,6 +551,8 @@ const generateData = {
 };
 const data = {
   title: '1955',
+  text: generateData.text(),
+  userrating: generateData.userrating(),
   rating: generateData.rating(),
   year: generateData.year(),
   duration:generateData.duration(),
@@ -618,9 +634,11 @@ const renderAll = () => {
     body.removeChild(popUpElement.element);
   };
   popUpElement.onSubmit = (newObject) => {
-    _data__WEBPACK_IMPORTED_MODULE_2__["data"].comments = newObject.comments;
-    _data__WEBPACK_IMPORTED_MODULE_2__["data"].rating = newObject.rating;
+    _data__WEBPACK_IMPORTED_MODULE_2__["data"].comment = newObject.comment;
+    _data__WEBPACK_IMPORTED_MODULE_2__["data"].score = newObject.score;
+    popUpElement.update(_data__WEBPACK_IMPORTED_MODULE_2__["data"]);
     cardElement.render();
+    body.replaceChild(cardElement.element, popUpElement.element);
     popUpElement.unrender();
   };
 };
