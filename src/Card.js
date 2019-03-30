@@ -1,9 +1,9 @@
 import createElement from './create-Elem';
 import {Component} from './component';
->>>>>>> module6-task1
 
-class Card {
+class Card extends Component {
   constructor(data) {
+    super();
       this._title = data.title;
       this._rating = data.rating;
       this._year = data.year;
@@ -12,9 +12,6 @@ class Card {
       this._picture = data.picture;
       this._description = data.description;
       this._comments = data.comments;
-  }
-  _onOpenButtonClick() {
-    return typeof this._onClick === `function` && this._onClick();
   }
   set onClick(fn) {
     this._onClick = fn;
@@ -44,12 +41,6 @@ class Card {
       <button class="film-card__controls-item button film-card__controls-item--favorite"><!--Mark as favorite-->FAV</button>
       </form>
       </article>`;
-  }
-  render() {
-    this._element = createElement(this.template);
-    console.log(this._element);
-    this.bind();
-    return this._element;
   }
 }
 export {Card};
