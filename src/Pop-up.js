@@ -28,6 +28,7 @@ class Popup extends Component {
       const [property, value] = pair;
       popUpMapper[property] && popUpMapper[property](value);
     }
+    
     return entry;
   }
 
