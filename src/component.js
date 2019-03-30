@@ -1,4 +1,4 @@
-import createElement from './createElem';
+import createElement from './create-Elem';
 class Component {
   constructor() {
     if (new.target === Component) {
@@ -8,13 +8,16 @@ class Component {
   get template() {
     throw new Error(`You have to define template.`);
   }
+  get element() {
+    return this._element;
+  }
   _onOpenButtonClick() {
     return typeof this._onClick === `function` && this._onClick();
   }
   _onCloseButtonClick() {
     return typeof this._onClick === `function` && this._onClick();
   }
-  _onSubmitButton() {
+  _onSubmitButtonClick() {
     this._onSubmit = this._onSubmit.bind(this);
   }
   set onClick(fn) {
@@ -26,7 +29,6 @@ class Component {
   unbind() {
     this._element.querySelector(`.film-card__comments`).removeEventListener(`click`, this._onOpenButtonClick.bind(this));
   }
-
   render() {
     this._element = createElement(this.template);
     this.bind();

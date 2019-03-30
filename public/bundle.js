@@ -96,7 +96,7 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Card", function() { return Card; });
-/* harmony import */ var _createElem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./createElem */ "./src/createElem.js");
+/* harmony import */ var _create_Elem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./create-Elem */ "./src/create-Elem.js");
 /* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./component */ "./src/component.js");
 
 
@@ -120,14 +120,15 @@ class Card extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
     this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
   }
   update(data) {
+
   }
   get template() {
     return `<article class="film-card">
       <h3 class="film-card__title">${this._title}</h3>
     <p class="film-card__rating">${this._rating}</p>
       <p class="film-card__info">
-      <span class="film-card__year">${this._year}</span>
-      <span class="film-card__duration">${moment().format('dddd')}</span>
+      <span class="film-card__year">${moment().format('YYYY')}</span>
+      <span class="film-card__duration">${moment().add().subtract().hours(1).minutes(50).format('h:mm')}</span>
     <span class="film-card__genre">${this._genre}</span>
       </p>
       <img src="${this._picture}" alt="" class="film-card__poster">
@@ -158,7 +159,7 @@ class Card extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Popup", function() { return Popup; });
-/* harmony import */ var _createElem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./createElem */ "./src/createElem.js");
+/* harmony import */ var _create_Elem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./create-Elem */ "./src/create-Elem.js");
 /* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./component */ "./src/component.js");
 
 
@@ -179,8 +180,8 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
   }
   _processForm(formData) {
     const entry = {
-      title: ``,
-      color: ``
+      comments: ``,
+      rating: ``
     };
     const popUpMapper = Popup.createMapper(entry);
 
@@ -188,19 +189,21 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
       const [property, value] = pair;
       popUpMapper[property] && popUpMapper[property](value);
     }
-
     return entry;
   }
-  //важно!!!!!!!!!!!
+
   _onSubmitButtonClick(evt) {
     if (evt.keyCode === ( true && 17)) {
-      console.log('hhhh');
       const formData = new FormData(this._element.querySelector(`.film-details__inner`));
       const newData = this._processForm(formData);
       typeof this._onSubmit === `function` && this._onSubmit(newData);
 
-      //this.update(newData);
+      this.update(newData);
     };
+  }
+  update(data) {
+    this._rating = data.rating;
+    this._comments = data.comments;
   }
 
   get element() {
@@ -222,7 +225,8 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
   static createMapper(target) {
     return {
       comments: (value) => target.comments.add(value),
-      rating: (value) => target.rating.add(value)
+      rating: (value) => target.rating.add(value),
+      //text: (value) => target.title = value,
     }
   }
   get template() {
@@ -266,11 +270,11 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Release Date</td>
-            <td class="film-details__cell">15 June 2018 (USA)</td>
+            <td class="film-details__cell">${moment().add(7, 'days').subtract(1, 'months').year(2019).format('DD MMMM YYYY')}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Runtime</td>
-            <td class="film-details__cell">118 min</td>
+            <td class="film-details__cell">${moment().add().subtract().hours(1).minutes(50).format('h:mm')}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Country</td>
@@ -313,7 +317,7 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
             <p class="film-details__comment-text">So long-long story, boring!</p>
             <p class="film-details__comment-info">
               <span class="film-details__comment-author">Tim Macoveev</span>
-              <span class="film-details__comment-day">3 days ago</span>
+              <span class="film-details__comment-day">${moment().add(12, 'days').subtract(1, 'months').year(2019).hours(0).minutes(0).seconds(0).format('DD.MM.YYYY')}</span>
             </p>
           </div>
         </li>
@@ -411,7 +415,7 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Component", function() { return Component; });
-/* harmony import */ var _createElem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./createElem */ "./src/createElem.js");
+/* harmony import */ var _create_Elem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./create-Elem */ "./src/create-Elem.js");
 
 class Component {
   constructor() {
@@ -440,9 +444,8 @@ class Component {
   unbind() {
     this._element.querySelector(`.film-card__comments`).removeEventListener(`click`, this._onOpenButtonClick.bind(this));
   }
-
   render() {
-    this._element = Object(_createElem__WEBPACK_IMPORTED_MODULE_0__["default"])(this.template);
+    this._element = Object(_create_Elem__WEBPACK_IMPORTED_MODULE_0__["default"])(this.template);
     this.bind();
     return this._element;
   }
@@ -457,10 +460,10 @@ class Component {
 
 /***/ }),
 
-/***/ "./src/createElem.js":
-/*!***************************!*\
-  !*** ./src/createElem.js ***!
-  \***************************/
+/***/ "./src/create-Elem.js":
+/*!****************************!*\
+  !*** ./src/create-Elem.js ***!
+  \****************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -610,16 +613,13 @@ const renderAll = () => {
   cardElement.onClick = () => {
     popUpElement.render();
     body.appendChild(popUpElement.element);
-    //popUpElement.onSubmit();
   };
   popUpElement.onClick = () => {
     body.removeChild(popUpElement.element);
   };
   popUpElement.onSubmit = (newObject) => {
-    console.log('bbbbb');
     _data__WEBPACK_IMPORTED_MODULE_2__["data"].comments = newObject.comments;
     _data__WEBPACK_IMPORTED_MODULE_2__["data"].rating = newObject.rating;
-
     cardElement.render();
     popUpElement.unrender();
   };

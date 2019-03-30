@@ -1,4 +1,4 @@
-import createElement from './createElem';
+import createElement from './create-Elem';
 import {Component} from './component';
 
 class Card extends Component {
@@ -20,6 +20,7 @@ class Card extends Component {
     this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
   }
   update(data) {
+
   }
   get template() {
     return `<article class="film-card">

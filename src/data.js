@@ -7,6 +7,14 @@ const generateData = {
     const randomIndexOfArrOfName = Math.round(Math.random()*(arrOfTitles.length));
     return arrOfTitles[randomIndexOfArrOfName];
     },
+  text: () => {
+    const textInTextarea = 'example';
+    return textInTextarea;
+  },
+  userrating: () => {
+    const randomNumber = 2;
+    return randomNumber;
+  },
   rating: () => {
     let rating = Math.random()*10;
     return rating.toFixed(1);
@@ -47,6 +55,8 @@ const generateData = {
 };
 const data = {
   title: '1955',
+  text: generateData.text(),
+  userrating: generateData.userrating(),
   rating: generateData.rating(),
   year: generateData.year(),
   duration:generateData.duration(),

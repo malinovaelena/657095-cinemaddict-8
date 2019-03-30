@@ -15,17 +15,16 @@ const renderAll = () => {
   cardElement.onClick = () => {
     popUpElement.render();
     body.appendChild(popUpElement.element);
-    //popUpElement.onSubmit();
   };
   popUpElement.onClick = () => {
     body.removeChild(popUpElement.element);
   };
   popUpElement.onSubmit = (newObject) => {
-    console.log('bbbbb');
-    data.comments = newObject.comments;
-    data.rating = newObject.rating;
-
+    data.comment = newObject.comment;
+    data.score = newObject.score;
+    popUpElement.update(data);
     cardElement.render();
+    body.replaceChild(cardElement.element, popUpElement.element);
     popUpElement.unrender();
   };
 };
