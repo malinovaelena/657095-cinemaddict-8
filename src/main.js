@@ -19,5 +19,13 @@ const renderAll = () => {
   popUpElement.onClick = () => {
     body.removeChild(popUpElement.element);
   };
+  popUpElement.onSubmit = (newObject) => {
+    data.comment = newObject.comment;
+    data.score = newObject.score;
+    popUpElement.update(data);
+    cardElement.render();
+    body.replaceChild(cardElement.element, popUpElement.element);
+    popUpElement.unrender();
+  };
 };
 renderAll();

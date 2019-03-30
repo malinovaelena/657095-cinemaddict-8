@@ -1,4 +1,6 @@
-import createElement from './createElem';
+import createElement from './create-Elem';
+import {Component} from './component';
+>>>>>>> module6-task1
 
 class Card {
   constructor(data) {
@@ -20,13 +22,16 @@ class Card {
   bind() {
     this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
   }
+  update(data) {
+
+  }
   get template() {
     return `<article class="film-card">
       <h3 class="film-card__title">${this._title}</h3>
     <p class="film-card__rating">${this._rating}</p>
       <p class="film-card__info">
-      <span class="film-card__year">${this._year}</span>
-      <span class="film-card__duration">${this._duration}</span>
+      <span class="film-card__year">${moment().format('YYYY')}</span>
+      <span class="film-card__duration">${moment().add().subtract().hours(1).minutes(50).format('h:mm')}</span>
     <span class="film-card__genre">${this._genre}</span>
       </p>
       <img src="${this._picture}" alt="" class="film-card__poster">
