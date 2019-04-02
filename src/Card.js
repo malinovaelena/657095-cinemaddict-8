@@ -12,16 +12,43 @@ class Card extends Component {
       this._picture = data.picture;
       this._description = data.description;
       this._comments = data.comments;
+      this._onAddToWatchList = this._onAddToWatchList.bind(this);
+      this._onMarkAsWatched = this._onMarkAsWatched.bind(this);
+      this._towatchlist = data.towatchlist;
+      this._tofavorite = data.towatched;
   }
   set onClick(fn) {
     this._onClick = fn;
   }
+  set onAddToWatchList(fn) {
+    this._onAddToWatchList = fn;
+  }
+  set onMarkAsWatched(fn) {
+    this._onMarkAsWatched = fn;
+  }
+  _onMarkAsWatched(event) {
+    event.preventDefault();
+    return typeof this._onMarkAsWatched === `function` && this._onMarkAsWatched();
+  }
+  _onAddToWatchList(event) {
+    event.preventDefault();
+    return typeof this._onAddToWatchList === `function` && this._onAddToWatchList();
+  }
   bind() {
     this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
+    this._element.querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._onAddToWatchList.bind(this));
+    this._element.querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, this._onMarkAsWatched.bind(this));
+  }
+  unbind() {
+    this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
+    this._element.querySelector(`.film-card__controls-item--add-to-watchlist`).removeEventListener(`click`, this._onAddToWatchList.bind(this));
+    this._element.querySelector(`.film-card__controls-item--mark-as-watched`).removeEventListener(`click`, this._onMarkAsWatched.bind(this));
   }
   update(data) {
-
+    this._towatched = data.towatched;
+    this._towatchlist = data.towatchlist;
   }
+  
   get template() {
     return `<article class="film-card">
       <h3 class="film-card__title">${this._title}</h3>

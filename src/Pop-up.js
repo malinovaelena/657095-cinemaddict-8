@@ -16,8 +16,10 @@ class Popup extends Component {
       this._comments = data.comments;
       this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
       this._onSubmit = null;
+      this._towatchlist = data.towatchlist;
+      this._tofavorite = data.towatched;
   }
-  _processForm(formData) { //объект в котором будет записанна новая обновленная сущность...
+  _processForm(formData) {
     const entry = {
       text: ``,
       score: ``
@@ -56,7 +58,7 @@ class Popup extends Component {
     this._onSubmit = fn;
   }
   bind() {
-    this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick.bind(this));
+    this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick.bind(this));  
     this._element.querySelector(`.film-details__inner`).addEventListener(`keydown`, this._onSubmitButtonClick.bind(this));
   }
   unbind() {
@@ -67,6 +69,8 @@ class Popup extends Component {
     return {
       comment: (value) => target.text = value,
       score: (value) => target.userrating = value,
+      favorite: (value) => target.tofavorite = value,
+      watchlist: (value) => target.towatchlist = value
     }
   }
   get template() {

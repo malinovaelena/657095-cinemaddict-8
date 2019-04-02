@@ -47,10 +47,24 @@ const generateData = {
       description.push(arrOfSentences[getRandomSentence]);
      }
     return description;
-    },
+  },
   comments:() => {
     const setRandomAmountComments = Math.round(Math.random()*10);
     return setRandomAmountComments;
+  },
+  href:() => {    
+    const arr = [`all`, `watchlist`, `history`, `favorites`];
+    return arr[1];
+  },
+  nameFilter:() => {
+    const arr = [`All movies` ,`Watchlist`, `History`, `Favorites`];
+    for (let i = 0; i < arr.length; i++) {
+      return arr[i];
+    }  
+  },
+  amount:() => {
+    let randomNumber = Math.floor(Math.random()*10);
+    return randomNumber;
   }
 };
 const data = {
@@ -63,7 +77,12 @@ const data = {
   genre:generateData.genre(),
   picture:generateData.picture(),
   description:generateData.description(),
-  comments:generateData.comments()
+  comments:generateData.comments(),
+  towatchlist: false,
+  towatched: false,
+  amount:generateData.amount(),
+  nameFilter:generateData.nameFilter(),
+  href:generateData.href(),
 }
 export {data};
 
