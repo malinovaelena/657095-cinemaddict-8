@@ -10,15 +10,21 @@ const cardElement = new Card(data);
 const popUpElement = new Popup(data);
 //const filterItem = new Filter(data);
 const body = document.querySelector(`body`);
-const arrOfFilters = [[`All movies`,`all`,10],[`Watchlist`,`watchlist`,5], [`History`,`history`,2], [`Favorites`,`favorites`,1]];
+const arrOfFilters = [[`Favorites`,`favorites`,1],[`Watchlist`,`watchlist`,5],[`History`,`history`,2],[`All movies`,`all`,10]];
 
 const renderAll = () => {
   const renderFilters = (filterList) => {
     for (let filter of filterList) {
       const filterItem = new Filter(filter);
       filterItem.render();
-      filterContainer.insertAdjacentElement(`beforeEnd`, filterItem.element);
+      filterContainer.insertAdjacentElement(`afterBegin`, filterItem.element);
     }
+  };
+  const stats = document.querySelector(`.statistic`);
+  stats.onclick = (evt) => {
+    stats.classList.remove(`visually-hidden`);
+    const section_filter = document.querySelector(`.films `);
+    section_filter.classList.add(`visually-hidden`);
   };
   renderFilters(arrOfFilters);
   filmContainer.appendChild(cardElement.render());
