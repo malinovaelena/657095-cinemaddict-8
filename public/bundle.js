@@ -112,16 +112,43 @@ class Card extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
       this._picture = data.picture;
       this._description = data.description;
       this._comments = data.comments;
+      this._onAddToWatchList = this._onAddToWatchList.bind(this);
+      this._onMarkAsWatched = this._onMarkAsWatched.bind(this);
+      this._towatchlist = data.towatchlist;
+      this._tofavorite = data.towatched;
   }
   set onClick(fn) {
     this._onClick = fn;
   }
+  set onAddToWatchList(fn) {
+    this._onAddToWatchList = fn;
+  }
+  set onMarkAsWatched(fn) {
+    this._onMarkAsWatched = fn;
+  }
+  _onMarkAsWatched(event) {
+    event.preventDefault();
+    return typeof this._onMarkAsWatched === `function` && this._onMarkAsWatched();
+  }
+  _onAddToWatchList(event) {
+    event.preventDefault();
+    return typeof this._onAddToWatchList === `function` && this._onAddToWatchList();
+  }
   bind() {
     this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
+    this._element.querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._onAddToWatchList.bind(this));
+    this._element.querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, this._onMarkAsWatched.bind(this));
+  }
+  unbind() {
+    this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
+    this._element.querySelector(`.film-card__controls-item--add-to-watchlist`).removeEventListener(`click`, this._onAddToWatchList.bind(this));
+    this._element.querySelector(`.film-card__controls-item--mark-as-watched`).removeEventListener(`click`, this._onMarkAsWatched.bind(this));
   }
   update(data) {
-
+    this._towatched = data.towatched;
+    this._towatchlist = data.towatchlist;
   }
+  
   get template() {
     return `<article class="film-card">
       <h3 class="film-card__title">${this._title}</h3>
@@ -145,6 +172,49 @@ class Card extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
 }
 
 
+
+
+/***/ }),
+
+/***/ "./src/Filter.js":
+/*!***********************!*\
+  !*** ./src/Filter.js ***!
+  \***********************/
+/*! exports provided: Filter */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Filter", function() { return Filter; });
+/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./component */ "./src/component.js");
+/* harmony import */ var _create_Elem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./create-Elem */ "./src/create-Elem.js");
+/* harmony import */ var _data__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./data */ "./src/data.js");
+
+
+
+class Filter extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {  
+    constructor([nameFilter,href, amount]) {
+    super();
+        this._href = href;
+        this._nameFilter = nameFilter;
+        this._amount = amount;
+    }
+    set onFilter(fn) {
+        this._onFilter = fn;
+    }
+    onClick() {
+        return typeof this._onFilter === `function` && this._onFilter();
+    }
+    bind() {
+        this._element.addEventListener(`click`, this._onClick);
+    }
+    unbind() {
+        this._element.removeEventListener(`click`, this._onClick);
+    }
+    get template() {
+        return `<a href="#${this._href}" class="main-navigation__item">${this._nameFilter}<span class="main-navigation__item-count">${this._amount}</span></a>`;
+    }
+};
 
 
 /***/ }),
@@ -179,8 +249,10 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
       this._comments = data.comments;
       this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
       this._onSubmit = null;
+      this._towatchlist = data.towatchlist;
+      this._tofavorite = data.towatched;
   }
-  _processForm(formData) { //объект в котором будет записанна новая обновленная сущность...
+  _processForm(formData) {
     const entry = {
       text: ``,
       score: ``
@@ -219,7 +291,7 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
     this._onSubmit = fn;
   }
   bind() {
-    this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick.bind(this));
+    this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick.bind(this));  
     this._element.querySelector(`.film-details__inner`).addEventListener(`keydown`, this._onSubmitButtonClick.bind(this));
   }
   unbind() {
@@ -230,6 +302,8 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_1__["Component"] {
     return {
       comment: (value) => target.text = value,
       score: (value) => target.userrating = value,
+      favorite: (value) => target.tofavorite = value,
+      watchlist: (value) => target.towatchlist = value
     }
   }
   get template() {
@@ -543,10 +617,24 @@ const generateData = {
       description.push(arrOfSentences[getRandomSentence]);
      }
     return description;
-    },
+  },
   comments:() => {
     const setRandomAmountComments = Math.round(Math.random()*10);
     return setRandomAmountComments;
+  },
+  href:() => {    
+    const arr = [`all`, `watchlist`, `history`, `favorites`];
+    return arr[1];
+  },
+  nameFilter:() => {
+    const arr = [`All movies` ,`Watchlist`, `History`, `Favorites`];
+    for (let i = 0; i < arr.length; i++) {
+      return arr[i];
+    }  
+  },
+  amount:() => {
+    let randomNumber = Math.floor(Math.random()*10);
+    return randomNumber;
   }
 };
 const data = {
@@ -559,41 +647,14 @@ const data = {
   genre:generateData.genre(),
   picture:generateData.picture(),
   description:generateData.description(),
-  comments:generateData.comments()
+  comments:generateData.comments(),
+  towatchlist: false,
+  towatched: false,
+  amount:generateData.amount(),
+  nameFilter:generateData.nameFilter(),
+  href:generateData.href(),
 }
 
-
-
-
-/***/ }),
-
-/***/ "./src/filter-element.js":
-/*!*******************************!*\
-  !*** ./src/filter-element.js ***!
-  \*******************************/
-/*! exports provided: getFilterElement */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getFilterElement", function() { return getFilterElement; });
-const getFilterElement = () => {
-  const container = document.querySelector('.main-navigation');
-  const amountFilters = 4;
-  const filter = {
-    HREF:[`all`, `watchlist`, `history`, `favorites`],
-    NAME:[`All movies` ,`Watchlist`, `History`, `Favorites`],
-    AMOUNT: [39,12,13,14]
-  };
-  const elementHtml = (href,name, amount) => {
-    return `
-    <a href="#${href}" class="main-navigation__item">${name}<span class="main-navigation__item-count">${amount}</span></a>
-        `;
-  };
-  for (let i = 0; i < amountFilters; i++ ) {
-    container.insertAdjacentHTML(`beforeEnd`, elementHtml(filter.HREF[i],filter.NAME[i],filter.AMOUNT[i]));
-  };
-};
 
 
 
@@ -608,27 +669,53 @@ const getFilterElement = () => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _filter_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./filter-element */ "./src/filter-element.js");
+/* harmony import */ var _Filter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Filter */ "./src/Filter.js");
 /* harmony import */ var _Pop_up__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Pop-up */ "./src/Pop-up.js");
 /* harmony import */ var _data__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./data */ "./src/data.js");
 /* harmony import */ var _Card__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Card */ "./src/Card.js");
+//  import {getFilterElement} from './filter-element';
 
 
 
 
-
-Object(_filter_element__WEBPACK_IMPORTED_MODULE_0__["getFilterElement"])();
 
 const filmContainer = document.querySelector(`.films-list__container`);
+const filterContainer = document.querySelector(`.main-navigation`);
 const cardElement = new _Card__WEBPACK_IMPORTED_MODULE_3__["Card"](_data__WEBPACK_IMPORTED_MODULE_2__["data"]);
 const popUpElement = new _Pop_up__WEBPACK_IMPORTED_MODULE_1__["Popup"](_data__WEBPACK_IMPORTED_MODULE_2__["data"]);
+//  const filterItem = new Filter(data);
 const body = document.querySelector(`body`);
+const arrOfFilters = [[`Favorites`, `favorites`, 1], [`Watchlist`, `watchlist`, 5], [`History`, `history`, 2], [`All movies`, `all`, 10]];
 
 const renderAll = () => {
+  const renderFilters = (filterList) => {
+    for (let filter of filterList) {
+      const filterItem = new _Filter__WEBPACK_IMPORTED_MODULE_0__["Filter"](filter);
+      filterItem.render();
+      filterContainer.insertAdjacentElement(`afterBegin`, filterItem.element);
+    }
+  };
+  const stats = document.querySelector(`.statistic`);
+  stats.onclick = (evt) => {
+    stats.classList.remove(`visually-hidden`);
+    const sectionFilter = document.querySelector(`.films `);
+    sectionFilter.classList.add(`visually-hidden`);
+  };
+  renderFilters(arrOfFilters);
   filmContainer.appendChild(cardElement.render());
   cardElement.onClick = () => {
     popUpElement.render();
     body.appendChild(popUpElement.element);
+  };
+  cardElement.onAddToWatchList = () => {
+    //  data.watchlist = newObject.watchlist;
+    _data__WEBPACK_IMPORTED_MODULE_2__["data"].towatchlist = !_data__WEBPACK_IMPORTED_MODULE_2__["data"].towatchlist;
+    //  cardElement.update(data);
+    //  popUpElement.update(data);
+    console.log(`test`);
+  };
+  cardElement.onMarkAsWatched = () => {
+    console.log(`test2`);
   };
   popUpElement.onClick = () => {
     body.removeChild(popUpElement.element);
@@ -636,6 +723,8 @@ const renderAll = () => {
   popUpElement.onSubmit = (newObject) => {
     _data__WEBPACK_IMPORTED_MODULE_2__["data"].comment = newObject.comment;
     _data__WEBPACK_IMPORTED_MODULE_2__["data"].score = newObject.score;
+    _data__WEBPACK_IMPORTED_MODULE_2__["data"].watchlist = newObject.watchlist;
+    _data__WEBPACK_IMPORTED_MODULE_2__["data"].favorite = newObject.favorite;
     popUpElement.update(_data__WEBPACK_IMPORTED_MODULE_2__["data"]);
     cardElement.render();
     body.replaceChild(cardElement.element, popUpElement.element);

@@ -1,15 +1,94 @@
 import Chart from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import {Component} from './component';
 
 class Statistic extends Component {
     constructor(data) {
         super();
+        this._onStatisticRender = this._onStatisticRender.bind(this);
+        this._watchedMovies = data.genre;
+    }
+    grauphStatistic() {
+        const statisticCtx = document.querySelector(`.statistic__chart`);
+    // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
+        const BAR_HEIGHT = 50;
+        statisticCtx.height = BAR_HEIGHT * 5;
+        const myChart = new Chart(statisticCtx, {
+            plugins: [ChartDataLabels],
+            type: `horizontalBar`,
+            data: {
+            labels: [`Sci-Fi`, `Animation`, `Fantasy`, `Comedy`, `TV Series`],// исправить на корректные, образец
+            datasets: [{
+                data: [11, 8, 7, 4, 3],
+                backgroundColor: `#ffe800`,
+                hoverBackgroundColor: `#ffe800`,
+                anchor: `start`
+            }]
+            },
+            options: {
+            plugins: {
+                datalabels: {
+                font: {
+                    size: 20
+                },
+                color: `#ffffff`,
+                anchor: 'start',
+                align: 'start',
+                offset: 40,
+                }
+            },
+            scales: {
+                yAxes: [{
+                ticks: {
+                    fontColor: `#ffffff`,
+                    padding: 100,
+                    fontSize: 20
+                },
+                gridLines: {
+                    display: false,
+                    drawBorder: false
+                },
+                barThickness: 24
+                }],
+                xAxes: [{
+                ticks: {
+                    display: false,
+                    beginAtZero: true
+                },
+                gridLines: {
+                    display: false,
+                    drawBorder: false
+                },
+                }],
+            },
+            legend: {
+                display: false
+            },
+            tooltips: {
+                enabled: false
+            }
+            }
+        })
+        return myChart;
+    }
+    set onStatisticRender(fn) {
+        this._onStatisticRender = fn;
+    }
+    _onStatisticRender(event) {
+        event.preventDefault();
+        return typeof this._onStatisticRender === `function` && this._onStatisticRender();
+    }
+    bind() {
+        document.querySelector(`.main-navigation__item--additional`).addEventListener(`click`, this._onStatisticRender);
+    }
+    unbind() {
+        document.querySelector(`.main-navigation__item--additional`).removeEventListener(`click`, this._onStatisticRender);
     }
     get template() {
-        return ` <section class="statistic">
+        return `<section class="statistic">
         <p class="statistic__rank">Your rank <span class="statistic__rank-label">Sci-Fighter</span></p>
       
-        <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters visually-hidden">
+        <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
           <p class="statistic__filters-description">Show stats:</p>
       
           <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
@@ -31,15 +110,15 @@ class Statistic extends Component {
         <ul class="statistic__text-list">
           <li class="statistic__text-item">
             <h4 class="statistic__item-title">You watched</h4>
-            <p class="statistic__item-text">22 <span class="statistic__item-description">movies</span></p>
+    <p class="statistic__item-text">${this._watchedMovies}<span class="statistic__item-description">movies</span></p>
           </li>
           <li class="statistic__text-item">
             <h4 class="statistic__item-title">Total duration</h4>
-            <p class="statistic__item-text">130 <span class="statistic__item-description">h</span> 22 <span class="statistic__item-description">m</span></p>
+    <p class="statistic__item-text">1<span class="statistic__item-description">h</span> 22 <span class="statistic__item-description">m</span></p>
           </li>
           <li class="statistic__text-item">
             <h4 class="statistic__item-title">Top genre</h4>
-            <p class="statistic__item-text">Sci-Fi</p>
+            <p class="statistic__item-text">1</p>
           </li>
         </ul>
       
@@ -49,4 +128,5 @@ class Statistic extends Component {
       
       </section>`;
     }
-}
+};
+export{Statistic};

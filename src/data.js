@@ -68,7 +68,7 @@ const generateData = {
   }
 };
 const data = {
-  title: '1955',
+  title: generateData.title(),
   text: generateData.text(),
   userrating: generateData.userrating(),
   rating: generateData.rating(),
@@ -83,6 +83,8 @@ const data = {
   amount:generateData.amount(),
   nameFilter:generateData.nameFilter(),
   href:generateData.href(),
+  arrOfTitles: ['Harry Potter','Intouchables','Inception','Fight Club'],
+  watched: false,
 }
 export {data};
 
