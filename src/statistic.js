@@ -5,21 +5,46 @@ import {Component} from './component';
 class Statistic extends Component {
     constructor(data) {
         super();
+        this._data = data;
         this._onStatisticRender = this._onStatisticRender.bind(this);
-        this._watchedMovies = data.genre;
+        this._watchedMovies = data.length;
+    
+        this._totalDuration = data.reduce((acc,item) => acc + item.duration, 0);
     }
+
     grauphStatistic() {
+        const genreMap = {};
+        for (let film of this._data) {
+            for (let genre of film.genre) {
+                if (genreMap[genre] === undefined) {
+                    genreMap[genre] = 1;
+                } else {
+                    genreMap[genre] += 1;
+                }
+            }
+        }
+        const arrGenreMap = Object.entries(genreMap);
+        const newArr = arrGenreMap.sort((a,b) => {
+            return b[1] - a[1];
+        });
+            const arrayOfKeys = [];
+            const arrayOfValues = [];
+            newArr.forEach((item)=> {
+                arrayOfKeys.push(item[0]);
+                arrayOfValues.push(item[1]);
+            });
+
         const statisticCtx = document.querySelector(`.statistic__chart`);
-    // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
         const BAR_HEIGHT = 50;
         statisticCtx.height = BAR_HEIGHT * 5;
         const myChart = new Chart(statisticCtx, {
             plugins: [ChartDataLabels],
             type: `horizontalBar`,
             data: {
-            labels: [`Sci-Fi`, `Animation`, `Fantasy`, `Comedy`, `TV Series`],// исправить на корректные, образец
+            labels:arrayOfKeys,
+             
             datasets: [{
-                data: [11, 8, 7, 4, 3],
+                data:arrayOfValues,
                 backgroundColor: `#ffe800`,
                 hoverBackgroundColor: `#ffe800`,
                 anchor: `start`
@@ -114,7 +139,7 @@ class Statistic extends Component {
           </li>
           <li class="statistic__text-item">
             <h4 class="statistic__item-title">Total duration</h4>
-    <p class="statistic__item-text">1<span class="statistic__item-description">h</span> 22 <span class="statistic__item-description">m</span></p>
+    <p class="statistic__item-text">${Math.floor(this._totalDuration/60)}<span class="statistic__item-description">h</span>${this._totalDuration % 60}<span class="statistic__item-description">m</span></p>
           </li>
           <li class="statistic__text-item">
             <h4 class="statistic__item-title">Top genre</h4>

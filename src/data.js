@@ -24,13 +24,19 @@ const generateData = {
     return dateOfFilm;
   },
   duration: () => {
-    const time = '1 h ' + Math.floor(Math.random()*59)+ ' m';
-    return time;
+    const minutes = Math.floor(Math.random()*240) + 60;
+    return minutes;
   },
   genre: () => {
     const arrGenre = ['Comedy', 'Thriller', 'Detective', 'Action', 'Drama'];
     const getRandomAmout = Math.round(Math.random()* (arrGenre.length));
-    return arrGenre[getRandomAmout];
+    const finalGenres = [];
+    for (let item of arrGenre) {
+      if (Math.random() > 0.5) {
+        finalGenres.push(item);
+      }
+    }
+    return finalGenres;
   },
   picture: () => {
     const arrPicture = [`accused`,`blackmail`,`blue-blazes`,`fuga-da-new-york`,`moonrise`,`three-friends`];
@@ -67,7 +73,7 @@ const generateData = {
     return randomNumber;
   }
 };
-const data = {
+const dataRender = {
   title: generateData.title(),
   text: generateData.text(),
   userrating: generateData.userrating(),
@@ -85,6 +91,28 @@ const data = {
   href:generateData.href(),
   arrOfTitles: ['Harry Potter','Intouchables','Inception','Fight Club'],
   watched: false,
-}
-export {data};
+};
+const arrOfData = [];
+for (let i = 0; i < 5; i++) {
+  arrOfData.push({
+    title: generateData.title(),
+    text: generateData.text(),
+    userrating: generateData.userrating(),
+    rating: generateData.rating(),
+    year: generateData.year(),
+    duration:generateData.duration(),
+    genre:generateData.genre(),
+    picture:generateData.picture(),
+    description:generateData.description(),
+    comments:generateData.comments(),
+    towatchlist: false,
+    towatched: false,
+    amount:generateData.amount(),
+    nameFilter:generateData.nameFilter(),
+    href:generateData.href(),
+    arrOfTitles: ['Harry Potter','Intouchables','Inception','Fight Club'],
+    watched: false,
+  });
+};
+export {arrOfData,dataRender};
 
