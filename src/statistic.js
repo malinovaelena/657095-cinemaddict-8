@@ -3,18 +3,16 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {Component} from './component';
 
 class Statistic extends Component {
-    constructor(data) {
+    constructor(arrOfData) {
         super();
-        this._data = data;
+        this._towatched = arrOfData.filter((it) => it.towatched === true);
         this._onStatisticRender = this._onStatisticRender.bind(this);
-        this._watchedMovies = data.length;
-    
-        this._totalDuration = data.reduce((acc,item) => acc + item.duration, 0);
+        this._totalDuration = this._towatched.reduce((acc,item) => acc + item.duration, 0);
     }
 
     grauphStatistic() {
         const genreMap = {};
-        for (let film of this._data) {
+        for (let film of this._towatched) {
             for (let genre of film.genre) {
                 if (genreMap[genre] === undefined) {
                     genreMap[genre] = 1;
@@ -109,6 +107,30 @@ class Statistic extends Component {
     unbind() {
         document.querySelector(`.main-navigation__item--additional`).removeEventListener(`click`, this._onStatisticRender);
     }
+    update(arrOfData) {
+        this._towatched = arrOfData.filter((it) => it.towatched === true);
+        this._totalDuration = this._totalDuration = this._towatched.reduce((acc,item) => acc + item.duration, 0);
+        const genreMap = {};
+        for (let film of this._towatched) {
+            for (let genre of film.genre) {
+                if (genreMap[genre] === undefined) {
+                    genreMap[genre] = 1;
+                } else {
+                    genreMap[genre] += 1;
+                }
+            }
+        }
+        const arrGenreMap = Object.entries(genreMap);
+        const newArr = arrGenreMap.sort((a,b) => {
+            return b[1] - a[1];
+        });
+            const arrayOfKeys = [];
+            const arrayOfValues = [];
+            newArr.forEach((item)=> {
+                arrayOfKeys.push(item[0]);
+                arrayOfValues.push(item[1]);
+            });
+      }
     get template() {
         return `<section class="statistic">
         <p class="statistic__rank">Your rank <span class="statistic__rank-label">Sci-Fighter</span></p>
@@ -135,7 +157,7 @@ class Statistic extends Component {
         <ul class="statistic__text-list">
           <li class="statistic__text-item">
             <h4 class="statistic__item-title">You watched</h4>
-    <p class="statistic__item-text">${this._watchedMovies}<span class="statistic__item-description">movies</span></p>
+    <p class="statistic__item-text">${this._towatched.length}<span class="statistic__item-description">movies</span></p>
           </li>
           <li class="statistic__text-item">
             <h4 class="statistic__item-title">Total duration</h4>

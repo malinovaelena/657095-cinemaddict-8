@@ -15,7 +15,7 @@ class Card extends Component {
       this._onAddToWatchList = this._onAddToWatchList.bind(this);
       this._onMarkAsWatched = this._onMarkAsWatched.bind(this);
       this._towatchlist = data.towatchlist;
-      this._tofavorite = data.towatched;
+      this._towatched = data.towatched;
   }
   set onClick(fn) {
     this._onClick = fn;

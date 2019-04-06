@@ -7,18 +7,22 @@ class Filter extends Component {
         this._href = href;
         this._nameFilter = nameFilter;
         this._amount = amount;
+        this._onFilterClick = this._onFilterClick.bind(this);
     }
     set onFilter(fn) {
-        this._onFilter = fn;
+    this._onFilter = fn;
     }
-    onClick() {
-        return typeof this._onFilter === `function` && this._onFilter();
+
+    _onFilterClick(event) {
+    event.preventDefault();
+    return typeof this._onFilter === `function` && this._onFilter();
     }
+
     bind() {
-        this._element.addEventListener(`click`, this._onClick);
+    this._element.addEventListener(`click`, this._onFilterClick);
     }
     unbind() {
-        this._element.removeEventListener(`click`, this._onClick);
+    this._element.removeEventListener(`click`, this._onFilterClick);
     }
     get template() {
         return `<a href="#${this._href}" class="main-navigation__item">${this._nameFilter}<span class="main-navigation__item-count">${this._amount}</span></a>`;

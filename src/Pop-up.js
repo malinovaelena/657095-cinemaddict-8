@@ -22,32 +22,30 @@ class Popup extends Component {
   _processForm(formData) {
     const entry = {
       text: ``,
-      score: ``
+      score: ``,
+      favorite: ``,
+      watchlist: ``
     };
     const popUpMapper = Popup.createMapper(entry);
 
-    for (const pair of formData.entries()) {
-      const [property, value] = pair;
-      popUpMapper[property] && popUpMapper[property](value);
-    }
-    
-    return entry;
+    Array.from(formData.entries()).forEach(([property, value]) => {
+      if (popUpMapper[property]) {
+        popUpMapper[property](value);
+      }
+    });
+  return entry;
   }
 
   _onSubmitButtonClick(evt) {
     if (evt.keyCode === (13 && 17)) {
       const formData = new FormData(this._element.querySelector(`.film-details__inner`));
       const newData = this._processForm(formData);
-      typeof this._onSubmit === `function` && this._onSubmit(newData);
-
+      if (typeof this._onSubmit === `function`){
+        this._onSubmit(newData)
+      }
       this.update(newData);
-    };
+    }
   }
-  update(data) {
-    this._text = data.text;
-    this._userrating = data.userrating;
-  }
-
   get element() {
     return this._element;
   }
@@ -71,8 +69,14 @@ class Popup extends Component {
       score: (value) => target.userrating = value,
       favorite: (value) => target.tofavorite = value,
       watchlist: (value) => target.towatchlist = value
-    }
+    };
   }
+  update(data) {
+    this._text = data.text;
+    this._userrating = data.userrating;
+    this._towatchlist = data.towatchlist;
+  }
+
   get template() {
     return `<section class="film-details">
   <form class="film-details__inner" action="" method="get">
@@ -141,7 +145,7 @@ class Popup extends Component {
     </div>
 
     <section class="film-details__controls">
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${this._towatchlist === 'checked'}>
       <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
       <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" checked>

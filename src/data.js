@@ -93,7 +93,8 @@ const dataRender = {
   watched: false,
 };
 const arrOfData = [];
-for (let i = 0; i < 5; i++) {
+const amountOfFilms = 5;
+for (let i = 0; i < amountOfFilms; i++) {
   arrOfData.push({
     title: generateData.title(),
     text: generateData.text(),
@@ -110,8 +111,7 @@ for (let i = 0; i < 5; i++) {
     amount:generateData.amount(),
     nameFilter:generateData.nameFilter(),
     href:generateData.href(),
-    arrOfTitles: ['Harry Potter','Intouchables','Inception','Fight Club'],
-    watched: false,
+    arrOfTitles: ['Harry Potter','Intouchables','Inception','Fight Club']
   });
 };
 export {arrOfData,dataRender};
