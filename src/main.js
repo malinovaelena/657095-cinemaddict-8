@@ -4,11 +4,18 @@ import {arrOfData} from './data';
 import {Card} from './Card';
 import {Statistic} from './statistic';
 
+import {API} from './api';
+
 
 const filmContainer = document.querySelector(`.films-list__container`);
 const filterContainer = document.querySelector(`.main-navigation`);
 const body = document.querySelector(`body`);
 const arrOfFilters = [[`Favorites`, `favorites`, 1], [`Watchlist`, `watchlist`, 5], [`History`, `history`, 2], [`All movies`, `all`, 10]];
+
+const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
+const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
+const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
+
 
 const updateFilms = (films, filmForUpdate, newCard) => {
   const i = films.findIndex((it) => it === filmForUpdate);
@@ -34,7 +41,6 @@ const filterFilms = (nameFilter) => {
 
 
 const renderAll = () => {
-
   const statistic = new Statistic(arrOfData);
   statistic.bind();
   statistic.onStatisticRender = () => {
@@ -56,9 +62,9 @@ const renderAll = () => {
     }
   };
 
-  const renderFilms = (arr) => {
+  const renderFilms = (arrfromserver) => {
     filmContainer.innerHTML = ``;
-    for (let data of arr) {
+    for (let data of arrfromserver) {
       const cardElement = new Card(data);
       const popUpElement = new Popup(data);
 
@@ -71,16 +77,16 @@ const renderAll = () => {
 
       cardElement.onAddToWatchList = () => {
         data.towatchlist = !data.towatchlist;
-        const updateFilm = updateFilms(arr, data);
+        const updateFilm = updateFilms(arrfromserver, data);
         cardElement.update(updateFilm);
-        statistic.update(arr);
+        statistic.update(arrfromserver);
       };
 
       cardElement.onMarkAsWatched = () => {
         data.towatched = !data.towatched;
-        const updateFilm = updateFilms(arr, data);
+        const updateFilm = updateFilms(arrfromserver, data);
         cardElement.update(updateFilm);
-        statistic.update(arr);
+        statistic.update(arrfromserver);
       };
 
       popUpElement.onClick = () => {
@@ -89,7 +95,7 @@ const renderAll = () => {
       };
 
       popUpElement.onSubmit = () => {
-        updateFilms(arr, data);
+        updateFilms(arrfromserver, data);
         popUpElement.update(data);
         cardElement.render();
         body.replaceChild(cardElement.element, popUpElement.element);
@@ -104,6 +110,10 @@ const renderAll = () => {
     }
   };
   renderFilters(arrOfFilters);
-  renderFilms(arrOfData);
+
+  api.getCards()
+    .then((movies) => {
+      renderFilms(movies);
+    });
 };
 renderAll();

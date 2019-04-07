@@ -9,13 +9,14 @@ class Card extends Component {
       this._year = data.year;
       this._duration = data.duration;
       this._genre = data.genre;
-      this._picture = data.picture;
+      this._poster = data.poster;
       this._description = data.description;
-      this._comments = data.comments;
+      this._comments = data.userComments.length;
       this._onAddToWatchList = this._onAddToWatchList.bind(this);
       this._onMarkAsWatched = this._onMarkAsWatched.bind(this);
       this._towatchlist = data.towatchlist;
       this._towatched = data.towatched;
+      this._dateOfFilm = data.dateOfFilm;
   }
   set onClick(fn) {
     this._onClick = fn;
@@ -54,11 +55,11 @@ class Card extends Component {
       <h3 class="film-card__title">${this._title}</h3>
     <p class="film-card__rating">${this._rating}</p>
       <p class="film-card__info">
-      <span class="film-card__year">${moment().format('YYYY')}</span>
-      <span class="film-card__duration">${moment().add().subtract().hours(1).minutes(50).format('h:mm')}</span>
+      <span class="film-card__year">${moment(this._dateOfFilm).year()}</span>
+      <span class="film-card__duration">${Math.round(this._duration / 60)} h ${this._duration % 60} m</span>
     <span class="film-card__genre">${this._genre}</span>
       </p>
-      <img src="${this._picture}" alt="" class="film-card__poster">
+      <img src="${this._poster}" alt="" class="film-card__poster">
       <p class="film-card__description">${this._description}</p>
     <button class="film-card__comments">${this._comments} comments</button>
 

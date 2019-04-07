@@ -8,16 +8,22 @@ class Popup extends Component {
       this._text = data.text;
       this._userrating = data.userrating;
       this._rating = data.rating;
+      this._ageRating = data.age_rating;
       this._year = data.year;
       this._duration = data.duration;
       this._genre = data.genre;
-      this._picture = data.picture;
+      this._poster = data.poster;
       this._description = data.description;
       this._comments = data.comments;
       this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
       this._onSubmit = null;
       this._towatchlist = data.towatchlist;
       this._tofavorite = data.towatched;
+      this._actors = data.actors;
+      this._director = data.director;
+      this._writers = data.writers;
+      this._country = data.country;
+      this._dateOfFilm = data.dateOfFilm;
   }
   _processForm(formData) {
     const entry = {
@@ -85,9 +91,9 @@ class Popup extends Component {
     </div>
     <div class="film-details__info-wrap">
       <div class="film-details__poster">
-        <img class="film-details__poster-img" src="${this._picture}" alt="incredables-2">
+        <img class="film-details__poster-img" src="${this._poster}" alt="incredables-2">
 
-        <p class="film-details__age">18+</p>
+        <p class="film-details__age">${this._ageRating}</p>
       </div>
 
       <div class="film-details__info">
@@ -106,34 +112,33 @@ class Popup extends Component {
         <table class="film-details__table">
           <tr class="film-details__row">
             <td class="film-details__term">Director</td>
-            <td class="film-details__cell">Brad Bird</td>
+            <td class="film-details__cell">${this._director}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Writers</td>
-            <td class="film-details__cell">Brad Bird</td>
+            <td class="film-details__cell">${this._writers}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Actors</td>
-            <td class="film-details__cell">Samuel L. Jackson, Catherine Keener, Sophia Bush</td>
+            <td class="film-details__cell">${this._actors}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Release Date</td>
-            <td class="film-details__cell">${moment().add(7, 'days').subtract(1, 'months').year(2019).format('DD MMMM YYYY')}</td>
+            <td class="film-details__cell">${this._dateOfFilm}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Runtime</td>
-            <td class="film-details__cell">${moment().add().subtract().hours(1).minutes(50).format('h:mm')}</td>
+            <td class="film-details__cell">${Math.round(this._duration / 60)} h ${this._duration % 60} m</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Country</td>
-            <td class="film-details__cell">USA</td>
+            <td class="film-details__cell">${this._country}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Genres</td>
             <td class="film-details__cell">
-              <span class="film-details__genre">Animation</span>
-              <span class="film-details__genre">Action</span>
-              <span class="film-details__genre">Adventure</span></td>
+            ${this._genre.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``)}
+            </td>
           </tr>
         </table>
 
@@ -201,7 +206,7 @@ class Popup extends Component {
 
       <div class="film-details__user-score">
         <div class="film-details__user-rating-poster">
-          <img src="images/posters/blackmail.jpg" alt="film-poster" class="film-details__user-rating-img">
+          <img src="${this._poster}" alt="film-poster" class="film-details__user-rating-img">
         </div>
 
         <section class="film-details__user-rating-inner">

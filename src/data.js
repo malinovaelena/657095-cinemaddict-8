@@ -103,7 +103,7 @@ for (let i = 0; i < amountOfFilms; i++) {
     year: generateData.year(),
     duration:generateData.duration(),
     genre:generateData.genre(),
-    picture:generateData.picture(),
+    //picture:generateData.picture(),
     description:generateData.description(),
     comments:generateData.comments(),
     towatchlist: false,
