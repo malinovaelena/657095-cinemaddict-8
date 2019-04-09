@@ -105,7 +105,7 @@ for (let i = 0; i < amountOfFilms; i++) {
     genre:generateData.genre(),
     //picture:generateData.picture(),
     description:generateData.description(),
-    comments:generateData.comments(),
+    //comments:generateData.comments(),
     towatchlist: false,
     towatched: false,
     amount:generateData.amount(),

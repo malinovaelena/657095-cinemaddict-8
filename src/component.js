@@ -1,4 +1,3 @@
-import createElement from './create-Elem';
 class Component {
   constructor() {
     if (new.target === Component) {
@@ -11,7 +10,7 @@ class Component {
   get element() {
     return this._element;
   }
-  _onOpenButtonClick() {
+ /* _onOpenButtonClick() {
     return typeof this._onClick === `function` && this._onClick();
   }
   _onCloseButtonClick() {
@@ -22,15 +21,20 @@ class Component {
   }
   set onClick(fn) {
     this._onClick = fn;
+  }*/
+  static createElement(template) {
+    const newElement = document.createElement(`div`);
+    newElement.innerHTML = template;
+    return newElement.firstChild;
   }
-  bind() {
-    this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
-  }
-  unbind() {
-    this._element.querySelector(`.film-card__comments`).removeEventListener(`click`, this._onOpenButtonClick.bind(this));
-  }
+  //bind() {}
+    //this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
+  
+  //unbind() {}
+    //this._element.querySelector(`.film-card__comments`).removeEventListener(`click`, this._onOpenButtonClick.bind(this));
+  
   render() {
-    this._element = createElement(this.template);
+    this._element = Component.createElement(this.template);
     this.bind();
     return this._element;
   }

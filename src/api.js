@@ -35,7 +35,7 @@ class API {
  
    createCard({card}) {
      return this._load({
-       url: `cards`,
+       url: `movies`,
        method: Method.POST,
        body: JSON.stringify(card),
        headers: new Headers({'Content-Type': `application/json`})
@@ -55,7 +55,7 @@ class API {
        .then(ModelCards.parseCard);
    }
    deleteCard({id}) {
-     return this._load({url: `cards/${id}`, method: Method.DELETE});
+     return this._load({url: `movies/${id}`, method: Method.DELETE});
    }
  
  

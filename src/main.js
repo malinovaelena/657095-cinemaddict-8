@@ -1,119 +1,142 @@
 import {Filter} from './Filter';
 import {Popup} from './Pop-up';
-import {arrOfData} from './data';
 import {Card} from './Card';
 import {Statistic} from './statistic';
 
 import {API} from './api';
+import {ModelCards} from './model-data';
 
 
 const filmContainer = document.querySelector(`.films-list__container`);
 const filterContainer = document.querySelector(`.main-navigation`);
 const body = document.querySelector(`body`);
-const arrOfFilters = [[`Favorites`, `favorites`, 1], [`Watchlist`, `watchlist`, 5], [`History`, `history`, 2], [`All movies`, `all`, 10]];
+const arrOfFilters = [[`Favorites`, `favorites`, 5], [`Watchlist`, `watchlist`, 5], [`History`, `history`, 2], [`All movies`, `all`, 10]];
 
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
 const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
 
 
-const updateFilms = (films, filmForUpdate, newCard) => {
-  const i = films.findIndex((it) => it === filmForUpdate);
-  films[i] = Object.assign({}, filmForUpdate, newCard);
-  return films[i];
-};
 
-const filterFilms = (nameFilter) => {
+
+const filterFilms = (nameFilter, cards) => {
   switch (nameFilter) {
     case `All movies`:
-      return arrOfData;
+      return cards;
 
     case `History`:
-      return arrOfData.filter((it) => it.towatched === true);
+      return cards.filter((it) => it.towatched || it.alreadyWatched === true);
 
     case `Watchlist`:
-      return arrOfData.filter((it) => it.towatchlist === true);
+      return cards.filter((it) => it.towatchlist || it.watchlist === true);
+
+    case 'Favorites':
+    return cards.filter((it) => it.favorite === true);
 
     default:
-      return arrOfData;
+      return cards;
   }
 };
 
 
 const renderAll = () => {
-  const statistic = new Statistic(arrOfData);
-  statistic.bind();
-  statistic.onStatisticRender = () => {
-    filmContainer.innerHTML = ``;
-    statistic.render();
-    filmContainer.appendChild(statistic.element);
-    statistic.grauphStatistic();
-  };
 
-  const renderFilters = (filterList) => {
+  //const updateFilms = (films, filmForUpdate, newCard) => {
+   // const i = films.findIndex((it) => it === filmForUpdate);
+   // films[i] = Object.assign({}, filmForUpdate, newCard);
+   // return films[i];
+  //};
+  api.getCards()
+  .then((movies) => {
+    renderFilms(movies);
+    renderFilters(arrOfFilters,movies);
+    console.log(movies);
+  });
+
+  const renderFilters = (filterList,cards) => {
     for (let filter of filterList) {
       const filterItem = new Filter(filter);
       filterItem.render();
       filterContainer.insertAdjacentElement(`afterBegin`, filterItem.element);
       filterItem.onFilter = () => {
-        const cardsForThisFilter = filterFilms(filter[0]);
+        const cardsForThisFilter = filterFilms(filter[0],cards);
         renderFilms(cardsForThisFilter);
       };
     }
   };
 
-  const renderFilms = (arrfromserver) => {
+  const renderFilms = (cards) => {
     filmContainer.innerHTML = ``;
-    for (let data of arrfromserver) {
-      const cardElement = new Card(data);
-      const popUpElement = new Popup(data);
+
+    const statistic = new Statistic(cards);
+    statistic.bind();
+    statistic.onStatisticRender = () => {
+    filmContainer.innerHTML = ``;
+    statistic.render();
+    filmContainer.appendChild(statistic.element);
+    statistic.grauphStatistic();
+    };
+
+    for (let dataOneCard of cards) {
+      const cardElement = new Card(dataOneCard);
+      const popUpElement = new Popup(dataOneCard);
 
       cardElement.render();
       filmContainer.appendChild(cardElement.element);
+
       cardElement.onClick = () => {
         popUpElement.render();
+        popUpElement.bind();
         body.appendChild(popUpElement.element);
+        cardElement.unbind();
       };
 
       cardElement.onAddToWatchList = () => {
-        data.towatchlist = !data.towatchlist;
-        const updateFilm = updateFilms(arrfromserver, data);
-        cardElement.update(updateFilm);
-        statistic.update(arrfromserver);
+        dataOneCard.watchlist = !dataOneCard.watchlist;
+        api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
+        .then((newData) => {
+          popUpElement.update(newData);
+          renderFilters(filterList,cards);
+        });
       };
 
       cardElement.onMarkAsWatched = () => {
-        data.towatched = !data.towatched;
-        const updateFilm = updateFilms(arrfromserver, data);
-        cardElement.update(updateFilm);
-        statistic.update(arrfromserver);
+        dataOneCard.alreadyWatched = !dataOneCard.alreadyWatched;
+        api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
+        .then((newData) => {
+          popUpElement.update(newData);
+          renderFilters(filterList,cards);
+        });
       };
 
-      popUpElement.onClick = () => {
-        popUpElement.unrender();
-        cardElement.bind();
+      cardElement.onMarkAsFavorite = () => {
+        dataOneCard.favorite = !dataOneCard.favorite;
+        api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
+        .then((newData) => {
+          popUpElement.update(newData);
+          renderFilters(filterList,cards);
+        });
+      }
+      popUpElement.onSubmit = (newData) => {
+        Object.assign(dataOneCard, newData);
+        api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
+        .then(() => {
+          console.log(`raw`, dataOneCard.toRAW());
+          let oldFilm = cardElement.element;
+          cardElement.render();
+          cardElement.bind();
+          filmContainer.replaceChild(cardElement.element, oldFilm);
+          popUpElement.unrender();
+        });
       };
-
-      popUpElement.onSubmit = () => {
-        updateFilms(arrfromserver, data);
-        popUpElement.update(data);
-        cardElement.render();
-        body.replaceChild(cardElement.element, popUpElement.element);
-        popUpElement.unrender();
-
-        let oldFilm = cardElement.element;
-        cardElement.render();
+      popUpElement.onClose = () => {
         cardElement.bind();
-        filmContainer.replaceChild(cardElement.element, oldFilm);
         popUpElement.unrender();
       };
     }
   };
-  renderFilters(arrOfFilters);
 
-  api.getCards()
-    .then((movies) => {
-      renderFilms(movies);
-    });
+
+  
 };
 renderAll();

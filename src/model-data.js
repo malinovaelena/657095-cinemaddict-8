@@ -13,15 +13,17 @@ class ModelCards {
       this.poster = data.film_info[`poster`];
       this.rating = data.film_info[`total_rating`];
       this.writers = data.film_info[`writers`];
-      this.comments = data.user_details[`Usercomments`];
-      this.userComments = data[`comments`];
       this.duration = data.film_info[`runtime`];
       this.dateOfFilm = data.film_info.release[`date`];
       this.country = data.film_info.release[`release_country`];
-      this.personalRating = data.user_details[`personal_rating`];
+
+      this.comments = data.user_details[`Usercomments`];
+      this.userComments = data[`comments`];
+
       this.alreadyWatched = data.user_details[`already_watched`];
       this.favorite = data.user_details[`favorite`];
       this.watchlist = data.user_details[`watchlist`];
+      this.personalRating = data.user_details[`personal_rating`];
       this.userDetails = data[`user_details`];
     }
     toRAW() {
