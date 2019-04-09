@@ -97,7 +97,7 @@ class Popup extends Component {
       const formData = new FormData(this._element.querySelector(`.film-details__inner`));
       const newData = this._processForm(formData);
       if (typeof this._onSubmit === `function`) {
-        this._onSubmit(newData)
+        this._onSubmit(newData);
       }
       this.update(newData);
     }
@@ -110,12 +110,12 @@ class Popup extends Component {
   }
   
   bind() {
-    this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick.bind(this));  
+    this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick);  
     this._element.querySelector(`.film-details__inner`).addEventListener(`keydown`, this._onSubmitButtonClick);
     //this._element.querySelector(`.film-details__comment-input`).addEventListener(`keydown`, this._onSubmitButtonClick.bind(this));
   }
   unbind() {
-    this._element.querySelector(`.film-details__close-btn`).removeEventListener(`click`, this._onCloseButtonClick.bind(this));
+    this._element.querySelector(`.film-details__close-btn`).removeEventListener(`click`, this._onCloseButtonClick);
     this._element.querySelector(`.film-details__inner`).removeEventListener(`keydown`, this._onSubmitButtonClick);
     //this._element.querySelector(`.film-details__comment-input`).removeEventListener(`keydown`, this._onSubmitButtonClick.bind(this));
   }

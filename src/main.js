@@ -41,16 +41,11 @@ const filterFilms = (nameFilter, cards) => {
 
 const renderAll = () => {
 
-  //const updateFilms = (films, filmForUpdate, newCard) => {
-   // const i = films.findIndex((it) => it === filmForUpdate);
-   // films[i] = Object.assign({}, filmForUpdate, newCard);
-   // return films[i];
-  //};
   api.getCards()
   .then((movies) => {
     renderFilms(movies);
     renderFilters(arrOfFilters,movies);
-    console.log(movies);
+    console.log(movies, 'строка 48 renderFilms и renderFilters');
   });
 
   const renderFilters = (filterList,cards) => {
@@ -121,17 +116,22 @@ const renderAll = () => {
         Object.assign(dataOneCard, newData);
         api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
         .then(() => {
-          console.log(`raw`, dataOneCard.toRAW());
+          popUpElement.unrender();
+          console.log(dataOneCard.toRAW(), '119 строка кнопка submit');
           let oldFilm = cardElement.element;
+          console.log(popUpElement.element, 'вывод попапа перед submit');
           cardElement.render();
           cardElement.bind();
           filmContainer.replaceChild(cardElement.element, oldFilm);
-          popUpElement.unrender();
+          
         });
       };
       popUpElement.onClose = () => {
-        cardElement.bind();
+        console.log(dataOneCard.toRAW(), '128 строка кнопка close');
+        console.log(popUpElement.element, 'вывод попапа перед close');
         popUpElement.unrender();
+        cardElement.bind();
+        
       };
     }
   };

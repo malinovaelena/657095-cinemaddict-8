@@ -1,8 +1,6 @@
 import {Component} from './component';
-import createElement from './create-Elem';
-import {data} from './data';
 class Filter extends Component {  
-    constructor([nameFilter,href,amount],func) {
+    constructor([nameFilter,href,amount]) {
     super();
         this._href = href;
         this._nameFilter = nameFilter;
