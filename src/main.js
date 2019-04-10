@@ -10,7 +10,7 @@ import {ModelCards} from './model-data';
 const filmContainer = document.querySelector(`.films-list__container`);
 const filterContainer = document.querySelector(`.main-navigation`);
 const body = document.querySelector(`body`);
-const arrOfFilters = [[`Favorites`, `favorites`, 5], [`Watchlist`, `watchlist`, 5], [`History`, `history`, 2], [`All movies`, `all`, 10]];
+
 
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
@@ -31,7 +31,7 @@ const filterFilms = (nameFilter, cards) => {
       return cards.filter((it) => it.towatchlist || it.watchlist === true);
 
     case 'Favorites':
-    return cards.filter((it) => it.favorite === true);
+    return cards.filter((it) => it.favorite || it.favorite === true);
 
     default:
       return cards;
@@ -40,6 +40,7 @@ const filterFilms = (nameFilter, cards) => {
 
 
 const renderAll = () => {
+  const arrOfFilters = [[`Favorites`, `favorites`, 5], [`Watchlist`, `watchlist`, 5], [`History`, `history`, 2], [`All movies`, `all`, 10]];
 
   api.getCards()
   .then((movies) => {
@@ -47,9 +48,8 @@ const renderAll = () => {
     renderFilters(arrOfFilters,movies);
     console.log(movies, 'строка 48 renderFilms и renderFilters');
   });
-
-  const renderFilters = (filterList,cards) => {
-    for (let filter of filterList) {
+  const renderFilters = (Arr,cards) => {
+    for (let filter of Arr) {
       const filterItem = new Filter(filter);
       filterItem.render();
       filterContainer.insertAdjacentElement(`afterBegin`, filterItem.element);
@@ -91,16 +91,20 @@ const renderAll = () => {
         api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
         .then((newData) => {
           popUpElement.update(newData);
-          renderFilters(filterList,cards);
+          //renderFilters(arrOfFilters,cards);
+          filterFilms(arrOfFilters, cards);
         });
       };
 
       cardElement.onMarkAsWatched = () => {
         dataOneCard.alreadyWatched = !dataOneCard.alreadyWatched;
+        //statistic.update(cards);
         api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
         .then((newData) => {
           popUpElement.update(newData);
-          renderFilters(filterList,cards);
+          //renderFilters(arrOfFilters,cards);
+          filterFilms(arrOfFilters, cards);
+          statistic.update(cards);
         });
       };
 
@@ -109,7 +113,8 @@ const renderAll = () => {
         api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
         .then((newData) => {
           popUpElement.update(newData);
-          renderFilters(filterList,cards);
+          //renderFilters(arrOfFilters,cards);
+          filterFilms(arrOfFilters, cards);
         });
       }
       popUpElement.onSubmit = (newData) => {
@@ -131,12 +136,8 @@ const renderAll = () => {
         console.log(popUpElement.element, 'вывод попапа перед close');
         popUpElement.unrender();
         cardElement.bind();
-        
       };
     }
   };
-
-
-  
 };
 renderAll();

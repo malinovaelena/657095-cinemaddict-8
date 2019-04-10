@@ -5,7 +5,7 @@ import {Component} from './component';
 class Statistic extends Component {
     constructor(arrOfData) {
         super();
-        this._towatched = arrOfData.filter((it) => it.towatched === true);
+        this._towatched = arrOfData.filter((it) => it.alreadyWatched === true);
         this._onStatisticRender = this._onStatisticRender.bind(this);
         this._totalDuration = this._towatched.reduce((acc,item) => acc + item.duration, 0);
     }
@@ -108,7 +108,7 @@ class Statistic extends Component {
         document.querySelector(`.main-navigation__item--additional`).removeEventListener(`click`, this._onStatisticRender);
     }
     update(arrOfData) {
-        this._towatched = arrOfData.filter((it) => it.towatched === true);
+        this._towatched = arrOfData.filter((it) => it.alreadyWatched === true);
         this._totalDuration = this._totalDuration = this._towatched.reduce((acc,item) => acc + item.duration, 0);
         const genreMap = {};
         for (let film of this._towatched) {

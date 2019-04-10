@@ -67,6 +67,9 @@ class API {
        .then(checkStatus)
        .catch((err) => {
          console.error(`fetch error: ${err}`);
+         //const errorMessage = `Something went wrong while loading movies. Check your connection or try again later`;
+         //const filmContainer = document.querySelector(`.films-list__container`);
+         //filmContainer.insertAdjanceHTML(`beforeEnd`,errorMessage);
          throw err;
        });
    }
