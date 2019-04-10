@@ -48,7 +48,6 @@ class Card extends Component {
     this._towatched = data.towatched;
     this._towatchlist = data.towatchlist;
   }
-  
   get template() {
     return `<article class="film-card">
       <h3 class="film-card__title">${this._title}</h3>
