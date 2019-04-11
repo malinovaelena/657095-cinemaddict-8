@@ -1,8 +1,9 @@
 import createElement from './create-Elem';
 import {Component} from './component';
 
-class Card {
+class Card extends Component {
   constructor(data) {
+    super();
       this._title = data.title;
       this._rating = data.rating;
       this._year = data.year;
@@ -11,18 +12,41 @@ class Card {
       this._picture = data.picture;
       this._description = data.description;
       this._comments = data.comments;
-  }
-  _onOpenButtonClick() {
-    return typeof this._onClick === `function` && this._onClick();
+      this._onAddToWatchList = this._onAddToWatchList.bind(this);
+      this._onMarkAsWatched = this._onMarkAsWatched.bind(this);
+      this._towatchlist = data.towatchlist;
+      this._towatched = data.towatched;
   }
   set onClick(fn) {
     this._onClick = fn;
   }
+  set onAddToWatchList(fn) {
+    this._onAddToWatchList = fn;
+  }
+  set onMarkAsWatched(fn) {
+    this._onMarkAsWatched = fn;
+  }
+  _onMarkAsWatched(event) {
+    event.preventDefault();
+    return typeof this._onMarkAsWatched === `function` && this._onMarkAsWatched();
+  }
+  _onAddToWatchList(event) {
+    event.preventDefault();
+    return typeof this._onAddToWatchList === `function` && this._onAddToWatchList();
+  }
   bind() {
     this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
+    this._element.querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._onAddToWatchList.bind(this));
+    this._element.querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, this._onMarkAsWatched.bind(this));
+  }
+  unbind() {
+    this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
+    this._element.querySelector(`.film-card__controls-item--add-to-watchlist`).removeEventListener(`click`, this._onAddToWatchList.bind(this));
+    this._element.querySelector(`.film-card__controls-item--mark-as-watched`).removeEventListener(`click`, this._onMarkAsWatched.bind(this));
   }
   update(data) {
-
+    this._towatched = data.towatched;
+    this._towatchlist = data.towatchlist;
   }
   get template() {
     return `<article class="film-card">
@@ -43,12 +67,6 @@ class Card {
       <button class="film-card__controls-item button film-card__controls-item--favorite"><!--Mark as favorite-->FAV</button>
       </form>
       </article>`;
-  }
-  render() {
-    this._element = createElement(this.template);
-    console.log(this._element);
-    this.bind();
-    return this._element;
   }
 }
 export {Card};
