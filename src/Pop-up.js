@@ -52,7 +52,7 @@ class Popup extends Component {
     }
     return entry;
   }
-  static createMapper(target) { //Его задача - сопоставить поля формы с полями структуры и записать в них полученные значения
+  static createMapper(target) {
     this._comment = undefined;
     return {
       'watchlist': (value) => (target.watchlist = (value === `on`)),
@@ -105,6 +105,18 @@ class Popup extends Component {
   _onCloseButtonClick() {
     return typeof this._onClose === `function` && this._onClose();
   }
+  render() {
+    this._element = Component.createElement(this.template);
+    this.bind();
+    return this._element;
+  }
+
+  unrender() {
+    this.unbind();
+    this._element.remove();
+    this._element = null;
+  }
+
   get element() {
     return this._element;
   }
@@ -118,6 +130,14 @@ class Popup extends Component {
     this._element.querySelector(`.film-details__close-btn`).removeEventListener(`click`, this._onCloseButtonClick);
     this._element.querySelector(`.film-details__inner`).removeEventListener(`keydown`, this._onSubmitButtonClick);
     //this._element.querySelector(`.film-details__comment-input`).removeEventListener(`keydown`, this._onSubmitButtonClick.bind(this));
+  }
+  shake() {
+    const ANIMATION_TIMEOUT = 600;
+    this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`
+    
+    setTimeout(() => {
+      this._element.style.animation = ``
+    }, ANIMATION_TIMEOUT);
   }
 
   get template() {

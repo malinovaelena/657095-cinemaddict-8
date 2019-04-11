@@ -1,6 +1,4 @@
-//  модуль отправки и получения данных с сервера
-//ниже скопированно из демонстрации
- import {ModelCards} from './model-data';
+import {ModelCards} from './model-data';
 
  const Method = {
    GET: `GET`,
@@ -14,6 +12,7 @@
       return response;
     } else {
       throw new Error(`${response.status}: ${response.statusText}`);
+      
     }
   };
 
@@ -67,9 +66,6 @@ class API {
        .then(checkStatus)
        .catch((err) => {
          console.error(`fetch error: ${err}`);
-         //const errorMessage = `Something went wrong while loading movies. Check your connection or try again later`;
-         //const filmContainer = document.querySelector(`.films-list__container`);
-         //filmContainer.insertAdjanceHTML(`beforeEnd`,errorMessage);
          throw err;
        });
    }
