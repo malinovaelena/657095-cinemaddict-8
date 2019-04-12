@@ -8,19 +8,22 @@ class Filter extends Component {
         this._onFilterClick = this._onFilterClick.bind(this);
     }
     set onFilter(fn) {
-    this._onFilter = fn;
+        this._onFilter = fn;
+    }
+    update(amount) {
+        this._amount = amount;
     }
 
     _onFilterClick(event) {
-    event.preventDefault();
-    return typeof this._onFilter === `function` && this._onFilter();
+        event.preventDefault();
+        return typeof this._onFilter === `function` && this._onFilter();
     }
 
     bind() {
-    this._element.addEventListener(`click`, this._onFilterClick);
+        this._element.addEventListener(`click`, this._onFilterClick);
     }
     unbind() {
-    this._element.removeEventListener(`click`, this._onFilterClick);
+        this._element.removeEventListener(`click`, this._onFilterClick);
     }
     get template() {
         return `<a href="#${this._href}" class="main-navigation__item">${this._nameFilter}<span class="main-navigation__item-count">${this._amount}</span></a>`;
