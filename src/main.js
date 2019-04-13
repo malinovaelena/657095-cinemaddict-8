@@ -57,38 +57,30 @@ const renderAll = () => {
       filmContainer.innerHTML = `Loading movies...`;
       renderFilms(movies);
     })
-    .catch(() => {
+    .catch((movies) => {
       renderFilters(movies);
       filmContainer.innerHTML = `Something went wrong while loading movies. Check your connection or try again later`;
     });
 
   const renderFilters = (dataForFilters) => {
-      let amountHistory = dataForFilters.filter((it) => it.towatched || it.alreadyWatched === true).length;
-      let amountFavorite =  dataForFilters.filter((it) => it.favorite || it.favorite === true).length;
-      let amountWatchlist = dataForFilters.filter((it) => it.towatchlist || it.watchlist === true).length;
+    let amountHistory = dataForFilters.filter((it) => it.towatched || it.alreadyWatched === true).length;
+    let amountFavorite = dataForFilters.filter((it) => it.favorite || it.favorite === true).length;
+    let amountWatchlist = dataForFilters.filter((it) => it.towatchlist || it.watchlist === true).length;
 
-      const arrOfFilters = [[`Favorites`, `favorites`, amountFavorite], [`Watchlist`, `watchlist`, amountWatchlist], [`History`, `history`, amountHistory], [`All movies`, `all`, dataForFilters.length]];
-      
-      for (let filter of arrOfFilters) {
-        const filterItem = new Filter(filter);
-        filterItem.render();
-        filterContainer.insertAdjacentElement(`afterBegin`, filterItem.element);
+    const arrOfFilters = [[`Favorites`, `favorites`, amountFavorite], [`Watchlist`, `watchlist`, amountWatchlist], [`History`, `history`, amountHistory], [`All movies`, `all`, dataForFilters.length]];
 
-        filterItem.onFilter = () => {
-          amountFavorite =  dataForFilters.filter((it) => it.favorite || it.favorite === true).length;
-          amountWatchlist = dataForFilters.filter((it) => it.towatchlist || it.watchlist === true).length;
-          amountHistory = dataForFilters.filter((it) => it.towatched || it.alreadyWatched === true).length;
-          const amountforEach = filterAmount(filter[0], dataForFilters);
-          
-          filterItem.update(amountforEach);
+    for (let filter of arrOfFilters) {
+      const filterItem = new Filter(filter);
+      filterItem.render();
+      filterContainer.insertAdjacentElement(`afterBegin`, filterItem.element);
 
-          const cardsForThisFilter = filterFilms(filter[0], dataForFilters);
-          renderFilms(cardsForThisFilter);
-
-          console.log(cardsForThisFilter, 'тут массив карточек для конкретного фильтра');
-          console.log(amountforEach, 'тут длинна массива карточек каждого фильтра');
-        };
-      }
+      filterItem.onFilter = () => {
+        const amountforEach = filterAmount(filter[0], dataForFilters);
+        filterItem.update(amountforEach);
+        const cardsForThisFilter = filterFilms(filter[0], dataForFilters);
+        renderFilms(cardsForThisFilter);
+      };
+    }
   };
 
   const renderFilms = (cards) => {
@@ -179,7 +171,6 @@ const renderAll = () => {
       };
     }
   };
- 
 };
 renderAll();
 
