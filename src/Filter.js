@@ -1,4 +1,5 @@
 import {Component} from './component';
+
 class Filter extends Component {  
     constructor([nameFilter,href,amount]) {
     super();

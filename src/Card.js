@@ -53,7 +53,6 @@ class Card extends Component {
     return typeof this._onMarkAsFavorite === `function` && this._onMarkAsFavorite();
   }
 
-
   bind() {
     this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
     this._element.querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._onAddToWatchList.bind(this));
@@ -69,7 +68,8 @@ class Card extends Component {
   update(data) {
     this._alreadyWatched = data.alreadyWatched;
     this._watchlist = data.watchlist;
-    this._favorite = data.favorite
+    this._favorite = data.favorite;
+    this._userComments = data.userComments;
   }
   
   get template() {

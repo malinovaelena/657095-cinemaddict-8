@@ -13,8 +13,42 @@ const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
 const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
 
 
+const filterFilms = (nameFilter, dataForFilters) => {
+  switch (nameFilter) {
+    case `All movies`:
+      return dataForFilters;
 
+    case `History`:
+      return dataForFilters.filter((it) => it.towatched || it.alreadyWatched === true);
 
+    case `Watchlist`:
+      return dataForFilters.filter((it) => it.towatchlist || it.watchlist === true);
+
+    case `Favorites`:
+      return dataForFilters.filter((it) => it.favorite || it.favorite === true);
+
+    default:
+      return dataForFilters;
+  }
+};
+const filterAmount = (nameFilter, dataForFilters) => {
+  switch (nameFilter) {
+    case `All movies`:
+      return dataForFilters.length;
+
+    case `History`:
+      return dataForFilters.filter((it) => it.towatched || it.alreadyWatched === true).length;
+
+    case `Watchlist`:
+      return dataForFilters.filter((it) => it.towatchlist || it.watchlist === true).length;
+
+    case `Favorites`:
+      return dataForFilters.filter((it) => it.favorite || it.favorite === true).length;
+
+    default:
+      return dataForFilters.length;
+  }
+};
 
 const renderAll = () => {
   api.getCards()
@@ -35,63 +69,27 @@ const renderAll = () => {
 
       const arrOfFilters = [[`Favorites`, `favorites`, amountFavorite], [`Watchlist`, `watchlist`, amountWatchlist], [`History`, `history`, amountHistory], [`All movies`, `all`, dataForFilters.length]];
       
-      const filterFilms = (nameFilter, dataForFilters) => {
-        switch (nameFilter) {
-          case `All movies`:
-            return dataForFilters;
-      
-          case `History`:
-            return dataForFilters.filter((it) => it.towatched || it.alreadyWatched === true);
-      
-          case `Watchlist`:
-            return dataForFilters.filter((it) => it.towatchlist || it.watchlist === true);
-      
-          case `Favorites`:
-            return dataForFilters.filter((it) => it.favorite || it.favorite === true);
-      
-          default:
-            return dataForFilters;
-        }
-      };
-     /* const filterAmount = (nameFilter, dataForFilters) => {
-        switch (nameFilter) {
-          case `All movies`:
-            return dataForFilters.length;
-      
-          case `History`:
-            return dataForFilters.filter((it) => it.towatched || it.alreadyWatched === true).length;
-      
-          case `Watchlist`:
-            return dataForFilters.filter((it) => it.towatchlist || it.watchlist === true).length;
-      
-          case `Favorites`:
-            return dataForFilters.filter((it) => it.favorite || it.favorite === true).length;
-      
-          default:
-            return dataForFilters.length;
-        }
-      };
-      */
-
       for (let filter of arrOfFilters) {
         const filterItem = new Filter(filter);
         filterItem.render();
         filterContainer.insertAdjacentElement(`afterBegin`, filterItem.element);
 
-        filterItem.onFilter = (dataForFilters) => {
+        filterItem.onFilter = () => {
+          amountFavorite =  dataForFilters.filter((it) => it.favorite || it.favorite === true).length;
+          amountWatchlist = dataForFilters.filter((it) => it.towatchlist || it.watchlist === true).length;
+          amountHistory = dataForFilters.filter((it) => it.towatched || it.alreadyWatched === true).length;
+          const amountforEach = filterAmount(filter[0], dataForFilters);
+          
+          filterItem.update(amountforEach);
+
           const cardsForThisFilter = filterFilms(filter[0], dataForFilters);
-          renderFilms(cardsForThisFilter); 
-          //const amountforEach = filterAmount(filter[0], dataForFilters);
+          renderFilms(cardsForThisFilter);
+
           console.log(cardsForThisFilter, 'тут массив карточек для конкретного фильтра');
           console.log(amountforEach, 'тут длинна массива карточек каждого фильтра');
-          // функция отвечает за выдачу карточек для каждого фильтра
-          //filterItem.update(amountforEach);
-          //filterItem.render();
         };
       }
-    };
-
-  
+  };
 
   const renderFilms = (cards) => {
     filmContainer.innerHTML = ``;
@@ -122,7 +120,6 @@ const renderAll = () => {
         api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
         .then((newData) => {
           popUpElement.update(newData);
-          filterFilms(arrOfFilters, cards);
         });
       };
 
@@ -182,6 +179,7 @@ const renderAll = () => {
       };
     }
   };
+ 
 };
 renderAll();
 
