@@ -21,4 +21,5 @@ class Search extends Component {
     get template() {
         return `<input type="text" name="search" class="search__field" placeholder="Search">`;
     }
-}
+};
+export {Search};
