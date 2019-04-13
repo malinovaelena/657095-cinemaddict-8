@@ -3,10 +3,12 @@ import {Popup} from './Pop-up';
 import {Card} from './Card';
 import {Statistic} from './statistic';
 import {API} from './api';
+import {Search} from './Search';
 
 const filmContainer = document.querySelector(`.films-list__container`);
 const filterContainer = document.querySelector(`.main-navigation`);
 const body = document.querySelector(`body`);
+const searchContainer = document.querySelector(`.header__search`);
 
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
@@ -49,6 +51,14 @@ const filterAmount = (nameFilter, dataForFilters) => {
       return dataForFilters.length;
   }
 };
+const searchCards = (data, value) => {
+  if (value === ``) {
+    return data;
+  }
+  return data.filter((it) => it.title.toUpperCase().includes(value.toUpperCase()));
+};
+
+
 
 const renderAll = () => {
   api.getCards()
@@ -61,6 +71,22 @@ const renderAll = () => {
       renderFilters(movies);
       filmContainer.innerHTML = `Something went wrong while loading movies. Check your connection or try again later`;
     });
+
+  const renderSearch = () => {
+    const searchElement = new Search();
+    searchElement.render();
+    searchContainer.appendChild(searchElement.element);
+    searchElement.onSearch = () => {
+      const searchValue = searchElement.element.value;
+      if (searchValue !== ``) {
+        const searchResult = searchCards(filmData.data, searchValue);
+        renderCards(searchResult);
+      } else {
+        cardToRenderPosition = 5;
+        showMoreCards(filmData.data);
+      }
+    };
+  };
 
   const renderFilters = (dataForFilters) => {
     let amountHistory = dataForFilters.filter((it) => it.towatched || it.alreadyWatched === true).length;
@@ -171,6 +197,7 @@ const renderAll = () => {
       };
     }
   };
+  renderSearch();
 };
 renderAll();
 
