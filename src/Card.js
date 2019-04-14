@@ -1,4 +1,5 @@
 import {Component} from './component';
+import moment from 'moment';
 
 class Card extends Component {
   constructor(data) {
@@ -73,12 +74,14 @@ class Card extends Component {
   }
   
   get template() {
+    const filmDuration = moment.duration(this._duration, `m`);
     return `<article class="film-card">
       <h3 class="film-card__title">${this._title}</h3>
     <p class="film-card__rating">${this._rating}</p>
       <p class="film-card__info">
       <span class="film-card__year">${moment(this._dateOfFilm).year()}</span>
-      <span class="film-card__duration">${Math.round(this._duration / 60)} h ${this._duration % 60} m</span>
+      <span class="film-card__duration">${filmDuration.hours()}:${filmDuration.minutes()}</span>
+     
     <span class="film-card__genre">${this._genre}</span>
       </p>
       <img src="${this._poster}" alt="" class="film-card__poster">

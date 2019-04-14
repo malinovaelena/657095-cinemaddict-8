@@ -58,32 +58,29 @@ const searchCards = (data, value) => {
   return data.filter((it) => it.title.toUpperCase().includes(value.toUpperCase()));
 };
 
-
-
 const renderAll = () => {
   api.getCards()
     .then((movies) => {
+      console.log(movies);
       renderFilters(movies);
       filmContainer.innerHTML = `Loading movies...`;
       renderFilms(movies);
+      renderSearch(movies);
     })
     .catch((movies) => {
       renderFilters(movies);
       filmContainer.innerHTML = `Something went wrong while loading movies. Check your connection or try again later`;
     });
 
-  const renderSearch = () => {
+  const renderSearch = (cards) => {
     const searchElement = new Search();
     searchElement.render();
     searchContainer.appendChild(searchElement.element);
     searchElement.onSearch = () => {
       const searchValue = searchElement.element.value;
       if (searchValue !== ``) {
-        const searchResult = searchCards(filmData.data, searchValue);
-        renderCards(searchResult);
-      } else {
-        cardToRenderPosition = 5;
-        showMoreCards(filmData.data);
+        const searchResult = searchCards(cards, searchValue);
+        renderFilms(searchResult);
       }
     };
   };
@@ -197,7 +194,7 @@ const renderAll = () => {
       };
     }
   };
-  renderSearch();
+  //renderSearch();
 };
 renderAll();
 

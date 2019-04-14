@@ -33766,6 +33766,9 @@ module.exports = function(module) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Card", function() { return Card; });
 /* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./component */ "./src/component.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_1__);
+
 
 
 class Card extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
@@ -33841,12 +33844,14 @@ class Card extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   }
   
   get template() {
+    const filmDuration = moment__WEBPACK_IMPORTED_MODULE_1___default.a.duration(this._duration, `m`);
     return `<article class="film-card">
       <h3 class="film-card__title">${this._title}</h3>
     <p class="film-card__rating">${this._rating}</p>
       <p class="film-card__info">
-      <span class="film-card__year">${moment(this._dateOfFilm).year()}</span>
-      <span class="film-card__duration">${Math.round(this._duration / 60)} h ${this._duration % 60} m</span>
+      <span class="film-card__year">${moment__WEBPACK_IMPORTED_MODULE_1___default()(this._dateOfFilm).year()}</span>
+      <span class="film-card__duration">${filmDuration.hours()}:${filmDuration.minutes()}</span>
+     
     <span class="film-card__genre">${this._genre}</span>
       </p>
       <img src="${this._poster}" alt="" class="film-card__poster">
@@ -33925,6 +33930,9 @@ class Filter extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Popup", function() { return Popup; });
 /* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./component */ "./src/component.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_1__);
+
 
 
 const Emoji = {
@@ -33975,8 +33983,8 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
       let [property, value] = pair;
       if (filmDetailsMapper[property]) {
         filmDetailsMapper[property](value);
-      }
-    }
+      };
+    };
     return entry;
   }
   static createMapper(target) {
@@ -33990,9 +33998,9 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
         if (this._comment) {
           let emoji = this._comment.emotion;
           this._comment.comment = value;
-          target.userComments.push({author: `Me`, emotion: emoji, comment: value, date: moment().valueOf()});
+          target.userComments.push({author: `Me`, emotion: emoji, comment: value, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()});
         } else {
-          this._comment = {author: `Me`, emotion: undefined, comment: value, date: moment().valueOf()};
+          this._comment = {author: `Me`, emotion: undefined, comment: value, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()};
         }
       },
       'comment-emoji': (value) => {
@@ -34000,9 +34008,9 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
           let comment = this._comment.comment;
           let emoji = value;
           this._comment.emotion = value;
-          target.userComments.push({author: `Me`, emotion: emoji, comment, date: moment().valueOf()});
+          target.userComments.push({author: `Me`, emotion: emoji, comment, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()});
         } else {
-          this._comment = {author: `Me`, emotion: value, comment: undefined, date: moment().valueOf()};
+          this._comment = {author: `Me`, emotion: value, comment: undefined, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()};
         }
       }
     };
@@ -34051,20 +34059,16 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   bind() {
     this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick);  
     this._element.querySelector(`.film-details__inner`).addEventListener(`keydown`, this._onSubmitButtonClick);
-    //this._element.querySelector(`.film-details__comment-input`).addEventListener(`keydown`, this._onSubmitButtonClick.bind(this));
   }
   unbind() {
     this._element.querySelector(`.film-details__close-btn`).removeEventListener(`click`, this._onCloseButtonClick);
     this._element.querySelector(`.film-details__inner`).removeEventListener(`keydown`, this._onSubmitButtonClick);
-    //this._element.querySelector(`.film-details__comment-input`).removeEventListener(`keydown`, this._onSubmitButtonClick.bind(this));
   }
   shake() {
     const ANIMATION_TIMEOUT = 600;
-    this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`
+    this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
     
-    setTimeout(() => {
-      this._element.style.animation = ``
-    }, ANIMATION_TIMEOUT);
+    setTimeout(() => {this._element.style.animation = ``}, ANIMATION_TIMEOUT);
   }
 
   get template() {
@@ -34092,7 +34096,6 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
             <p class="film-details__user-rating">Your rate ${this._myPersonalRating}</p>
           </div>
         </div>
-
         <table class="film-details__table">
           <tr class="film-details__row">
             <td class="film-details__term">Director</td>
@@ -34108,14 +34111,14 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Release Date</td>
-            <td class="film-details__cell">${moment(this._dateOfFilm).year()}</td>
+            <td class="film-details__cell">${this._year} </td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Runtime</td>
-            <td class="film-details__cell">${Math.round(this._duration / 60)} h ${this._duration % 60} m</td>
+            <td class="film-details__cell">${this._duration} min</td>
           </tr>
           <tr class="film-details__row">
-            <td class="film-details__term">Country</td>
+            <td class="film-details__term">Country</td>)
             <td class="film-details__cell">${this._country}</td>
           </tr>
           <tr class="film-details__row">
@@ -34146,20 +34149,16 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
 
       <ul class="film-details__comments-list">
       ${this._userComments.map((comment) => {
-        return `
-        <li class="film-details__comment">
+        return `<li class="film-details__comment">
             <span class="film-details__comment-emoji">${Emoji[comment.emotion]}</span>
           <div>
           <p class="film-details__comment-text">${comment.comment}</p>
           <p class="film-details__comment-info">
             <span class="film-details__comment-author">${comment.author}</span>
-          <span class="film-details__comment-day">${moment(comment.date).fromNow()}</span>
+          <span class="film-details__comment-day">${moment__WEBPACK_IMPORTED_MODULE_1___default()(comment.date).fromNow()}</span>
           </p>
           </div>
-          </li>
-          `;
-      }
-      ).join(``)}
+          </li>`;}).join(``)}
       </ul>
 
       <div class="film-details__new-comment">
@@ -34498,24 +34497,22 @@ const renderAll = () => {
       renderFilters(movies);
       filmContainer.innerHTML = `Loading movies...`;
       renderFilms(movies);
+      renderSearch(movies);
     })
     .catch((movies) => {
       renderFilters(movies);
       filmContainer.innerHTML = `Something went wrong while loading movies. Check your connection or try again later`;
     });
 
-  const renderSearch = () => {
+  const renderSearch = (cards) => {
     const searchElement = new _Search__WEBPACK_IMPORTED_MODULE_5__["Search"]();
     searchElement.render();
     searchContainer.appendChild(searchElement.element);
     searchElement.onSearch = () => {
       const searchValue = searchElement.element.value;
       if (searchValue !== ``) {
-        const searchResult = searchCards(filmData.data, searchValue);
-        renderCards(searchResult);
-      } else {
-        cardToRenderPosition = 5;
-        showMoreCards(filmData.data);
+        const searchResult = searchCards(cards, searchValue);
+        renderFilms(searchResult);
       }
     };
   };
@@ -34629,7 +34626,7 @@ const renderAll = () => {
       };
     }
   };
-  renderSearch();
+  //renderSearch();
 };
 renderAll();
 

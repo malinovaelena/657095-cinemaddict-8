@@ -1,4 +1,5 @@
 import {Component} from './component';
+import moment from 'moment';
 
 const Emoji = {
   'grinning': `😀`,
@@ -13,7 +14,6 @@ class Popup extends Component {
       this._userrating = data.userrating;
       this._rating = data.rating;
       this._ageRating = data.age_rating;
-      this._year = data.year;
       this._duration = data.duration;
       this._genre = data.genre;
       this._poster = data.poster;
@@ -48,8 +48,8 @@ class Popup extends Component {
       let [property, value] = pair;
       if (filmDetailsMapper[property]) {
         filmDetailsMapper[property](value);
-      }
-    }
+      };
+    };
     return entry;
   }
   static createMapper(target) {
@@ -85,6 +85,7 @@ class Popup extends Component {
     this._towatchlist = data.watchlist;
     this._favorite = data.favorite;
     this._userComments = data.userComments;
+    this._alreadyWatched = data.alreadyWatched;
   }
   set onSubmit(fn) {
     this._onSubmit = fn;
@@ -102,8 +103,10 @@ class Popup extends Component {
       this.update(newData);
     }
   }
-  _onCloseButtonClick() {
-    return typeof this._onClose === `function` && this._onClose();
+  _onCloseButtonClick(evt) {
+    if (`click` || evt.keyCode === 27) {
+      return typeof this._onClose === `function` && this._onClose();
+    }
   }
   render() {
     this._element = Component.createElement(this.template);
@@ -122,22 +125,22 @@ class Popup extends Component {
   }
   
   bind() {
-    this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick);  
+    this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick); 
     this._element.querySelector(`.film-details__inner`).addEventListener(`keydown`, this._onSubmitButtonClick);
-    //this._element.querySelector(`.film-details__comment-input`).addEventListener(`keydown`, this._onSubmitButtonClick.bind(this));
+    this._element.querySelector(`.film-details__inner`).addEventListener(`keydown`, this._onCloseButtonClick);
+    
   }
   unbind() {
     this._element.querySelector(`.film-details__close-btn`).removeEventListener(`click`, this._onCloseButtonClick);
     this._element.querySelector(`.film-details__inner`).removeEventListener(`keydown`, this._onSubmitButtonClick);
-    //this._element.querySelector(`.film-details__comment-input`).removeEventListener(`keydown`, this._onSubmitButtonClick.bind(this));
+    this._element.querySelector(`.film-details__inner`).removeEventListener(`keydown`, this._onCloseButtonClick);
+    
   }
   shake() {
     const ANIMATION_TIMEOUT = 600;
-    this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`
+    this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
     
-    setTimeout(() => {
-      this._element.style.animation = ``
-    }, ANIMATION_TIMEOUT);
+    setTimeout(() => {this._element.style.animation = ``}, ANIMATION_TIMEOUT);
   }
 
   get template() {
@@ -165,7 +168,6 @@ class Popup extends Component {
             <p class="film-details__user-rating">Your rate ${this._myPersonalRating}</p>
           </div>
         </div>
-
         <table class="film-details__table">
           <tr class="film-details__row">
             <td class="film-details__term">Director</td>
@@ -181,14 +183,14 @@ class Popup extends Component {
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Release Date</td>
-            <td class="film-details__cell">${moment(this._dateOfFilm).year()}</td>
+            <td class="film-details__cell">${moment(this._dateOfFilm).format(`d MMMM YYYY`)} </td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Runtime</td>
-            <td class="film-details__cell">${Math.round(this._duration / 60)} h ${this._duration % 60} m</td>
+            <td class="film-details__cell">${this._duration} min</td>
           </tr>
           <tr class="film-details__row">
-            <td class="film-details__term">Country</td>
+            <td class="film-details__term">Country</td>)
             <td class="film-details__cell">${this._country}</td>
           </tr>
           <tr class="film-details__row">
@@ -219,8 +221,7 @@ class Popup extends Component {
 
       <ul class="film-details__comments-list">
       ${this._userComments.map((comment) => {
-        return `
-        <li class="film-details__comment">
+        return `<li class="film-details__comment">
             <span class="film-details__comment-emoji">${Emoji[comment.emotion]}</span>
           <div>
           <p class="film-details__comment-text">${comment.comment}</p>
@@ -229,10 +230,7 @@ class Popup extends Component {
           <span class="film-details__comment-day">${moment(comment.date).fromNow()}</span>
           </p>
           </div>
-          </li>
-          `;
-      }
-      ).join(``)}
+          </li>`;}).join(``)}
       </ul>
 
       <div class="film-details__new-comment">
