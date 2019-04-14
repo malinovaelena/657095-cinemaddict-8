@@ -102,12 +102,36 @@ class Popup extends Component {
       this.update(newData);
     }
   }
-  _onCloseButtonClick() {
-    return typeof this._onClose === `function` && this._onClose();
+  _processForm(formData) { //объект в котором будет записанна новая обновленная сущность...
+    const entry = {
+      text: ``,
+      score: ``
+    };
+    const popUpMapper = Popup.createMapper(entry);
+
+    for (const pair of formData.entries()) {
+      const [property, value] = pair;
+      popUpMapper[property] && popUpMapper[property](value);
+    }
+    
+    return entry;
   }
-  render() {
-    this._element = Component.createElement(this.template);
-    this.bind();
+
+  _onSubmitButtonClick(evt) {
+    if (evt.keyCode === (13 && 17)) {
+      const formData = new FormData(this._element.querySelector(`.film-details__inner`));
+      const newData = this._processForm(formData);
+      typeof this._onSubmit === `function` && this._onSubmit(newData);
+
+      this.update(newData);
+    };
+  }
+  update(data) {
+    this._text = data.text;
+    this._userrating = data.userrating;
+  }
+
+  get element() {
     return this._element;
   }
 
