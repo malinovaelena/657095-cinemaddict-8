@@ -33755,9 +33755,96 @@ module.exports = function(module) {
 
 /***/ }),
 
-/***/ "./src/Card.js":
+/***/ "./src/api.js":
+/*!********************!*\
+  !*** ./src/api.js ***!
+  \********************/
+/*! exports provided: API */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "API", function() { return API; });
+/* harmony import */ var _model_data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./model-data */ "./src/model-data.js");
+
+
+ const Method = {
+   GET: `GET`,
+   POST: `POST`,
+   PUT: `PUT`,
+   DELETE: `DELETE`
+ };
+ 
+ const checkStatus = (response) => {
+    if (response.status >= 200 && response.status < 300) {
+      return response;
+    } else {
+      throw new Error(`${response.status}: ${response.statusText}`);
+      
+    }
+  };
+
+ const toJSON = (response) => {
+   return response.json();
+ };
+
+class API {
+   constructor({endPoint, authorization}) {
+     this._endPoint = endPoint;
+     this._autorization = authorization;
+   }
+ 
+   getCards() {
+     return this._load({url: `movies`})
+       .then(toJSON)
+       .then(_model_data__WEBPACK_IMPORTED_MODULE_0__["ModelCards"].parseCards);
+   }
+ 
+   createCard({card}) {
+     return this._load({
+       url: `movies`,
+       method: Method.POST,
+       body: JSON.stringify(card),
+       headers: new Headers({'Content-Type': `application/json`})
+     })
+       .then(toJSON)
+       .then(_model_data__WEBPACK_IMPORTED_MODULE_0__["ModelCards"].parseCard);
+   }
+ 
+   updateCard({id, data}) {
+     return this._load({
+       url: `movies/${id}`,
+       method: Method.PUT,
+       body: JSON.stringify(data),
+       headers: new Headers({'Content-Type': `application/json`})
+     })
+       .then(toJSON)
+       .then(_model_data__WEBPACK_IMPORTED_MODULE_0__["ModelCards"].parseCard);
+   }
+   deleteCard({id}) {
+     return this._load({url: `movies/${id}`, method: Method.DELETE});
+   }
+ 
+ 
+   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
+ 
+     headers.append(`Authorization`, this._autorization);
+ 
+     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
+       .then(checkStatus)
+       .catch((err) => {
+         console.error(`fetch error: ${err}`);
+         throw err;
+       });
+   }
+ };
+ 
+
+/***/ }),
+
+/***/ "./src/card.js":
 /*!*********************!*\
-  !*** ./src/Card.js ***!
+  !*** ./src/card.js ***!
   \*********************/
 /*! exports provided: Card */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -33872,503 +33959,6 @@ class Card extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
 
 /***/ }),
 
-/***/ "./src/Filter.js":
-/*!***********************!*\
-  !*** ./src/Filter.js ***!
-  \***********************/
-/*! exports provided: Filter */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Filter", function() { return Filter; });
-/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./component */ "./src/component.js");
-
-
-class Filter extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {  
-    constructor([nameFilter,href,amount]) {
-    super();
-        this._href = href;
-        this._nameFilter = nameFilter;
-        this._amount = amount;
-        this._onFilterClick = this._onFilterClick.bind(this);
-    }
-    set onFilter(fn) {
-        this._onFilter = fn;
-    }
-    update(amount) {
-        this._amount = amount;
-    }
-
-    _onFilterClick(event) {
-        event.preventDefault();
-        return typeof this._onFilter === `function` && this._onFilter();
-    }
-
-    bind() {
-        this._element.addEventListener(`click`, this._onFilterClick);
-    }
-    unbind() {
-        this._element.removeEventListener(`click`, this._onFilterClick);
-    }
-    get template() {
-        return `<a href="#${this._href}" class="main-navigation__item">${this._nameFilter}<span class="main-navigation__item-count">${this._amount}</span></a>`;
-    }
-};
-
-
-/***/ }),
-
-/***/ "./src/Pop-up.js":
-/*!***********************!*\
-  !*** ./src/Pop-up.js ***!
-  \***********************/
-/*! exports provided: Popup */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Popup", function() { return Popup; });
-/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./component */ "./src/component.js");
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_1__);
-
-
-
-const Emoji = {
-  'grinning': `😀`,
-  'neutral-face': `😐`,
-  'sleeping': `😴`
-};
-
-class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
-  constructor(data) {
-    super();
-      this._title = data.title;
-      this._userrating = data.userrating;
-      this._rating = data.rating;
-      this._ageRating = data.age_rating;
-      this._year = data.year;
-      this._duration = data.duration;
-      this._genre = data.genre;
-      this._poster = data.poster;
-      this._description = data.description;
-      
-      this._towatchlist = data.watchlist;
-      this._tofavorite = data.favorite;
-      this._towatched = data.alreadyWatched;
-
-      this._actors = data.actors;
-      this._director = data.director;
-      this._writers = data.writers;
-      this._country = data.country;
-      this._dateOfFilm = data.dateOfFilm;
-      this._alternativeTitle = data.alternativeTitle;
-      this._myPersonalRating = data.personalRating;
-      this._userComments = data.userComments;
-
-      this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
-      this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
-  }
-  _processForm(formData) {
-    const entry = {
-      personalRating: this._myPersonalRating,
-      userComments: this._userComments,
-      alreadyWatched: false,
-      watchlist: false,
-      favorite: false,
-    };
-    const filmDetailsMapper = Popup.createMapper(entry);
-    for (let pair of formData.entries()) {
-      let [property, value] = pair;
-      if (filmDetailsMapper[property]) {
-        filmDetailsMapper[property](value);
-      };
-    };
-    return entry;
-  }
-  static createMapper(target) {
-    this._comment = undefined;
-    return {
-      'watchlist': (value) => (target.watchlist = (value === `on`)),
-      'watched': (value) => (target.alreadyWatched = (value === `on`)),
-      'favorite': (value) => (target.favorite = (value === `on`)),
-      'score': (value) => (target.personalRating = +value),
-      'comment': (value) => {
-        if (this._comment) {
-          let emoji = this._comment.emotion;
-          this._comment.comment = value;
-          target.userComments.push({author: `Me`, emotion: emoji, comment: value, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()});
-        } else {
-          this._comment = {author: `Me`, emotion: undefined, comment: value, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()};
-        }
-      },
-      'comment-emoji': (value) => {
-        if (this._comment) {
-          let comment = this._comment.comment;
-          let emoji = value;
-          this._comment.emotion = value;
-          target.userComments.push({author: `Me`, emotion: emoji, comment, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()});
-        } else {
-          this._comment = {author: `Me`, emotion: value, comment: undefined, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()};
-        }
-      }
-    };
-  }
-  update(data) {
-    this._myPersonalRating = data.personalRating;
-    this._towatchlist = data.watchlist;
-    this._favorite = data.favorite;
-    this._userComments = data.userComments;
-  }
-  set onSubmit(fn) {
-    this._onSubmit = fn;
-  }
-  set onClose(fn) {
-    this._onClose = fn;
-  }
-  _onSubmitButtonClick(evt) {
-    if (evt.keyCode === ( true && 17)) {
-      const formData = new FormData(this._element.querySelector(`.film-details__inner`));
-      const newData = this._processForm(formData);
-      if (typeof this._onSubmit === `function`) {
-        this._onSubmit(newData);
-      }
-      this.update(newData);
-    }
-  }
-  _onCloseButtonClick() {
-    return typeof this._onClose === `function` && this._onClose();
-  }
-  render() {
-    this._element = _component__WEBPACK_IMPORTED_MODULE_0__["Component"].createElement(this.template);
-    this.bind();
-    return this._element;
-  }
-
-  unrender() {
-    this.unbind();
-    this._element.remove();
-    this._element = null;
-  }
-
-  get element() {
-    return this._element;
-  }
-  
-  bind() {
-    this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick);  
-    this._element.querySelector(`.film-details__inner`).addEventListener(`keydown`, this._onSubmitButtonClick);
-  }
-  unbind() {
-    this._element.querySelector(`.film-details__close-btn`).removeEventListener(`click`, this._onCloseButtonClick);
-    this._element.querySelector(`.film-details__inner`).removeEventListener(`keydown`, this._onSubmitButtonClick);
-  }
-  shake() {
-    const ANIMATION_TIMEOUT = 600;
-    this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
-    
-    setTimeout(() => {this._element.style.animation = ``}, ANIMATION_TIMEOUT);
-  }
-
-  get template() {
-    return `<section class="film-details">
-  <form class="film-details__inner" action="" method="get">
-    <div class="film-details__close">
-      <button class="film-details__close-btn" type="button">close</button>
-    </div>
-    <div class="film-details__info-wrap">
-      <div class="film-details__poster">
-        <img class="film-details__poster-img" src="${this._poster}" alt="incredables-2">
-
-        <p class="film-details__age">${this._ageRating}</p>
-      </div>
-
-      <div class="film-details__info">
-        <div class="film-details__info-head">
-          <div class="film-details__title-wrap">
-            <h3 class="film-details__title">${this._title}</h3>
-            <p class="film-details__title-original">${this._alternativeTitle}</p>
-          </div>
-
-          <div class="film-details__rating">
-            <p class="film-details__total-rating">${this._rating}</p>
-            <p class="film-details__user-rating">Your rate ${this._myPersonalRating}</p>
-          </div>
-        </div>
-        <table class="film-details__table">
-          <tr class="film-details__row">
-            <td class="film-details__term">Director</td>
-            <td class="film-details__cell">${this._director}</td>
-          </tr>
-          <tr class="film-details__row">
-            <td class="film-details__term">Writers</td>
-            <td class="film-details__cell">${this._writers}</td>
-          </tr>
-          <tr class="film-details__row">
-            <td class="film-details__term">Actors</td>
-            <td class="film-details__cell">${this._actors}</td>
-          </tr>
-          <tr class="film-details__row">
-            <td class="film-details__term">Release Date</td>
-            <td class="film-details__cell">${this._year} </td>
-          </tr>
-          <tr class="film-details__row">
-            <td class="film-details__term">Runtime</td>
-            <td class="film-details__cell">${this._duration} min</td>
-          </tr>
-          <tr class="film-details__row">
-            <td class="film-details__term">Country</td>)
-            <td class="film-details__cell">${this._country}</td>
-          </tr>
-          <tr class="film-details__row">
-            <td class="film-details__term">Genres</td>
-            <td class="film-details__cell">
-            ${this._genre.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``)}
-            </td>
-          </tr>
-        </table>
-
-        <p class="film-details__film-description">${this._description}</p>
-      </div>
-    </div>
-
-    <section class="film-details__controls">
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${this._towatchlist === 'checked'}>
-      <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
-
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${this._towatched === 'checked'}>
-      <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
-
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${this._tofavorite === 'checked'}>
-      <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
-    </section>
-
-    <section class="film-details__comments-wrap">
-      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._userComments.length}</span></h3>
-
-      <ul class="film-details__comments-list">
-      ${this._userComments.map((comment) => {
-        return `<li class="film-details__comment">
-            <span class="film-details__comment-emoji">${Emoji[comment.emotion]}</span>
-          <div>
-          <p class="film-details__comment-text">${comment.comment}</p>
-          <p class="film-details__comment-info">
-            <span class="film-details__comment-author">${comment.author}</span>
-          <span class="film-details__comment-day">${moment__WEBPACK_IMPORTED_MODULE_1___default()(comment.date).fromNow()}</span>
-          </p>
-          </div>
-          </li>`;}).join(``)}
-      </ul>
-
-      <div class="film-details__new-comment">
-        <div>
-          <label for="add-emoji" class="film-details__add-emoji-label">😐</label>
-          <input type="checkbox" class="film-details__add-emoji visually-hidden" id="add-emoji">
-
-          <div class="film-details__emoji-list">
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
-            <label class="film-details__emoji-label" for="emoji-sleeping">😴</label>
-
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-neutral-face" value="neutral-face" checked>
-            <label class="film-details__emoji-label" for="emoji-neutral-face">😐</label>
-
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-grinning" value="grinning">
-            <label class="film-details__emoji-label" for="emoji-grinning">😀</label>
-          </div>
-        </div>
-        <label class="film-details__comment-label">
-          <textarea class="film-details__comment-input" placeholder="← Select reaction, add comment here" name="comment"></textarea>
-        </label>
-      </div>
-    </section>
-
-    <section class="film-details__user-rating-wrap">
-      <div class="film-details__user-rating-controls">
-        <span class="film-details__watched-status ${this._alreadyWatched && `film-details__watched-status--active`}">Already watched</span>
-        <button class="film-details__watched-reset" type="button">undo</button>
-      </div>
-
-      <div class="film-details__user-score">
-        <div class="film-details__user-rating-poster">
-          <img src="${this._poster}" alt="film-poster" class="film-details__user-rating-img">
-        </div>
-
-        <section class="film-details__user-rating-inner">
-          <h3 class="film-details__user-rating-title">${this._title}</h3>
-
-          <p class="film-details__user-rating-feelings">How you feel it?</p>
-
-          <div class="film-details__user-rating-score">
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1" ${this._myPersonalRating === `1` && 'checked'} >
-            <label class="film-details__user-rating-label" for="rating-1">1</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2" ${this._myPersonalRating === `2` && 'checked'}>
-            <label class="film-details__user-rating-label" for="rating-2">2</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3" ${this._myPersonalRating === `3` && 'checked'}>
-            <label class="film-details__user-rating-label" for="rating-3">3</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4" ${this._myPersonalRating === `4` && 'checked'}>
-            <label class="film-details__user-rating-label" for="rating-4">4</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5" ${this._myPersonalRating === `5` && 'checked'}>
-            <label class="film-details__user-rating-label" for="rating-5">5</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6" ${this._myPersonalRating === `6` && 'checked'}>
-            <label class="film-details__user-rating-label" for="rating-6">6</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7" ${this._myPersonalRating === `7` && 'checked'}>
-            <label class="film-details__user-rating-label" for="rating-7">7</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8" ${this._myPersonalRating === `8` && 'checked'}>
-            <label class="film-details__user-rating-label" for="rating-8">8</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9" ${this._myPersonalRating === `9` && 'checked'}>
-            <label class="film-details__user-rating-label" for="rating-9">9</label>
-
-          </div>
-        </section>
-      </div>
-    </section>
-  </form>
-</section>`;
-  };
-
-}
-
-
-
-
-
-/***/ }),
-
-/***/ "./src/Search.js":
-/*!***********************!*\
-  !*** ./src/Search.js ***!
-  \***********************/
-/*! exports provided: Search */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Search", function() { return Search; });
-/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./component */ "./src/component.js");
-
-
-class Search extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
-    constructor() {
-    super();
-        this._onSearchButtonClick = this._onSearchButtonClick.bind(this);
-    }
-    _onSearchButtonClick() {
-        return typeof this._onClick === `function` && this._onClick();
-    }
-    set onSearch(fn) {
-        this._onClick = fn;
-    }
-    
-    bind() {
-        this._element.addEventListener(`keyup`, this._onSearchButtonClick);
-    }
-    unbind() {
-        this._element.removeEventListener(`keyup`, this._onSearchButtonClick);
-    }
-    get template() {
-        return `<input type="text" name="search" class="search__field" placeholder="Search">`;
-    }
-};
-
-
-/***/ }),
-
-/***/ "./src/api.js":
-/*!********************!*\
-  !*** ./src/api.js ***!
-  \********************/
-/*! exports provided: API */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "API", function() { return API; });
-/* harmony import */ var _model_data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./model-data */ "./src/model-data.js");
-
-
- const Method = {
-   GET: `GET`,
-   POST: `POST`,
-   PUT: `PUT`,
-   DELETE: `DELETE`
- };
- 
- const checkStatus = (response) => {
-    if (response.status >= 200 && response.status < 300) {
-      return response;
-    } else {
-      throw new Error(`${response.status}: ${response.statusText}`);
-      
-    }
-  };
-
- const toJSON = (response) => {
-   return response.json();
- };
-
-class API {
-   constructor({endPoint, authorization}) {
-     this._endPoint = endPoint;
-     this._autorization = authorization;
-   }
- 
-   getCards() {
-     return this._load({url: `movies`})
-       .then(toJSON)
-       .then(_model_data__WEBPACK_IMPORTED_MODULE_0__["ModelCards"].parseCards);
-   }
- 
-   createCard({card}) {
-     return this._load({
-       url: `movies`,
-       method: Method.POST,
-       body: JSON.stringify(card),
-       headers: new Headers({'Content-Type': `application/json`})
-     })
-       .then(toJSON)
-       .then(_model_data__WEBPACK_IMPORTED_MODULE_0__["ModelCards"].parseCard);
-   }
- 
-   updateCard({id, data}) {
-     return this._load({
-       url: `movies/${id}`,
-       method: Method.PUT,
-       body: JSON.stringify(data),
-       headers: new Headers({'Content-Type': `application/json`})
-     })
-       .then(toJSON)
-       .then(_model_data__WEBPACK_IMPORTED_MODULE_0__["ModelCards"].parseCard);
-   }
-   deleteCard({id}) {
-     return this._load({url: `movies/${id}`, method: Method.DELETE});
-   }
- 
- 
-   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
- 
-     headers.append(`Authorization`, this._autorization);
- 
-     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
-       .then(checkStatus)
-       .catch((err) => {
-         console.error(`fetch error: ${err}`);
-         throw err;
-       });
-   }
- };
- 
-
-/***/ }),
-
 /***/ "./src/component.js":
 /*!**************************!*\
   !*** ./src/component.js ***!
@@ -34414,21 +34004,72 @@ class Component {
 
 /***/ }),
 
-/***/ "./src/main.js":
-/*!*********************!*\
-  !*** ./src/main.js ***!
-  \*********************/
-/*! no exports provided */
+/***/ "./src/filter.js":
+/*!***********************!*\
+  !*** ./src/filter.js ***!
+  \***********************/
+/*! exports provided: Filter */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Filter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Filter */ "./src/Filter.js");
-/* harmony import */ var _Pop_up__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Pop-up */ "./src/Pop-up.js");
-/* harmony import */ var _Card__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Card */ "./src/Card.js");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Filter", function() { return Filter; });
+/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./component */ "./src/component.js");
+
+
+class Filter extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {  
+    constructor([nameFilter,href,amount]) {
+    super();
+        this._href = href;
+        this._nameFilter = nameFilter;
+        this._amount = amount;
+        this._onFilterClick = this._onFilterClick.bind(this);
+    }
+    set onFilter(fn) {
+        this._onFilter = fn;
+    }
+    update(amount) {
+        this._amount = amount;
+    }
+
+    _onFilterClick(event) {
+        event.preventDefault();
+        return typeof this._onFilter === `function` && this._onFilter();
+    }
+
+    bind() {
+        this._element.addEventListener(`click`, this._onFilterClick);
+    }
+    unbind() {
+        this._element.removeEventListener(`click`, this._onFilterClick);
+    }
+    get template() {
+        return `<a href="#${this._href}" class="main-navigation__item">${this._nameFilter}<span class="main-navigation__item-count">${this._amount}</span></a>`;
+    }
+};
+
+
+/***/ }),
+
+/***/ "./src/main.js":
+/*!*********************!*\
+  !*** ./src/main.js ***!
+  \*********************/
+/*! exports provided: ratingOfUser */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _filter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./filter */ "./src/filter.js");
+/* harmony import */ var _pop_up__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pop-up */ "./src/pop-up.js");
+/* harmony import */ var _card__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./card */ "./src/card.js");
 /* harmony import */ var _statistic__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./statistic */ "./src/statistic.js");
 /* harmony import */ var _api__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./api */ "./src/api.js");
-/* harmony import */ var _Search__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Search */ "./src/Search.js");
+/* harmony import */ var _search__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./search */ "./src/search.js");
+/* harmony import */ var _user_rating__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./user-rating */ "./src/user-rating.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ratingOfUser", function() { return _user_rating__WEBPACK_IMPORTED_MODULE_6__["ratingOfUser"]; });
+
+
 
 
 
@@ -34445,6 +34086,7 @@ const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
 const api = new _api__WEBPACK_IMPORTED_MODULE_4__["API"]({endPoint: END_POINT, authorization: AUTHORIZATION});
 
+const profileRatingContainer = document.querySelector(`.header__profile profile`);
 
 const filterFilms = (nameFilter, dataForFilters) => {
   switch (nameFilter) {
@@ -34489,15 +34131,15 @@ const searchCards = (data, value) => {
   return data.filter((it) => it.title.toUpperCase().includes(value.toUpperCase()));
 };
 
-
-
 const renderAll = () => {
   api.getCards()
     .then((movies) => {
+      console.log(movies);
       renderFilters(movies);
       filmContainer.innerHTML = `Loading movies...`;
       renderFilms(movies);
       renderSearch(movies);
+      calculateUserRating(movies);
     })
     .catch((movies) => {
       renderFilters(movies);
@@ -34505,7 +34147,7 @@ const renderAll = () => {
     });
 
   const renderSearch = (cards) => {
-    const searchElement = new _Search__WEBPACK_IMPORTED_MODULE_5__["Search"]();
+    const searchElement = new _search__WEBPACK_IMPORTED_MODULE_5__["Search"]();
     searchElement.render();
     searchContainer.appendChild(searchElement.element);
     searchElement.onSearch = () => {
@@ -34516,29 +34158,47 @@ const renderAll = () => {
       }
     };
   };
+  const calculateUserRating = (cards) => {
+    const amountWatchingMovies = cards.filter((it) => it.towatched || it.alreadyWatched === true).length;
+    const calculating = (amountWatchingMovies) => {
+      if (amountWatchingMovies <= 10) {
+        return 'novice';
+      } else if (amountWatchingMovies <= 19) {
+        return 'fan';
+      } else {
+        return 'movie buff';
+      }
+    };
+    const tag = `<p class="profile__rating">blabla</p>`;
+    console.log('test');
+    console.log(calculating(20));
+    console.log('test2');
+  }; 
+  
 
-  const renderFilters = (dataForFilters) => {
-    let amountHistory = dataForFilters.filter((it) => it.towatched || it.alreadyWatched === true).length;
-    let amountFavorite = dataForFilters.filter((it) => it.favorite || it.favorite === true).length;
-    let amountWatchlist = dataForFilters.filter((it) => it.towatchlist || it.watchlist === true).length;
+  const renderFilters = (cards) => {
+    let amountHistory = cards.filter((it) => it.towatched || it.alreadyWatched === true).length;
+    let amountFavorite = cards.filter((it) => it.favorite || it.favorite === true).length;
+    let amountWatchlist = cards.filter((it) => it.towatchlist || it.watchlist === true).length;
 
-    const arrOfFilters = [[`Favorites`, `favorites`, amountFavorite], [`Watchlist`, `watchlist`, amountWatchlist], [`History`, `history`, amountHistory], [`All movies`, `all`, dataForFilters.length]];
-
+    const arrOfFilters = [[`Favorites`, `favorites`, amountFavorite], [`Watchlist`, `watchlist`, amountWatchlist], [`History`, `history`, amountHistory], [`All movies`, `all`, cards.length]];
+  
     for (let filter of arrOfFilters) {
-      const filterItem = new _Filter__WEBPACK_IMPORTED_MODULE_0__["Filter"](filter);
+      const filterItem = new _filter__WEBPACK_IMPORTED_MODULE_0__["Filter"](filter);
       filterItem.render();
       filterContainer.insertAdjacentElement(`afterBegin`, filterItem.element);
 
       filterItem.onFilter = () => {
-        const amountforEach = filterAmount(filter[0], dataForFilters);
+        const amountforEach = filterAmount(filter[0], cards);
         filterItem.update(amountforEach);
-        const cardsForThisFilter = filterFilms(filter[0], dataForFilters);
+        const cardsForThisFilter = filterFilms(filter[0], cards);
         renderFilms(cardsForThisFilter);
       };
     }
   };
 
   const renderFilms = (cards) => {
+    //calculateUserRating(cards);
     filmContainer.innerHTML = ``;
 
     const statistic = new _statistic__WEBPACK_IMPORTED_MODULE_3__["Statistic"](cards);
@@ -34551,8 +34211,8 @@ const renderAll = () => {
     };
 
     for (let dataOneCard of cards) {
-      const cardElement = new _Card__WEBPACK_IMPORTED_MODULE_2__["Card"](dataOneCard);
-      const popUpElement = new _Pop_up__WEBPACK_IMPORTED_MODULE_1__["Popup"](dataOneCard);
+      const cardElement = new _card__WEBPACK_IMPORTED_MODULE_2__["Card"](dataOneCard);
+      const popUpElement = new _pop_up__WEBPACK_IMPORTED_MODULE_1__["Popup"](dataOneCard);
 
       cardElement.render();
       filmContainer.appendChild(cardElement.element);
@@ -34689,6 +34349,375 @@ class ModelCards {
   
     static parseCards(data) {
       return data.map(ModelCards.parseCard);
+    }
+};
+
+
+/***/ }),
+
+/***/ "./src/pop-up.js":
+/*!***********************!*\
+  !*** ./src/pop-up.js ***!
+  \***********************/
+/*! exports provided: Popup */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Popup", function() { return Popup; });
+/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./component */ "./src/component.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_1__);
+
+
+
+const Emoji = {
+  'grinning': `😀`,
+  'neutral-face': `😐`,
+  'sleeping': `😴`
+};
+
+class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
+  constructor(data) {
+    super();
+      this._title = data.title;
+      this._userrating = data.userrating;
+      this._rating = data.rating;
+      this._ageRating = data.age_rating;
+      this._duration = data.duration;
+      this._genre = data.genre;
+      this._poster = data.poster;
+      this._description = data.description;
+      
+      this._towatchlist = data.watchlist;
+      this._tofavorite = data.favorite;
+      this._towatched = data.alreadyWatched;
+
+      this._actors = data.actors;
+      this._director = data.director;
+      this._writers = data.writers;
+      this._country = data.country;
+      this._dateOfFilm = data.dateOfFilm;
+      this._alternativeTitle = data.alternativeTitle;
+      this._myPersonalRating = data.personalRating;
+      this._userComments = data.userComments;
+
+      this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
+      this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
+  }
+  _processForm(formData) {
+    const entry = {
+      personalRating: this._myPersonalRating,
+      userComments: this._userComments,
+      alreadyWatched: false,
+      watchlist: false,
+      favorite: false,
+    };
+    const filmDetailsMapper = Popup.createMapper(entry);
+    for (let pair of formData.entries()) {
+      let [property, value] = pair;
+      if (filmDetailsMapper[property]) {
+        filmDetailsMapper[property](value);
+      };
+    };
+    return entry;
+  }
+  static createMapper(target) {
+    this._comment = undefined;
+    return {
+      'watchlist': (value) => (target.watchlist = (value === `on`)),
+      'watched': (value) => (target.alreadyWatched = (value === `on`)),
+      'favorite': (value) => (target.favorite = (value === `on`)),
+      'score': (value) => (target.personalRating = +value),
+      'comment': (value) => {
+        if (this._comment) {
+          let emoji = this._comment.emotion;
+          this._comment.comment = value;
+          target.userComments.push({author: `Me`, emotion: emoji, comment: value, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()});
+        } else {
+          this._comment = {author: `Me`, emotion: undefined, comment: value, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()};
+        }
+      },
+      'comment-emoji': (value) => {
+        if (this._comment) {
+          let comment = this._comment.comment;
+          let emoji = value;
+          this._comment.emotion = value;
+          target.userComments.push({author: `Me`, emotion: emoji, comment, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()});
+        } else {
+          this._comment = {author: `Me`, emotion: value, comment: undefined, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()};
+        }
+      }
+    };
+  }
+  update(data) {
+    this._myPersonalRating = data.personalRating;
+    this._towatchlist = data.watchlist;
+    this._favorite = data.favorite;
+    this._userComments = data.userComments;
+    this._alreadyWatched = data.alreadyWatched;
+  }
+  set onSubmit(fn) {
+    this._onSubmit = fn;
+  }
+  set onClose(fn) {
+    this._onClose = fn;
+  }
+  _onSubmitButtonClick(evt) {
+    if (evt.keyCode === ( true && 17)) {
+      const formData = new FormData(this._element.querySelector(`.film-details__inner`));
+      const newData = this._processForm(formData);
+      if (typeof this._onSubmit === `function`) {
+        this._onSubmit(newData);
+      }
+      this.update(newData);
+    }
+  }
+  _onCloseButtonClick(evt) {
+    if (true) {
+      return typeof this._onClose === `function` && this._onClose();
+    }
+  }
+  render() {
+    this._element = _component__WEBPACK_IMPORTED_MODULE_0__["Component"].createElement(this.template);
+    this.bind();
+    return this._element;
+  }
+
+  unrender() {
+    this.unbind();
+    this._element.remove();
+    this._element = null;
+  }
+
+  get element() {
+    return this._element;
+  }
+  
+  bind() {
+    this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick); 
+    this._element.querySelector(`.film-details__inner`).addEventListener(`keydown`, this._onSubmitButtonClick);
+    this._element.querySelector(`.film-details__inner`).addEventListener(`keydown`, this._onCloseButtonClick);
+    
+  }
+  unbind() {
+    this._element.querySelector(`.film-details__close-btn`).removeEventListener(`click`, this._onCloseButtonClick);
+    this._element.querySelector(`.film-details__inner`).removeEventListener(`keydown`, this._onSubmitButtonClick);
+    this._element.querySelector(`.film-details__inner`).removeEventListener(`keydown`, this._onCloseButtonClick);
+    
+  }
+  shake() {
+    const ANIMATION_TIMEOUT = 600;
+    this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
+    
+    setTimeout(() => {this._element.style.animation = ``}, ANIMATION_TIMEOUT);
+  }
+
+  get template() {
+    return `<section class="film-details">
+  <form class="film-details__inner" action="" method="get">
+    <div class="film-details__close">
+      <button class="film-details__close-btn" type="button">close</button>
+    </div>
+    <div class="film-details__info-wrap">
+      <div class="film-details__poster">
+        <img class="film-details__poster-img" src="${this._poster}" alt="incredables-2">
+
+        <p class="film-details__age">${this._ageRating}</p>
+      </div>
+
+      <div class="film-details__info">
+        <div class="film-details__info-head">
+          <div class="film-details__title-wrap">
+            <h3 class="film-details__title">${this._title}</h3>
+            <p class="film-details__title-original">${this._alternativeTitle}</p>
+          </div>
+
+          <div class="film-details__rating">
+            <p class="film-details__total-rating">${this._rating}</p>
+            <p class="film-details__user-rating">Your rate ${this._myPersonalRating}</p>
+          </div>
+        </div>
+        <table class="film-details__table">
+          <tr class="film-details__row">
+            <td class="film-details__term">Director</td>
+            <td class="film-details__cell">${this._director}</td>
+          </tr>
+          <tr class="film-details__row">
+            <td class="film-details__term">Writers</td>
+            <td class="film-details__cell">${this._writers}</td>
+          </tr>
+          <tr class="film-details__row">
+            <td class="film-details__term">Actors</td>
+            <td class="film-details__cell">${this._actors}</td>
+          </tr>
+          <tr class="film-details__row">
+            <td class="film-details__term">Release Date</td>
+            <td class="film-details__cell">${moment__WEBPACK_IMPORTED_MODULE_1___default()(this._dateOfFilm).format(`d MMMM YYYY`)} </td>
+          </tr>
+          <tr class="film-details__row">
+            <td class="film-details__term">Runtime</td>
+            <td class="film-details__cell">${this._duration} min</td>
+          </tr>
+          <tr class="film-details__row">
+            <td class="film-details__term">Country</td>)
+            <td class="film-details__cell">${this._country}</td>
+          </tr>
+          <tr class="film-details__row">
+            <td class="film-details__term">Genres</td>
+            <td class="film-details__cell">
+            ${this._genre.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``)}
+            </td>
+          </tr>
+        </table>
+
+        <p class="film-details__film-description">${this._description}</p>
+      </div>
+    </div>
+
+    <section class="film-details__controls">
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${this._towatchlist === 'checked'}>
+      <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
+
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${this._towatched === 'checked'}>
+      <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
+
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${this._tofavorite === 'checked'}>
+      <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
+    </section>
+
+    <section class="film-details__comments-wrap">
+      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._userComments.length}</span></h3>
+
+      <ul class="film-details__comments-list">
+      ${this._userComments.map((comment) => {
+        return `<li class="film-details__comment">
+            <span class="film-details__comment-emoji">${Emoji[comment.emotion]}</span>
+          <div>
+          <p class="film-details__comment-text">${comment.comment}</p>
+          <p class="film-details__comment-info">
+            <span class="film-details__comment-author">${comment.author}</span>
+          <span class="film-details__comment-day">${moment__WEBPACK_IMPORTED_MODULE_1___default()(comment.date).fromNow()}</span>
+          </p>
+          </div>
+          </li>`;}).join(``)}
+      </ul>
+
+      <div class="film-details__new-comment">
+        <div>
+          <label for="add-emoji" class="film-details__add-emoji-label">😐</label>
+          <input type="checkbox" class="film-details__add-emoji visually-hidden" id="add-emoji">
+
+          <div class="film-details__emoji-list">
+            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
+            <label class="film-details__emoji-label" for="emoji-sleeping">😴</label>
+
+            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-neutral-face" value="neutral-face" checked>
+            <label class="film-details__emoji-label" for="emoji-neutral-face">😐</label>
+
+            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-grinning" value="grinning">
+            <label class="film-details__emoji-label" for="emoji-grinning">😀</label>
+          </div>
+        </div>
+        <label class="film-details__comment-label">
+          <textarea class="film-details__comment-input" placeholder="← Select reaction, add comment here" name="comment"></textarea>
+        </label>
+      </div>
+    </section>
+
+    <section class="film-details__user-rating-wrap">
+      <div class="film-details__user-rating-controls">
+        <span class="film-details__watched-status ${this._alreadyWatched && `film-details__watched-status--active`}">Already watched</span>
+        <button class="film-details__watched-reset" type="button">undo</button>
+      </div>
+
+      <div class="film-details__user-score">
+        <div class="film-details__user-rating-poster">
+          <img src="${this._poster}" alt="film-poster" class="film-details__user-rating-img">
+        </div>
+
+        <section class="film-details__user-rating-inner">
+          <h3 class="film-details__user-rating-title">${this._title}</h3>
+
+          <p class="film-details__user-rating-feelings">How you feel it?</p>
+
+          <div class="film-details__user-rating-score">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1" ${this._myPersonalRating === `1` && 'checked'} >
+            <label class="film-details__user-rating-label" for="rating-1">1</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2" ${this._myPersonalRating === `2` && 'checked'}>
+            <label class="film-details__user-rating-label" for="rating-2">2</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3" ${this._myPersonalRating === `3` && 'checked'}>
+            <label class="film-details__user-rating-label" for="rating-3">3</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4" ${this._myPersonalRating === `4` && 'checked'}>
+            <label class="film-details__user-rating-label" for="rating-4">4</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5" ${this._myPersonalRating === `5` && 'checked'}>
+            <label class="film-details__user-rating-label" for="rating-5">5</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6" ${this._myPersonalRating === `6` && 'checked'}>
+            <label class="film-details__user-rating-label" for="rating-6">6</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7" ${this._myPersonalRating === `7` && 'checked'}>
+            <label class="film-details__user-rating-label" for="rating-7">7</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8" ${this._myPersonalRating === `8` && 'checked'}>
+            <label class="film-details__user-rating-label" for="rating-8">8</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9" ${this._myPersonalRating === `9` && 'checked'}>
+            <label class="film-details__user-rating-label" for="rating-9">9</label>
+
+          </div>
+        </section>
+      </div>
+    </section>
+  </form>
+</section>`;
+  };
+
+}
+
+
+
+
+
+/***/ }),
+
+/***/ "./src/search.js":
+/*!***********************!*\
+  !*** ./src/search.js ***!
+  \***********************/
+/*! exports provided: Search */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Search", function() { return Search; });
+/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./component */ "./src/component.js");
+
+
+class Search extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
+    constructor() {
+    super();
+        this._onSearchButtonClick = this._onSearchButtonClick.bind(this);
+    }
+    _onSearchButtonClick() {
+        return typeof this._onClick === `function` && this._onClick();
+    }
+    set onSearch(fn) {
+        this._onClick = fn;
+    }
+    
+    bind() {
+        this._element.addEventListener(`keyup`, this._onSearchButtonClick);
+    }
+    unbind() {
+        this._element.removeEventListener(`keyup`, this._onSearchButtonClick);
+    }
+    get template() {
+        return `<input type="text" name="search" class="search__field" placeholder="Search">`;
     }
 };
 
@@ -34888,6 +34917,41 @@ class Statistic extends _component__WEBPACK_IMPORTED_MODULE_2__["Component"] {
       </section>`;
     }
 };
+
+
+/***/ }),
+
+/***/ "./src/user-rating.js":
+/*!****************************!*\
+  !*** ./src/user-rating.js ***!
+  \****************************/
+/*! exports provided: ratingOfUser */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ratingOfUser", function() { return ratingOfUser; });
+/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./component */ "./src/component.js");
+
+
+class ratingOfUser extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
+    constructor(data) {
+        super();
+        this._amount = data;
+    }
+    set update(data) {
+        this._amount = data;
+    }
+    render() {
+        this._element = _component__WEBPACK_IMPORTED_MODULE_0__["Component"].createElement(this.template);
+        return this._element;
+    }
+    get template() {
+        return `<section class="header__profile profile">
+                    <p class="profile__rating">${this._amount}</p>
+                </section>`;
+    }
+}
 
 
 /***/ })

@@ -1,18 +1,23 @@
-import {Filter} from './Filter';
-import {Popup} from './Pop-up';
-import {Card} from './Card';
+import {Filter} from './filter';
+import {Popup} from './pop-up';
+import {Card} from './card';
 import {Statistic} from './statistic';
 import {API} from './api';
-import {Search} from './Search';
+import {Search} from './search';
+export {ratingOfUser} from './user-rating';
 
 const filmContainer = document.querySelector(`.films-list__container`);
 const filterContainer = document.querySelector(`.main-navigation`);
 const body = document.querySelector(`body`);
 const searchContainer = document.querySelector(`.header__search`);
+const profileRatingContainer = document.querySelector(`.header__profile profile`);
+const header = document.querySelector(`.header`);
+const hren = document.querySelector(`.profile__rating`);
 
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
 const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
+
 
 
 const filterFilms = (nameFilter, dataForFilters) => {
@@ -57,21 +62,36 @@ const searchCards = (data, value) => {
   }
   return data.filter((it) => it.title.toUpperCase().includes(value.toUpperCase()));
 };
+const amountOfHistory = (array) => {
+  const amountOf = array.filter((it) => it.towatched || it.alreadyWatched === true).length;
+  return amountOf;
+};
+const amountOfFavorite = (array) => {
+  const amountOfF = array.filter((it) => it.favorite || it.favorite === true).length;
+  return amountOfF;
+};
+const amountOfWatchlist = (array) => {
+  let amountOfW = array.filter((it) => it.towatchlist || it.watchlist === true).length;
+  return amountOfW;
+};
+    
 
 const renderAll = () => {
   api.getCards()
-    .then((movies) => {
-      console.log(movies);
-      renderFilters(movies);
-      filmContainer.innerHTML = `Loading movies...`;
-      renderFilms(movies);
-      renderSearch(movies);
-    })
-    .catch((movies) => {
-      renderFilters(movies);
-      filmContainer.innerHTML = `Something went wrong while loading movies. Check your connection or try again later`;
-    });
-
+  .then((movies) => {
+    console.log(movies);
+    renderFilters(movies);
+    filmContainer.innerHTML = `Loading movies...`;
+    renderFilms(movies);
+    renderSearch(movies);
+    //calculateUserRating(movies);
+    //renderRat(amountOfWatchlist(movies));
+    //hren.innerHTML = `fan`;
+  })
+  .catch((movies) => {
+    renderFilters(movies);
+    filmContainer.innerHTML = `Something went wrong while loading movies. Check your connection or try again later`;
+  });
   const renderSearch = (cards) => {
     const searchElement = new Search();
     searchElement.render();
@@ -84,23 +104,28 @@ const renderAll = () => {
       }
     };
   };
+  
+  const renderFilters = (cards) => {
+    filterContainer.innerHTML = `<a href="#stats" class="main-navigation__item main-navigation__item--additional">Stats</a>`;
+    let amountHistory = Array.from(cards).filter((it) => it.towatched || it.alreadyWatched === true).length;
+    let amountFavorite = Array.from(cards).filter((it) => it.favorite || it.favorite === true).length;
+    let amountWatchlist = Array.from(cards).filter((it) => it.towatchlist || it.watchlist === true).length;
 
-  const renderFilters = (dataForFilters) => {
-    let amountHistory = dataForFilters.filter((it) => it.towatched || it.alreadyWatched === true).length;
-    let amountFavorite = dataForFilters.filter((it) => it.favorite || it.favorite === true).length;
-    let amountWatchlist = dataForFilters.filter((it) => it.towatchlist || it.watchlist === true).length;
-
-    const arrOfFilters = [[`Favorites`, `favorites`, amountFavorite], [`Watchlist`, `watchlist`, amountWatchlist], [`History`, `history`, amountHistory], [`All movies`, `all`, dataForFilters.length]];
-
+    const arrOfFilters = [[`Favorites`, `favorites`, amountFavorite], [`Watchlist`, `watchlist`, amountWatchlist], [`History`, `history`, amountHistory], [`All movies`, `all`, cards.length]];
+    if (amountFavorite < 10) {
+      console.log('bll');
+      hren.innerHTML = `novichek`;
+    };
+    const amontFilters = filterContainer.childNodes.length;
     for (let filter of arrOfFilters) {
       const filterItem = new Filter(filter);
       filterItem.render();
       filterContainer.insertAdjacentElement(`afterBegin`, filterItem.element);
 
       filterItem.onFilter = () => {
-        const amountforEach = filterAmount(filter[0], dataForFilters);
+        const amountforEach = filterAmount(filter[0], cards);
         filterItem.update(amountforEach);
-        const cardsForThisFilter = filterFilms(filter[0], dataForFilters);
+        const cardsForThisFilter = filterFilms(filter[0], cards);
         renderFilms(cardsForThisFilter);
       };
     }
@@ -152,6 +177,7 @@ const renderAll = () => {
         api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
         .then((newData) => {
           popUpElement.update(newData);
+          renderFilters(newData);
         });
       };
       popUpElement.onSubmit = (newData) => {
@@ -194,7 +220,7 @@ const renderAll = () => {
       };
     }
   };
-  //renderSearch();
 };
+
 renderAll();
 
