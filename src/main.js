@@ -54,7 +54,6 @@ const renderAll = () => {
   api.getCards()
     .then((movies) => {
       renderFilters(movies);
-      filmContainer.innerHTML = `Loading movies...`;
       renderFilms(movies);
     })
     .catch((movies) => {
@@ -63,9 +62,9 @@ const renderAll = () => {
     });
 
   const renderFilters = (dataForFilters) => {
-    let amountHistory = dataForFilters.filter((it) => it.towatched || it.alreadyWatched === true).length;
-    let amountFavorite = dataForFilters.filter((it) => it.favorite || it.favorite === true).length;
-    let amountWatchlist = dataForFilters.filter((it) => it.towatchlist || it.watchlist === true).length;
+    let amountHistory = Array.from(dataForFilters).filter((it) => it.towatched || it.alreadyWatched === true).length;
+    let amountFavorite = Array.from(dataForFilters).filter((it) => it.favorite || it.favorite === true).length;
+    let amountWatchlist = Array.from(dataForFilters).filter((it) => it.towatchlist || it.watchlist === true).length;
 
     const arrOfFilters = [[`Favorites`, `favorites`, amountFavorite], [`Watchlist`, `watchlist`, amountWatchlist], [`History`, `history`, amountHistory], [`All movies`, `all`, dataForFilters.length]];
 
