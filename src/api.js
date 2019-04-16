@@ -12,7 +12,6 @@ import {ModelCards} from './model-data';
       return response;
     } else {
       throw new Error(`${response.status}: ${response.statusText}`);
-      
     }
   };
 

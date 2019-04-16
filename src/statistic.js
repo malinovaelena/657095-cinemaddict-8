@@ -103,6 +103,7 @@ class Statistic extends Component {
     }
     bind() {
         document.querySelector(`.main-navigation__item--additional`).addEventListener(`click`, this._onStatisticRender);
+        //document.querySelector(`#statistic-all-time`).addEventListener(`click`, this._onStatisticRe);
     }
     unbind() {
         document.querySelector(`.main-navigation__item--additional`).removeEventListener(`click`, this._onStatisticRender);

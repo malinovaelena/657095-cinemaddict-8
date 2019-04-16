@@ -4,7 +4,9 @@ import {Card} from './card';
 import {Statistic} from './statistic';
 import {API} from './api';
 import {Search} from './search';
-export {ratingOfUser} from './user-rating';
+//import {ratingOfUser} from './user-rating';
+//import {Store} from './storage';
+
 
 const filmContainer = document.querySelector(`.films-list__container`);
 const filterContainer = document.querySelector(`.main-navigation`);
@@ -61,36 +63,20 @@ const searchCards = (data, value) => {
     return data;
   }
   return data.filter((it) => it.title.toUpperCase().includes(value.toUpperCase()));
-};
-const amountOfHistory = (array) => {
-  const amountOf = array.filter((it) => it.towatched || it.alreadyWatched === true).length;
-  return amountOf;
-};
-const amountOfFavorite = (array) => {
-  const amountOfF = array.filter((it) => it.favorite || it.favorite === true).length;
-  return amountOfF;
-};
-const amountOfWatchlist = (array) => {
-  let amountOfW = array.filter((it) => it.towatchlist || it.watchlist === true).length;
-  return amountOfW;
-};
-    
+};  
 
 const renderAll = () => {
   api.getCards()
   .then((movies) => {
     console.log(movies);
     renderFilters(movies);
-    filmContainer.innerHTML = `Loading movies...`;
     renderFilms(movies);
     renderSearch(movies);
-    //calculateUserRating(movies);
-    //renderRat(amountOfWatchlist(movies));
-    //hren.innerHTML = `fan`;
   })
   .catch((movies) => {
     renderFilters(movies);
     filmContainer.innerHTML = `Something went wrong while loading movies. Check your connection or try again later`;
+
   });
   const renderSearch = (cards) => {
     const searchElement = new Search();
@@ -104,19 +90,20 @@ const renderAll = () => {
       }
     };
   };
+  console.log('test');
   
   const renderFilters = (cards) => {
-    filterContainer.innerHTML = `<a href="#stats" class="main-navigation__item main-navigation__item--additional">Stats</a>`;
+    filterContainer.innerHTML = ``;
     let amountHistory = Array.from(cards).filter((it) => it.towatched || it.alreadyWatched === true).length;
     let amountFavorite = Array.from(cards).filter((it) => it.favorite || it.favorite === true).length;
     let amountWatchlist = Array.from(cards).filter((it) => it.towatchlist || it.watchlist === true).length;
 
     const arrOfFilters = [[`Favorites`, `favorites`, amountFavorite], [`Watchlist`, `watchlist`, amountWatchlist], [`History`, `history`, amountHistory], [`All movies`, `all`, cards.length]];
-    if (amountFavorite < 10) {
+    /* if (amountFavorite < 10) {
       console.log('bll');
       hren.innerHTML = `novichek`;
-    };
-    const amontFilters = filterContainer.childNodes.length;
+    };*/
+    //const amontFilters = filterContainer.childNodes.length;
     for (let filter of arrOfFilters) {
       const filterItem = new Filter(filter);
       filterItem.render();

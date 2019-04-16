@@ -34055,7 +34055,7 @@ class Filter extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
 /*!*********************!*\
   !*** ./src/main.js ***!
   \*********************/
-/*! exports provided: ratingOfUser */
+/*! no exports provided */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -34066,14 +34066,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _statistic__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./statistic */ "./src/statistic.js");
 /* harmony import */ var _api__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./api */ "./src/api.js");
 /* harmony import */ var _search__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./search */ "./src/search.js");
-/* harmony import */ var _user_rating__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./user-rating */ "./src/user-rating.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ratingOfUser", function() { return _user_rating__WEBPACK_IMPORTED_MODULE_6__["ratingOfUser"]; });
+/* harmony import */ var _storage__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./storage */ "./src/storage.js");
 
 
 
 
 
 
+//import {ratingOfUser} from './user-rating';
 
 
 
@@ -34081,12 +34081,15 @@ const filmContainer = document.querySelector(`.films-list__container`);
 const filterContainer = document.querySelector(`.main-navigation`);
 const body = document.querySelector(`body`);
 const searchContainer = document.querySelector(`.header__search`);
+const profileRatingContainer = document.querySelector(`.header__profile profile`);
+const header = document.querySelector(`.header`);
+const hren = document.querySelector(`.profile__rating`);
 
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
 const api = new _api__WEBPACK_IMPORTED_MODULE_4__["API"]({endPoint: END_POINT, authorization: AUTHORIZATION});
 
-const profileRatingContainer = document.querySelector(`.header__profile profile`);
+
 
 const filterFilms = (nameFilter, dataForFilters) => {
   switch (nameFilter) {
@@ -34129,23 +34132,20 @@ const searchCards = (data, value) => {
     return data;
   }
   return data.filter((it) => it.title.toUpperCase().includes(value.toUpperCase()));
-};
+};  
 
 const renderAll = () => {
   api.getCards()
-    .then((movies) => {
-      console.log(movies);
-      renderFilters(movies);
-      filmContainer.innerHTML = `Loading movies...`;
-      renderFilms(movies);
-      renderSearch(movies);
-      calculateUserRating(movies);
-    })
-    .catch((movies) => {
-      renderFilters(movies);
-      filmContainer.innerHTML = `Something went wrong while loading movies. Check your connection or try again later`;
-    });
-
+  .then((movies) => {
+    console.log(movies);
+    renderFilters(movies);
+    renderFilms(movies);
+    renderSearch(movies);
+  })
+  .catch((movies) => {
+    renderFilters(movies);
+    filmContainer.innerHTML = `Something went wrong while loading movies. Check your connection or try again later`;
+  });
   const renderSearch = (cards) => {
     const searchElement = new _search__WEBPACK_IMPORTED_MODULE_5__["Search"]();
     searchElement.render();
@@ -34158,31 +34158,19 @@ const renderAll = () => {
       }
     };
   };
-  const calculateUserRating = (cards) => {
-    const amountWatchingMovies = cards.filter((it) => it.towatched || it.alreadyWatched === true).length;
-    const calculating = (amountWatchingMovies) => {
-      if (amountWatchingMovies <= 10) {
-        return 'novice';
-      } else if (amountWatchingMovies <= 19) {
-        return 'fan';
-      } else {
-        return 'movie buff';
-      }
-    };
-    const tag = `<p class="profile__rating">blabla</p>`;
-    console.log('test');
-    console.log(calculating(20));
-    console.log('test2');
-  }; 
   
-
   const renderFilters = (cards) => {
+    filterContainer.innerHTML = ``;
     let amountHistory = cards.filter((it) => it.towatched || it.alreadyWatched === true).length;
     let amountFavorite = cards.filter((it) => it.favorite || it.favorite === true).length;
     let amountWatchlist = cards.filter((it) => it.towatchlist || it.watchlist === true).length;
 
     const arrOfFilters = [[`Favorites`, `favorites`, amountFavorite], [`Watchlist`, `watchlist`, amountWatchlist], [`History`, `history`, amountHistory], [`All movies`, `all`, cards.length]];
-  
+    /* if (amountFavorite < 10) {
+      console.log('bll');
+      hren.innerHTML = `novichek`;
+    };*/
+    //const amontFilters = filterContainer.childNodes.length;
     for (let filter of arrOfFilters) {
       const filterItem = new _filter__WEBPACK_IMPORTED_MODULE_0__["Filter"](filter);
       filterItem.render();
@@ -34198,7 +34186,6 @@ const renderAll = () => {
   };
 
   const renderFilms = (cards) => {
-    //calculateUserRating(cards);
     filmContainer.innerHTML = ``;
 
     const statistic = new _statistic__WEBPACK_IMPORTED_MODULE_3__["Statistic"](cards);
@@ -34244,6 +34231,7 @@ const renderAll = () => {
         api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
         .then((newData) => {
           popUpElement.update(newData);
+          renderFilters(newData);
         });
       };
       popUpElement.onSubmit = (newData) => {
@@ -34286,8 +34274,8 @@ const renderAll = () => {
       };
     }
   };
-  //renderSearch();
 };
+
 renderAll();
 
 
@@ -34844,6 +34832,7 @@ class Statistic extends _component__WEBPACK_IMPORTED_MODULE_2__["Component"] {
     }
     bind() {
         document.querySelector(`.main-navigation__item--additional`).addEventListener(`click`, this._onStatisticRender);
+        //document.querySelector(`#statistic-all-time`).addEventListener(`click`, this._onStatisticRe);
     }
     unbind() {
         document.querySelector(`.main-navigation__item--additional`).removeEventListener(`click`, this._onStatisticRender);
@@ -34921,38 +34910,27 @@ class Statistic extends _component__WEBPACK_IMPORTED_MODULE_2__["Component"] {
 
 /***/ }),
 
-/***/ "./src/user-rating.js":
-/*!****************************!*\
-  !*** ./src/user-rating.js ***!
-  \****************************/
-/*! exports provided: ratingOfUser */
+/***/ "./src/storage.js":
+/*!************************!*\
+  !*** ./src/storage.js ***!
+  \************************/
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ratingOfUser", function() { return ratingOfUser; });
-/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./component */ "./src/component.js");
-
-
-class ratingOfUser extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
-    constructor(data) {
-        super();
-        this._amount = data;
+class Store {
+    constructor() {
+      this._data = null;
     }
-    set update(data) {
-        this._amount = data;
+    get data() {
+      return this._data;
     }
-    render() {
-        this._element = _component__WEBPACK_IMPORTED_MODULE_0__["Component"].createElement(this.template);
-        return this._element;
+    set data(data) {
+      this._data = data;
     }
-    get template() {
-        return `<section class="header__profile profile">
-                    <p class="profile__rating">${this._amount}</p>
-                </section>`;
-    }
-}
-
+};
+/* harmony default export */ __webpack_exports__["default"] = (new Store());
 
 /***/ })
 
