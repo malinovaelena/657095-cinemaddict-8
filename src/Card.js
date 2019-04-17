@@ -71,7 +71,6 @@ class Card extends Component {
     this._favorite = data.favorite;
     this._userComments = data.userComments;
   }
-  
   get template() {
     return `<article class="film-card">
       <h3 class="film-card__title">${this._title}</h3>
