@@ -5,7 +5,7 @@ import {Component} from './component';
 class Statistic extends Component {
     constructor(arrOfData) {
         super();
-        this._towatched = arrOfData.filter((it) => it.towatched === true);
+        this._towatched = arrOfData.filter((it) => it.alreadyWatched === true);
         this._onStatisticRender = this._onStatisticRender.bind(this);
         this._totalDuration = this._towatched.reduce((acc,item) => acc + item.duration, 0);
     }
@@ -108,9 +108,10 @@ class Statistic extends Component {
         document.querySelector(`.main-navigation__item--additional`).removeEventListener(`click`, this._onStatisticRender);
     }
     update(arrOfData) {
-        this._towatched = arrOfData.filter((it) => it.towatched === true);
+        this._towatched = arrOfData.filter((it) => it.alreadyWatched === true);
         this._totalDuration = this._totalDuration = this._towatched.reduce((acc,item) => acc + item.duration, 0);
         const genreMap = {};
+        
         for (let film of this._towatched) {
             for (let genre of film.genre) {
                 if (genreMap[genre] === undefined) {
@@ -132,6 +133,17 @@ class Statistic extends Component {
             });
       }
     get template() {
+        const genreMap = {};
+        for (let film of this._towatched) {
+            for (let genre of film.genre) {
+                if (genreMap[genre] === undefined) {
+                    genreMap[genre] = 1;
+                } else {
+                    genreMap[genre] += 1;
+                }
+            }
+        }
+        const arrGenreMapKeys = Object.keys(genreMap);
         return `<section class="statistic">
         <p class="statistic__rank">Your rank <span class="statistic__rank-label">Sci-Fighter</span></p>
       
@@ -165,7 +177,7 @@ class Statistic extends Component {
           </li>
           <li class="statistic__text-item">
             <h4 class="statistic__item-title">Top genre</h4>
-            <p class="statistic__item-text">1</p>
+            <p class="statistic__item-text">${arrGenreMapKeys[0]}</p>
           </li>
         </ul>
       
