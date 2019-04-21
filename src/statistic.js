@@ -6,29 +6,13 @@ class Statistic extends Component {
     constructor(arrOfData) {
         super();
         this._towatched = arrOfData.filter((it) => it.alreadyWatched === true);
-
         this._onStatisticRender = this._onStatisticRender.bind(this);
         this._onStatisticWeekClick = this._onStatisticWeekClick.bind(this);
         this._onStatisticDayClick = this._onStatisticDayClick.bind(this);
         this._onStatisticMonthClick = this._onStatisticMonthClick.bind(this);
         this._onStatisticYearClick = this._onStatisticYearClick.bind(this);
         this._onStatisticClick = this._onStatisticClick.bind(this);
-
         this._totalDuration = this._towatched.reduce((acc,item) => acc + item.duration, 0);
-        this._watchingDateArr = arrOfData.filter((it) => it.watchingDate !== null);//массив карточек, которые выбраны по дате просмотра не!равной нулю.
-        
-        this._arrWeek = arrOfData.filter((it) => {
-            return (Date.now() - it.watchingDate) <= 604800016;
-          });
-        this._arrDay = arrOfData.filter((it) => {
-            return (Date.now() - it.watchingDate) <= 86400000;
-          });
-        this._arrMonth = arrOfData.filter((it) => {
-            return (Date.now() - it.watchingDate) <= 2629800000;
-          });
-        //this.MONTH = 2629800000;
-        //this.WEEK = 604800016;
-        //this.DAY = 86400000;
     }
 
     grauphStatistic(_towatched) {
@@ -163,14 +147,11 @@ class Statistic extends Component {
     _onStatisticClick() {
         return typeof this._onStatisticClick === `function` && this._onStatisticClick();
     }
-
-
-
     render() {
         this._element = Component.createElement(this.template);
         this.bind();
         return this._element;
-      }
+    }
     unrender() {
         this.unbind();
         this._element.remove();
@@ -178,7 +159,7 @@ class Statistic extends Component {
     }
     get element() {
         return this._element;
-      }
+    }
     bind() {
         document.querySelector(`.main-navigation__item--additional`).addEventListener(`click`, this._onStatisticRender);  
     }
@@ -216,12 +197,12 @@ class Statistic extends Component {
         const newArr = arrGenreMap.sort((a,b) => {
             return b[1] - a[1];
         });
-            const arrayOfKeys = [];
-            const arrayOfValues = [];
-            newArr.forEach((item)=> {
-                arrayOfKeys.push(item[0]);
-                arrayOfValues.push(item[1]);
-            });
+        const arrayOfKeys = [];
+        const arrayOfValues = [];
+        newArr.forEach((item)=> {
+            arrayOfKeys.push(item[0]);
+             arrayOfValues.push(item[1]);
+        });
     }
 
 

@@ -105,11 +105,6 @@ class Popup extends Component {
       this.update(newData);
     }
   }
- /* _onCloseButtonClick(evt) {
-    if (`click` || evt.keyCode === 27) {
-      return typeof this._onClose === `function` && this._onClose();
-    }
-  }*/
   _onCloseButtonClick(evt) {
     if (evt.key === `Escape` || evt.target.classList[0] === `film-details__close-btn`) {
       return typeof this._onClose === `function` && this._onClose();
@@ -119,7 +114,6 @@ class Popup extends Component {
   render() {
     this._element = Component.createElement(this.template);
     this.bind();
-    ////////////////////////////////////////////////////
     this.renderCommentsList();
     return this._element;
   }
@@ -137,53 +131,46 @@ class Popup extends Component {
     this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick); 
     this._element.querySelector(`.film-details__comment-input`).addEventListener(`keydown`, this._onSubmitButtonClick);
     this._element.querySelector(`.film-details__inner`).addEventListener(`keydown`, this._onCloseButtonClick);
-///////////////////
     this._element.querySelector(`.film-details__watched-reset`).addEventListener(`click`, this._onDeleteComment);
   }
   unbind() {
     this._element.querySelector(`.film-details__close-btn`).removeEventListener(`click`, this._onCloseButtonClick);
     this._element.querySelector(`.film-details__comment-input`).removeEventListener(`keydown`, this._onSubmitButtonClick);
     this._element.querySelector(`.film-details__inner`).removeEventListener(`keydown`, this._onCloseButtonClick);
-///////////////////////////////
     this._element.querySelector(`.film-details__watched-reset`).removeEventListener(`click`, this._onDeleteComment);
   }
   shake() {
     const ANIMATION_TIMEOUT = 600;
     this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
-    
     setTimeout(() => {this._element.style.animation = ``}, ANIMATION_TIMEOUT);
   }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-enableForm() {
-  this._element.querySelector(`.film-details__comment-input`)
-    .removeAttribute(`disabled`);
-  this._element.querySelector(`.film-details__comment-input`)
-    .classList.remove(`film-details__comment-input--error`);
-  this._element.querySelector(`.film-details__add-emoji`).checked = false;
-}
-renderCommentsList(comments = this._userComments) {
-  const html = comments.map((comment) => {
-    return `<li class="film-details__comment">
-  <span class="film-details__comment-emoji">${Emoji[comment.emotion]}</span>
-    <div>
-    <p class="film-details__comment-text">${comment.comment}</p>
-      <p class="film-details__comment-info">
-      <span class="film-details__comment-author">${comment.author}</span>
-      <span class="film-details__comment-day">${moment(comment.date).fromNow()}</span>
-      </p>
-      </div>
-      </li>`;
+  enableForm() {
+    this._element.querySelector(`.film-details__comment-input`).removeAttribute(`disabled`);
+    this._element.querySelector(`.film-details__comment-input`).classList.remove(`film-details__comment-input--error`);
+    this._element.querySelector(`.film-details__add-emoji`).checked = false;
   }
-  ).join(``);
-  this._element.querySelector(`.film-details__comments-list`).innerHTML = html;
-  this._element.querySelector(`.film-details__comments-title .film-details__comments-count`).innerHTML = comments.length;
-}
-clearFrom() {
-    this._element.querySelector(`.film-details__comment-input`).value = ``;
+  renderCommentsList(comments = this._userComments) {
+    const html = comments.map((comment) => {
+      return `<li class="film-details__comment">
+    <span class="film-details__comment-emoji">${Emoji[comment.emotion]}</span>
+      <div>
+      <p class="film-details__comment-text">${comment.comment}</p>
+        <p class="film-details__comment-info">
+        <span class="film-details__comment-author">${comment.author}</span>
+        <span class="film-details__comment-day">${moment(comment.date).fromNow()}</span>
+        </p>
+        </div>
+        </li>`;
+    }
+    ).join(``);
+    this._element.querySelector(`.film-details__comments-list`).innerHTML = html;
+    this._element.querySelector(`.film-details__comments-title .film-details__comments-count`).innerHTML = comments.length;
+  }
+  clearFrom() {
+      this._element.querySelector(`.film-details__comment-input`).value = ``;
   }
   _onSubmitClick(evt) {
-    document.querySelector(`.film-details__watched-reset`)
-      .classList.add(`visually-hidden`);
+    document.querySelector(`.film-details__watched-reset`).classList.add(`visually-hidden`);
     if (evt.ctrlKey && evt.keyCode === 13) {
       const formData = new FormData(this._element.querySelector(`.film-details__inner`));
       const newData = this._processForm(formData);
@@ -200,16 +187,13 @@ clearFrom() {
     document.querySelector(`.film-details__watched-status`).innerHTML = `Comment added`;
     document.querySelector(`.film-details__watched-reset`).classList.remove(`visually-hidden`);
   }
-
   onDeleteSuccess() {
     document.querySelector(`.film-details__watched-status`).innerHTML = `Comment deleted`;
     document.querySelector(`.film-details__watched-reset`).classList.add(`visually-hidden`);
   }
-
   removeComment() {
     this._userComments.pop();
   }
-
   _deleteLastComment() {
     const lastComment = (this._userComments[this._userComments.length - 1]);
     if (lastComment.author === `Me`) {
@@ -222,15 +206,12 @@ clearFrom() {
       }
     }
   }
-
   _onDeleteComment() {
     this._deleteLastComment();
     if (typeof this._onDelete === `function`) {
       this._onDelete();
     }
   }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
   get template() {
     return `<section class="film-details">
   <form class="film-details__inner" action="" method="get">
@@ -383,7 +364,6 @@ clearFrom() {
   </form>
 </section>`;
   };
-
 }
 export {Popup};
 
