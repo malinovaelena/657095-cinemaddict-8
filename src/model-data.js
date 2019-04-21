@@ -14,7 +14,7 @@ class ModelCards {
       this.duration = data.film_info[`runtime`];
       this.dateOfFilm = data.film_info.release[`date`];
       this.country = data.film_info.release[`release_country`];
-
+      this.watchingDate = data.user_details[`watching_date`];
       this.comments = data.user_details[`Usercomments`];
       this.userComments = data[`comments`];
 

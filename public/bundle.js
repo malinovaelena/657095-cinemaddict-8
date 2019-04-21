@@ -34066,14 +34066,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _statistic__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./statistic */ "./src/statistic.js");
 /* harmony import */ var _api__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./api */ "./src/api.js");
 /* harmony import */ var _search__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./search */ "./src/search.js");
-/* harmony import */ var _storage__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./storage */ "./src/storage.js");
 
 
 
 
-
-
-//import {ratingOfUser} from './user-rating';
 
 
 
@@ -34081,9 +34077,6 @@ const filmContainer = document.querySelector(`.films-list__container`);
 const filterContainer = document.querySelector(`.main-navigation`);
 const body = document.querySelector(`body`);
 const searchContainer = document.querySelector(`.header__search`);
-const profileRatingContainer = document.querySelector(`.header__profile profile`);
-const header = document.querySelector(`.header`);
-const hren = document.querySelector(`.profile__rating`);
 
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
@@ -34109,35 +34102,27 @@ const filterFilms = (nameFilter, dataForFilters) => {
       return dataForFilters;
   }
 };
-const filterAmount = (nameFilter, dataForFilters) => {
-  switch (nameFilter) {
-    case `All movies`:
-      return dataForFilters.length;
-
-    case `History`:
-      return dataForFilters.filter((it) => it.towatched || it.alreadyWatched === true).length;
-
-    case `Watchlist`:
-      return dataForFilters.filter((it) => it.towatchlist || it.watchlist === true).length;
-
-    case `Favorites`:
-      return dataForFilters.filter((it) => it.favorite || it.favorite === true).length;
-
-    default:
-      return dataForFilters.length;
-  }
-};
 const searchCards = (data, value) => {
   if (value === ``) {
     return data;
   }
   return data.filter((it) => it.title.toUpperCase().includes(value.toUpperCase()));
-};  
+};
+const showProfileRating = (value) => {
+  if (value < 10) {
+    return `novice`;
+  } else if (value <= 18) {
+    return `fan`;
+  } else {
+    return `movie buff`;
+  };
+};
+    
 
 const renderAll = () => {
   api.getCards()
   .then((movies) => {
-    console.log(movies);
+    //console.log(movies);
     renderFilters(movies);
     renderFilms(movies);
     renderSearch(movies);
@@ -34145,7 +34130,7 @@ const renderAll = () => {
   .catch((movies) => {
     renderFilters(movies);
     filmContainer.innerHTML = `Something went wrong while loading movies. Check your connection or try again later`;
-  });
+  });//в функции main
   const renderSearch = (cards) => {
     const searchElement = new _search__WEBPACK_IMPORTED_MODULE_5__["Search"]();
     searchElement.render();
@@ -34160,25 +34145,24 @@ const renderAll = () => {
   };
   
   const renderFilters = (cards) => {
-    filterContainer.innerHTML = ``;
-    let amountHistory = cards.filter((it) => it.towatched || it.alreadyWatched === true).length;
-    let amountFavorite = cards.filter((it) => it.favorite || it.favorite === true).length;
-    let amountWatchlist = cards.filter((it) => it.towatchlist || it.watchlist === true).length;
+    console.log(cards);
+    filterContainer.innerHTML = `<a href="#stats" class="main-navigation__item main-navigation__item--additional">Stats</a>`;
+    let amountHistory = Array.from(cards).filter((it) => it.towatched || it.alreadyWatched === true).length;
+    let amountFavorite = Array.from(cards).filter((it) => it.favorite || it.favorite === true).length;
+    let amountWatchlist = Array.from(cards).filter((it) => it.towatchlist || it.watchlist === true).length;
 
     const arrOfFilters = [[`Favorites`, `favorites`, amountFavorite], [`Watchlist`, `watchlist`, amountWatchlist], [`History`, `history`, amountHistory], [`All movies`, `all`, cards.length]];
-    /* if (amountFavorite < 10) {
-      console.log('bll');
-      hren.innerHTML = `novichek`;
-    };*/
-    //const amontFilters = filterContainer.childNodes.length;
+    const profileUserContainer = document.querySelector(`.profile__rating`);
+    const NameOfUser = showProfileRating(amountHistory);
+    profileUserContainer.innerHTML = NameOfUser;
+
     for (let filter of arrOfFilters) {
+      
       const filterItem = new _filter__WEBPACK_IMPORTED_MODULE_0__["Filter"](filter);
       filterItem.render();
       filterContainer.insertAdjacentElement(`afterBegin`, filterItem.element);
-
+      
       filterItem.onFilter = () => {
-        const amountforEach = filterAmount(filter[0], cards);
-        filterItem.update(amountforEach);
         const cardsForThisFilter = filterFilms(filter[0], cards);
         renderFilms(cardsForThisFilter);
       };
@@ -34194,7 +34178,8 @@ const renderAll = () => {
       filmContainer.innerHTML = ``;
       statistic.render();
       filmContainer.appendChild(statistic.element);
-      statistic.grauphStatistic();
+      statistic.grauphStatistic();//возвращать статистику
+      statistic.bindData();
     };
 
     for (let dataOneCard of cards) {
@@ -34214,6 +34199,8 @@ const renderAll = () => {
         api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
         .then((newData) => {
           popUpElement.update(newData);
+          renderFilters(cards);
+          console.log(cards);
         });
       };
 
@@ -34223,6 +34210,8 @@ const renderAll = () => {
         .then((newData) => {
           popUpElement.update(newData);
           statistic.update(cards);
+          renderFilters(cards);
+          console.log(cards);
         });
       };
 
@@ -34231,7 +34220,8 @@ const renderAll = () => {
         api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
         .then((newData) => {
           popUpElement.update(newData);
-          renderFilters(newData);
+          renderFilters(cards);
+          console.log(cards);
         });
       };
       popUpElement.onSubmit = (newData) => {
@@ -34277,8 +34267,10 @@ const renderAll = () => {
 };
 
 renderAll();
-
-
+//1. сделать статистику
+//2. сделать обработку комментариев
+//3. сделать вывод 5 фильмов
+//4. переписать полносью мейн.
 
 /***/ }),
 
@@ -34308,7 +34300,7 @@ class ModelCards {
       this.duration = data.film_info[`runtime`];
       this.dateOfFilm = data.film_info.release[`date`];
       this.country = data.film_info.release[`release_country`];
-
+      this.watchingDate = data.user_details[`watching_date`];
       this.comments = data.user_details[`Usercomments`];
       this.userComments = data[`comments`];
 
@@ -34735,8 +34727,17 @@ class Statistic extends _component__WEBPACK_IMPORTED_MODULE_2__["Component"] {
     constructor(arrOfData) {
         super();
         this._towatched = arrOfData.filter((it) => it.alreadyWatched === true);
+
         this._onStatisticRender = this._onStatisticRender.bind(this);
+        this._onStatisticsDeltaRender = this._onStatisticsDeltaRender.bind(this);
+
         this._totalDuration = this._towatched.reduce((acc,item) => acc + item.duration, 0);
+        this._watchingDateArr = arrOfData.filter((it) => it.watchingDate !== null);//массив карточек, которые выбраны по дате просмотра не!равной нулю.
+
+        this.MONTH = 2629800000;
+        this.WEEK = 604800016;
+        this.DAY = 86400000;
+        
     }
 
     grauphStatistic() {
@@ -34826,16 +34827,52 @@ class Statistic extends _component__WEBPACK_IMPORTED_MODULE_2__["Component"] {
     set onStatisticRender(fn) {
         this._onStatisticRender = fn;
     }
+    set onStatisticsDeltaRender(fn) {
+        this._onStatisticsDeltaRender = fn;
+    }
     _onStatisticRender(event) {
         event.preventDefault();
         return typeof this._onStatisticRender === `function` && this._onStatisticRender();
     }
+    
+    _onStatisticsDeltaRender() { 
+        console.log('test1');
+        const date = Date.now();
+        const arrForFilter = arrOfData.filter((it) =>  {
+            return (it.watchingDate - date) <= 86400000;
+        });
+        console.log(Date.now());
+        console.log(this._watchingDateArr, 'массив весь!');
+        console.log(arrForFilter, 'новый массив');
+    }
+    render() {
+        this._element = _component__WEBPACK_IMPORTED_MODULE_2__["Component"].createElement(this.template);
+        this.bind();
+        return this._element;
+      }
+    unrender() {
+        this.unbind();
+        this._element.remove();
+        this._element = null;
+    }
+    get element() {
+        return this._element;
+      }
     bind() {
-        document.querySelector(`.main-navigation__item--additional`).addEventListener(`click`, this._onStatisticRender);
-        //document.querySelector(`#statistic-all-time`).addEventListener(`click`, this._onStatisticRe);
+        document.querySelector(`.main-navigation__item--additional`).addEventListener(`click`, this._onStatisticRender);  
     }
     unbind() {
         document.querySelector(`.main-navigation__item--additional`).removeEventListener(`click`, this._onStatisticRender);
+    }
+    bindData() {
+        this._element.querySelector(`#statistic-month`).addEventListener(`click`, this._onStatisticsDeltaRender);
+        this._element.querySelector(`#statistic-week`).addEventListener(`click`, this._onStatisticsDeltaRender);
+        this._element.querySelector(`#statistic-today`).addEventListener(`click`,this._onStatisticsDeltaRender);
+    }
+    unbindData() {
+        this._element.querySelector(`#statistic-month`).removeEventListener(`click`, this._onStatisticsDeltaRender);
+        this._element.querySelector(`#statistic-week`).removeEventListener(`click`, this._onStatisticsDeltaRender);
+        this._element.querySelector(`#statistic-today`).removeEventListener(`click`,this._onStatisticsDeltaRender);
     }
     update(arrOfData) {
         this._towatched = arrOfData.filter((it) => it.alreadyWatched === true);
@@ -34860,8 +34897,21 @@ class Statistic extends _component__WEBPACK_IMPORTED_MODULE_2__["Component"] {
                 arrayOfKeys.push(item[0]);
                 arrayOfValues.push(item[1]);
             });
-      }
+    }
+
+
     get template() {
+        const genreMap = {};
+        for (let film of this._towatched) {
+            for (let genre of film.genre) {
+                if (genreMap[genre] === undefined) {
+                    genreMap[genre] = 1;
+                } else {
+                    genreMap[genre] += 1;
+                }
+            }
+        }
+        const genreMapKeys = Object.keys(genreMap);
         return `<section class="statistic">
         <p class="statistic__rank">Your rank <span class="statistic__rank-label">Sci-Fighter</span></p>
       
@@ -34895,7 +34945,7 @@ class Statistic extends _component__WEBPACK_IMPORTED_MODULE_2__["Component"] {
           </li>
           <li class="statistic__text-item">
             <h4 class="statistic__item-title">Top genre</h4>
-            <p class="statistic__item-text">1</p>
+            <p class="statistic__item-text">${genreMapKeys[0]}</p>
           </li>
         </ul>
       
@@ -34907,30 +34957,6 @@ class Statistic extends _component__WEBPACK_IMPORTED_MODULE_2__["Component"] {
     }
 };
 
-
-/***/ }),
-
-/***/ "./src/storage.js":
-/*!************************!*\
-  !*** ./src/storage.js ***!
-  \************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-class Store {
-    constructor() {
-      this._data = null;
-    }
-    get data() {
-      return this._data;
-    }
-    set data(data) {
-      this._data = data;
-    }
-};
-/* harmony default export */ __webpack_exports__["default"] = (new Store());
 
 /***/ })
 
