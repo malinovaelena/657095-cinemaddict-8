@@ -34073,11 +34073,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const filmContainer = document.querySelector(`.films-list__container`);
+const filmContainer = document.querySelectorAll(`.films-list__container`);
 const filterContainer = document.querySelector(`.main-navigation`);
 const body = document.querySelector(`body`);
 const searchContainer = document.querySelector(`.header__search`);
-
+const showMoreButton = document.querySelector(`.films-list__show-more`);
+let cardToRenderPosition = 5;
+let dataToRender;
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
 const api = new _api__WEBPACK_IMPORTED_MODULE_4__["API"]({endPoint: END_POINT, authorization: AUTHORIZATION});
@@ -34117,20 +34119,57 @@ const showProfileRating = (value) => {
     return `movie buff`;
   };
 };
-    
+
+const ArraysOfTime = (arr,value) => {
+  if (value === `all-time`) {
+    return arr;
+  } else if (value === `today`) {
+    arr.filter((it) => {
+      return (Date.now() - it.watchingDate) <= 86400000;
+    });
+  } else if (value === `week`) {
+    arr.filter((it) => {
+      return (Date.now() - it.watchingDate) <= 86400000;
+    });
+  } else if (value === `month`) {
+    arr.filter((it) => {
+      return (Date.now() - it.watchingDate) <= 2629800000;
+    });
+  } else if (value === `year`) {
+    arr.filter((it) => {
+      return (Date.now() - it.watchingDate) <= 31536000000;
+    });
+  }
+};
 
 const renderAll = () => {
   api.getCards()
   .then((movies) => {
-    //console.log(movies);
+    dataToRender = movies;
     renderFilters(movies);
     renderFilms(movies);
     renderSearch(movies);
+    renderMostCommented(movies);
+    renderTopRated(movies);
+    showMoreCards(dataToRender);
+    showMoreButton.addEventListener(`click`, onShowMoreButtonClick);
   })
   .catch((movies) => {
     renderFilters(movies);
-    filmContainer.innerHTML = `Something went wrong while loading movies. Check your connection or try again later`;
+    filmContainer[0].innerHTML = `Something went wrong while loading movies. Check your connection or try again later`;
   });//в функции main
+
+  const onShowMoreButtonClick = () => showMoreCards(dataToRender);
+
+  const showMoreCards = (data) => {
+    renderFilms(data.slice(0, cardToRenderPosition));
+    if (cardToRenderPosition >= data.length) {
+      showMoreButton.removeEventListener(`click`, onShowMoreButtonClick);
+      showMoreButton.classList.add(`visually-hidden`);
+    }
+    cardToRenderPosition += 5;
+  };
+
   const renderSearch = (cards) => {
     const searchElement = new _search__WEBPACK_IMPORTED_MODULE_5__["Search"]();
     searchElement.render();
@@ -34145,7 +34184,6 @@ const renderAll = () => {
   };
   
   const renderFilters = (cards) => {
-    console.log(cards);
     filterContainer.innerHTML = `<a href="#stats" class="main-navigation__item main-navigation__item--additional">Stats</a>`;
     let amountHistory = Array.from(cards).filter((it) => it.towatched || it.alreadyWatched === true).length;
     let amountFavorite = Array.from(cards).filter((it) => it.favorite || it.favorite === true).length;
@@ -34164,113 +34202,294 @@ const renderAll = () => {
       
       filterItem.onFilter = () => {
         const cardsForThisFilter = filterFilms(filter[0], cards);
-        renderFilms(cardsForThisFilter);
+        //renderFilms(cardsForThisFilter);
+        showMoreButton.classList.remove(`visually-hidden`);
+        dataToRender = cardsForThisFilter;
+        showMoreButton.removeEventListener(`click`, onShowMoreButtonClick);
+        showMoreButton.addEventListener(`click`, onShowMoreButtonClick);
+        cardToRenderPosition = 5;
+        showMoreCards(dataToRender);
       };
     }
   };
 
   const renderFilms = (cards) => {
-    filmContainer.innerHTML = ``;
+    filmContainer[0].innerHTML = ``;
 
-    const statistic = new _statistic__WEBPACK_IMPORTED_MODULE_3__["Statistic"](cards);
-    statistic.bind();
-    statistic.onStatisticRender = () => {
-      filmContainer.innerHTML = ``;
-      statistic.render();
-      filmContainer.appendChild(statistic.element);
-      statistic.grauphStatistic();//возвращать статистику
-      statistic.bindData();
-    };
+    //массивы из главного массива сортированные по дате 
+    let lastWeekArr = cards.filter((it) => {
+      return (Date.now() - it.watchingDate) <= 604800016;
+    });
+    let lastDayArr = cards.filter((it) => {
+      return (Date.now() - it.watchingDate) <= 86400000;
+    });
+    let lastMonthArr = cards.filter((it) => {
+      return (Date.now() - it.watchingDate) <= 2629800000;
+    });
+    let lastYEarArr = cards.filter((it) => {
+      return (Date.now() - it.watchingDate) <= 31536000000;
+    });
+      const statistic = new _statistic__WEBPACK_IMPORTED_MODULE_3__["Statistic"](cards);
+      statistic.bind();
+      statistic.onStatisticRender = () => {
+        filmContainer[0].innerHTML = ``;
+        statistic.render();
+        filmContainer[0].appendChild(statistic.element);
+        statistic.grauphStatistic();//возвращать статистику
+        statistic.bindData();//привязали обработчики-функ. к фильтрам графика по дате!
 
-    for (let dataOneCard of cards) {
+        statistic.onStatisticWeekClick = () => { //кликаем на статистику -фильтр по неделе
+         
+          statistic.unrender();
+          statistic.update(lastWeekArr);
+          statistic.render();
+          filmContainer[0].appendChild(statistic.element);
+          statistic.grauphStatistic();
+          statistic.bindData();
+        };
+        statistic.onStatisticMonthClick = () => {
+         
+          statistic.unrender();
+          statistic.update(lastMonthArr);
+          statistic.render();
+          filmContainer[0].appendChild(statistic.element);
+          statistic.grauphStatistic();
+          statistic.bindData();
+        };
+        statistic.onStatisticDayClick = () => {
+          
+          statistic.unrender();
+          statistic.update(lastDayArr);
+          statistic.render();
+          filmContainer[0].appendChild(statistic.element);
+          statistic.grauphStatistic();
+          statistic.bindData();
+        };
+        statistic.onStatisticYearClick = () => {
+          statistic.unrender();
+          statistic.update(lastYEarArr);
+          statistic.render();
+          filmContainer[0].appendChild(statistic.element);
+          statistic.grauphStatistic();
+          statistic.bindData();
+        };
+        statistic.onStatisticClick = () => {
+          statistic.unrender();
+          statistic.update(cards);
+          statistic.render();
+          filmContainer[0].appendChild(statistic.element);
+          statistic.grauphStatistic();
+          statistic.bindData();
+        };
+      };
+          for (let dataOneCard of cards) {
+          
+          const cardElement = new _card__WEBPACK_IMPORTED_MODULE_2__["Card"](dataOneCard);
+          const popUpElement = new _pop_up__WEBPACK_IMPORTED_MODULE_1__["Popup"](dataOneCard);
+      
+          cardElement.render();
+          filmContainer[0].appendChild(cardElement.element);
+        
+          cardElement.onClick = () => {
+            popUpElement.render();
+            body.appendChild(popUpElement.element);
+          };
+
+          cardElement.onAddToWatchList = () => {
+            dataOneCard.watchlist = !dataOneCard.watchlist;
+            api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
+            .then((newData) => {
+              popUpElement.update(newData);
+              renderFilters(cards);
+            });
+          };
+
+          cardElement.onMarkAsWatched = () => {
+            dataOneCard.alreadyWatched = !dataOneCard.alreadyWatched;
+            api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
+            .then((newData) => {
+              popUpElement.update(newData);
+              //statistic.update(cards);
+              renderFilters(cards);
+            });
+          };
+
+          cardElement.onMarkAsFavorite = () => {
+            dataOneCard.favorite = !dataOneCard.favorite;
+            api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
+            .then((newData) => {
+              popUpElement.update(newData);
+              renderFilters(cards);
+            });
+          };
+          popUpElement.onSubmit = (newData, type = `add`) => {
+            const block = () => {
+              popUpElement.element.querySelector(`.film-details__comment-input`).disabled = true;
+              popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = true;
+            };
+            const unblock = () => {
+              popUpElement.element.querySelector(`.film-details__comment-input`).disabled = false;
+              popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = false;
+            };
+            const inputRedWarning = () => {
+              popUpElement.element.querySelector(`.film-details__comment-input`).style.borderColor = `#FF0000`;
+              popUpElement.element.querySelector(`.film-details__user-rating-label`).style.backgroundColor = `#FF0000`;
+            };
+            block();
+            const load = (isSuccess) => {
+              return new Promise((res, rej) => {
+                setTimeout(isSuccess ? res : rej, 1000);
+              });
+            };
+            Object.assign(dataOneCard, newData);
+            api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()});
+            load(true)
+              .then(() => {  
+                unblock();
+                /*
+                popUpElement.unrender();
+                let oldFilm = cardElement.element;
+                filmContainer[0].replaceChild(cardElement.element, oldFilm);
+                */
+                popUpElement.renderCommentsList(dataOneCard.userComments);
+                let oldFilm = cardElement.element;
+                cardElement.render();
+                filmContainer[0].replaceChild(cardElement.element, oldFilm);
+                popUpElement.clearFrom();
+                popUpElement.enableForm();
+                if (type === `add`) {
+                  popUpElement.onSubmitSuccess();
+                };
+                            
+              })
+              .catch(() => {
+                popUpElement.shake();
+                inputRedWarning();
+                unblock();    
+              });
+          };
+
+          popUpElement.onClose = () => {
+            popUpElement.unrender();
+          };
+        }
+
+  };//renderfilms
+  const renderMostCommented = (cards) => {
+    const mostCommentedContainer = filmContainer[2];
+    const mostCommented = cards.sort((a, b) => b.userComments.length - a.userComments.length).slice(0, 2);
+    
+    for (let dataOneCard of mostCommented) {
       const cardElement = new _card__WEBPACK_IMPORTED_MODULE_2__["Card"](dataOneCard);
       const popUpElement = new _pop_up__WEBPACK_IMPORTED_MODULE_1__["Popup"](dataOneCard);
 
       cardElement.render();
-      filmContainer.appendChild(cardElement.element);
-
+      mostCommentedContainer.appendChild(cardElement.element);
       cardElement.onClick = () => {
         popUpElement.render();
         body.appendChild(popUpElement.element);
+        cardElement.unbind();
       };
-
-      cardElement.onAddToWatchList = () => {
-        dataOneCard.watchlist = !dataOneCard.watchlist;
-        api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
-        .then((newData) => {
-          popUpElement.update(newData);
-          renderFilters(cards);
-          console.log(cards);
-        });
-      };
-
-      cardElement.onMarkAsWatched = () => {
-        dataOneCard.alreadyWatched = !dataOneCard.alreadyWatched;
-        api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
-        .then((newData) => {
-          popUpElement.update(newData);
-          statistic.update(cards);
-          renderFilters(cards);
-          console.log(cards);
-        });
-      };
-
-      cardElement.onMarkAsFavorite = () => {
-        dataOneCard.favorite = !dataOneCard.favorite;
-        api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
-        .then((newData) => {
-          popUpElement.update(newData);
-          renderFilters(cards);
-          console.log(cards);
-        });
-      };
-      popUpElement.onSubmit = (newData) => {
-        const block = () => {
-          popUpElement.element.querySelector(`.film-details__comment-input`).disabled = true;
-          popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = true;
+        popUpElement.onSubmit = (newData) => {
+          const block = () => {
+            popUpElement.element.querySelector(`.film-details__comment-input`).disabled = true;
+            popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = true;
+          };
+          const unblock = () => {
+            popUpElement.element.querySelector(`.film-details__comment-input`).disabled = false;
+            popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = false;
+          };
+          const inputRedWarning = () => {
+            popUpElement.element.querySelector(`.film-details__comment-input`).style.borderColor = `#FF0000`;
+            popUpElement.element.querySelector(`.film-details__user-rating-label`).style.backgroundColor = `#FF0000`;
+          };
+          block();
+          const load = (isSuccess) => {
+            return new Promise((res, rej) => {
+              setTimeout(isSuccess ? res : rej, 1000);
+            });
+          };
+          Object.assign(dataOneCard, newData);
+          api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()});
+          load(true)
+            .then(() => {
+              unblock();
+              popUpElement.unrender();
+              let oldFilm = cardElement.element;
+              filmContainer[0].replaceChild(cardElement.element, oldFilm);
+            })
+            .catch(() => {
+              popUpElement.shake();
+              inputRedWarning();
+              unblock();
+            });
         };
-        const unblock = () => {
-          popUpElement.element.querySelector(`.film-details__comment-input`).disabled = false;
-          popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = false;
+  
+        popUpElement.onClose = () => {
+          popUpElement.unrender();
         };
-        const inputRedWarning = () => {
-          popUpElement.element.querySelector(`.film-details__comment-input`).style.borderColor = `#FF0000`;
-          popUpElement.element.querySelector(`.film-details__user-rating-label`).style.backgroundColor = `#FF0000`;
-        };
-        block();
-        const load = (isSuccess) => {
-          return new Promise((res, rej) => {
-            setTimeout(isSuccess ? res : rej, 1000);
-          });
-        };
-        Object.assign(dataOneCard, newData);
-        api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()});
-        load(true)
-          .then(() => {
-            unblock();
-            popUpElement.unrender();
-            let oldFilm = cardElement.element;
-            filmContainer.replaceChild(cardElement.element, oldFilm);
-          })
-          .catch(() => {
-            popUpElement.shake();
-            inputRedWarning();
-            unblock();
-          });
-      };
 
-      popUpElement.onClose = () => {
-        popUpElement.unrender();
-      };
+      
     }
   };
-};
+  const renderTopRated = (cards) => {
+    const TopRatedContainer = filmContainer[1];
+    const topRated = cards.sort((a, b) => b.rating - a.rating).slice(0, 2);
+    for (let dataOneCard of topRated) {
+      const cardElement = new _card__WEBPACK_IMPORTED_MODULE_2__["Card"](dataOneCard);
+      const popUpElement = new _pop_up__WEBPACK_IMPORTED_MODULE_1__["Popup"](dataOneCard);
+      cardElement.render();
+      TopRatedContainer.appendChild(cardElement.element);
+      cardElement.onClick = () => {
+        popUpElement.render();
+        body.appendChild(popUpElement.element);
+        cardElement.unbind();
+      };
+        popUpElement.onSubmit = (newData) => {
+          const block = () => {
+            popUpElement.element.querySelector(`.film-details__comment-input`).disabled = true;
+            popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = true;
+          };
+          const unblock = () => {
+            popUpElement.element.querySelector(`.film-details__comment-input`).disabled = false;
+            popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = false;
+          };
+          const inputRedWarning = () => {
+            popUpElement.element.querySelector(`.film-details__comment-input`).style.borderColor = `#FF0000`;
+            popUpElement.element.querySelector(`.film-details__user-rating-label`).style.backgroundColor = `#FF0000`;
+          };
+          block();
+          const load = (isSuccess) => {
+            return new Promise((res, rej) => {
+              setTimeout(isSuccess ? res : rej, 1000);
+            });
+          };
+          Object.assign(dataOneCard, newData);
+          api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()});
+          load(true)
+            .then(() => {
+              unblock();
+              popUpElement.unrender();
+              let oldFilm = cardElement.element;
+              filmContainer[0].replaceChild(cardElement.element, oldFilm);
+            })
+            .catch(() => {
+              popUpElement.shake();
+              inputRedWarning();
+              unblock();
+            });
+        };
+  
+        popUpElement.onClose = () => {
+          popUpElement.unrender();
+        };
+      
+      };
+  };
+
+};//render all
 
 renderAll();
-//1. сделать статистику
-//2. сделать обработку комментариев
-//3. сделать вывод 5 фильмов
-//4. переписать полносью мейн.
 
 /***/ }),
 
@@ -34384,6 +34603,8 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
 
       this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
       this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
+      this._onDeleteComment = this._onDeleteComment.bind(this);
+      this._deleteLastComment = this._deleteLastComment.bind(this);
   }
   _processForm(formData) {
     const entry = {
@@ -34453,14 +34674,22 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
       this.update(newData);
     }
   }
-  _onCloseButtonClick(evt) {
-    if (true) {
+ /* _onCloseButtonClick(evt) {
+    if (`click` || evt.keyCode === 27) {
       return typeof this._onClose === `function` && this._onClose();
     }
+  }*/
+  _onCloseButtonClick(evt) {
+    if (evt.key === `Escape` || evt.target.classList[0] === `film-details__close-btn`) {
+      return typeof this._onClose === `function` && this._onClose();
+    }
+    return null;
   }
   render() {
     this._element = _component__WEBPACK_IMPORTED_MODULE_0__["Component"].createElement(this.template);
     this.bind();
+    ////////////////////////////////////////////////////
+    this.renderCommentsList();
     return this._element;
   }
 
@@ -34469,22 +34698,23 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
     this._element.remove();
     this._element = null;
   }
-
   get element() {
     return this._element;
   }
   
   bind() {
     this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick); 
-    this._element.querySelector(`.film-details__inner`).addEventListener(`keydown`, this._onSubmitButtonClick);
+    this._element.querySelector(`.film-details__comment-input`).addEventListener(`keydown`, this._onSubmitButtonClick);
     this._element.querySelector(`.film-details__inner`).addEventListener(`keydown`, this._onCloseButtonClick);
-    
+///////////////////
+    this._element.querySelector(`.film-details__watched-reset`).addEventListener(`click`, this._onDeleteComment);
   }
   unbind() {
     this._element.querySelector(`.film-details__close-btn`).removeEventListener(`click`, this._onCloseButtonClick);
-    this._element.querySelector(`.film-details__inner`).removeEventListener(`keydown`, this._onSubmitButtonClick);
+    this._element.querySelector(`.film-details__comment-input`).removeEventListener(`keydown`, this._onSubmitButtonClick);
     this._element.querySelector(`.film-details__inner`).removeEventListener(`keydown`, this._onCloseButtonClick);
-    
+///////////////////////////////
+    this._element.querySelector(`.film-details__watched-reset`).removeEventListener(`click`, this._onDeleteComment);
   }
   shake() {
     const ANIMATION_TIMEOUT = 600;
@@ -34492,7 +34722,84 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
     
     setTimeout(() => {this._element.style.animation = ``}, ANIMATION_TIMEOUT);
   }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+enableForm() {
+  this._element.querySelector(`.film-details__comment-input`)
+    .removeAttribute(`disabled`);
+  this._element.querySelector(`.film-details__comment-input`)
+    .classList.remove(`film-details__comment-input--error`);
+  this._element.querySelector(`.film-details__add-emoji`).checked = false;
+}
+renderCommentsList(comments = this._userComments) {
+  const html = comments.map((comment) => {
+    return `<li class="film-details__comment">
+  <span class="film-details__comment-emoji">${Emoji[comment.emotion]}</span>
+    <div>
+    <p class="film-details__comment-text">${comment.comment}</p>
+      <p class="film-details__comment-info">
+      <span class="film-details__comment-author">${comment.author}</span>
+      <span class="film-details__comment-day">${moment__WEBPACK_IMPORTED_MODULE_1___default()(comment.date).fromNow()}</span>
+      </p>
+      </div>
+      </li>`;
+  }
+  ).join(``);
+  this._element.querySelector(`.film-details__comments-list`).innerHTML = html;
+  this._element.querySelector(`.film-details__comments-title .film-details__comments-count`).innerHTML = comments.length;
+}
+clearFrom() {
+    this._element.querySelector(`.film-details__comment-input`).value = ``;
+  }
+  _onSubmitClick(evt) {
+    document.querySelector(`.film-details__watched-reset`)
+      .classList.add(`visually-hidden`);
+    if (evt.ctrlKey && evt.keyCode === 13) {
+      const formData = new FormData(this._element.querySelector(`.film-details__inner`));
+      const newData = this._processForm(formData);
+      if (typeof this._onSubmit === `function`) {
+        this.update(newData);
+        this._onSubmit(newData);
+      }
+    }
+  }
+  set onDelete(fn) {
+    this._onDelete = fn;
+  }
+  onSubmitSuccess() {
+    document.querySelector(`.film-details__watched-status`).innerHTML = `Comment added`;
+    document.querySelector(`.film-details__watched-reset`).classList.remove(`visually-hidden`);
+  }
 
+  onDeleteSuccess() {
+    document.querySelector(`.film-details__watched-status`).innerHTML = `Comment deleted`;
+    document.querySelector(`.film-details__watched-reset`).classList.add(`visually-hidden`);
+  }
+
+  removeComment() {
+    this._userComments.pop();
+  }
+
+  _deleteLastComment() {
+    const lastComment = (this._userComments[this._userComments.length - 1]);
+    if (lastComment.author === `Me`) {
+      this.removeComment();
+      const formData = new FormData(this._element.querySelector(`.film-details__inner`));
+      const newData = this._processForm(formData, `delete`);
+      if (typeof this._onSubmit === `function`) {
+        this.update(newData);
+        this._onSubmit(newData, `delete`);
+      }
+    }
+  }
+
+  _onDeleteComment() {
+    this._deleteLastComment();
+    if (typeof this._onDelete === `function`) {
+      this._onDelete();
+    }
+  }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
   get template() {
     return `<section class="film-details">
   <form class="film-details__inner" action="" method="get">
@@ -34570,17 +34877,6 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
       <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._userComments.length}</span></h3>
 
       <ul class="film-details__comments-list">
-      ${this._userComments.map((comment) => {
-        return `<li class="film-details__comment">
-            <span class="film-details__comment-emoji">${Emoji[comment.emotion]}</span>
-          <div>
-          <p class="film-details__comment-text">${comment.comment}</p>
-          <p class="film-details__comment-info">
-            <span class="film-details__comment-author">${comment.author}</span>
-          <span class="film-details__comment-day">${moment__WEBPACK_IMPORTED_MODULE_1___default()(comment.date).fromNow()}</span>
-          </p>
-          </div>
-          </li>`;}).join(``)}
       </ul>
 
       <div class="film-details__new-comment">
@@ -34607,8 +34903,8 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
 
     <section class="film-details__user-rating-wrap">
       <div class="film-details__user-rating-controls">
-        <span class="film-details__watched-status ${this._alreadyWatched && `film-details__watched-status--active`}">Already watched</span>
-        <button class="film-details__watched-reset" type="button">undo</button>
+        <span class="film-details__watched-status">Already watched</span>
+        <button class="film-details__watched-reset visually-hidden" type="button">undo</button>
       </div>
 
       <div class="film-details__user-score">
@@ -34729,18 +35025,30 @@ class Statistic extends _component__WEBPACK_IMPORTED_MODULE_2__["Component"] {
         this._towatched = arrOfData.filter((it) => it.alreadyWatched === true);
 
         this._onStatisticRender = this._onStatisticRender.bind(this);
-        this._onStatisticsDeltaRender = this._onStatisticsDeltaRender.bind(this);
+        this._onStatisticWeekClick = this._onStatisticWeekClick.bind(this);
+        this._onStatisticDayClick = this._onStatisticDayClick.bind(this);
+        this._onStatisticMonthClick = this._onStatisticMonthClick.bind(this);
+        this._onStatisticYearClick = this._onStatisticYearClick.bind(this);
+        this._onStatisticClick = this._onStatisticClick.bind(this);
 
         this._totalDuration = this._towatched.reduce((acc,item) => acc + item.duration, 0);
         this._watchingDateArr = arrOfData.filter((it) => it.watchingDate !== null);//массив карточек, которые выбраны по дате просмотра не!равной нулю.
-
-        this.MONTH = 2629800000;
-        this.WEEK = 604800016;
-        this.DAY = 86400000;
         
+        this._arrWeek = arrOfData.filter((it) => {
+            return (Date.now() - it.watchingDate) <= 604800016;
+          });
+        this._arrDay = arrOfData.filter((it) => {
+            return (Date.now() - it.watchingDate) <= 86400000;
+          });
+        this._arrMonth = arrOfData.filter((it) => {
+            return (Date.now() - it.watchingDate) <= 2629800000;
+          });
+        //this.MONTH = 2629800000;
+        //this.WEEK = 604800016;
+        //this.DAY = 86400000;
     }
 
-    grauphStatistic() {
+    grauphStatistic(_towatched) {
         const genreMap = {};
         for (let film of this._towatched) {
             for (let genre of film.genre) {
@@ -34827,24 +35135,54 @@ class Statistic extends _component__WEBPACK_IMPORTED_MODULE_2__["Component"] {
     set onStatisticRender(fn) {
         this._onStatisticRender = fn;
     }
-    set onStatisticsDeltaRender(fn) {
-        this._onStatisticsDeltaRender = fn;
-    }
     _onStatisticRender(event) {
         event.preventDefault();
         return typeof this._onStatisticRender === `function` && this._onStatisticRender();
     }
-    
-    _onStatisticsDeltaRender() { 
-        console.log('test1');
-        const date = Date.now();
-        const arrForFilter = arrOfData.filter((it) =>  {
-            return (it.watchingDate - date) <= 86400000;
-        });
-        console.log(Date.now());
-        console.log(this._watchingDateArr, 'массив весь!');
-        console.log(arrForFilter, 'новый массив');
+
+
+    set onStatisticDayClick(fn) {
+        this._onStatisticDayClick = fn;
     }
+    _onStatisticDayClick() { 
+        return typeof this._onStatisticDayClick === `function` && this._onStatisticDayClick();
+    }
+
+
+
+    set onStatisticWeekClick(fn) {
+        this._onStatisticWeekClick = fn;
+    }
+    _onStatisticWeekClick() {
+        return typeof this._onStatisticWeekClick === `function` && this._onStatisticWeekClick();
+    }
+
+
+
+    set onStatisticMonthClick(fn) {
+        this._onStatisticMonthClick = fn;
+    }
+    _onStatisticMonthClick() {
+        return typeof this._onStatisticMonthClick === `function` && this._onStatisticMonthClick();
+    }
+
+
+    set onStatisticYearClick(fn) {
+        this._onStatisticYearClick = fn;
+    }
+    _onStatisticYearClick() {
+        return typeof this._onStatisticYearClick === `function` && this._onStatisticYearClick();
+    }
+
+    set onStatisticClick(fn) {
+        this._onStatisticClick = fn;
+    }   
+    _onStatisticClick() {
+        return typeof this._onStatisticClick === `function` && this._onStatisticClick();
+    }
+
+
+
     render() {
         this._element = _component__WEBPACK_IMPORTED_MODULE_2__["Component"].createElement(this.template);
         this.bind();
@@ -34865,14 +35203,18 @@ class Statistic extends _component__WEBPACK_IMPORTED_MODULE_2__["Component"] {
         document.querySelector(`.main-navigation__item--additional`).removeEventListener(`click`, this._onStatisticRender);
     }
     bindData() {
-        this._element.querySelector(`#statistic-month`).addEventListener(`click`, this._onStatisticsDeltaRender);
-        this._element.querySelector(`#statistic-week`).addEventListener(`click`, this._onStatisticsDeltaRender);
-        this._element.querySelector(`#statistic-today`).addEventListener(`click`,this._onStatisticsDeltaRender);
+        this._element.querySelector(`#statistic-all-time`).addEventListener(`click`, this._onStatisticClick);
+        this._element.querySelector(`#statistic-month`).addEventListener(`click`, this._onStatisticMonthClick);
+        this._element.querySelector(`#statistic-week`).addEventListener(`click`, this._onStatisticWeekClick);
+        this._element.querySelector(`#statistic-today`).addEventListener(`click`,this._onStatisticDayClick);
+        this._element.querySelector(`#statistic-year`).addEventListener(`click`,this._onStatisticYearClick);
     }
     unbindData() {
-        this._element.querySelector(`#statistic-month`).removeEventListener(`click`, this._onStatisticsDeltaRender);
-        this._element.querySelector(`#statistic-week`).removeEventListener(`click`, this._onStatisticsDeltaRender);
-        this._element.querySelector(`#statistic-today`).removeEventListener(`click`,this._onStatisticsDeltaRender);
+        this._element.querySelector(`#statistic-all-time`).removeEventListener(`click`, this._onStatisticClick);
+        this._element.querySelector(`#statistic-month`).removeEventListener(`click`, this._onStatisticMonthClick);
+        this._element.querySelector(`#statistic-week`).removeEventListener(`click`, this._onStatisticWeekClick);
+        this._element.querySelector(`#statistic-today`).removeEventListener(`click`,this._onStatisticDayClick);
+        this._element.querySelector(`#statistic-year`).removeEventListener(`click`,this._onStatisticYearClick);
     }
     update(arrOfData) {
         this._towatched = arrOfData.filter((it) => it.alreadyWatched === true);
@@ -34918,7 +35260,7 @@ class Statistic extends _component__WEBPACK_IMPORTED_MODULE_2__["Component"] {
         <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
           <p class="statistic__filters-description">Show stats:</p>
       
-          <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
+          <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time"}>
           <label for="statistic-all-time" class="statistic__filters-label">All time</label>
       
           <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
