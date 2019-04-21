@@ -27,7 +27,7 @@ class Filter extends Component {
         this._element.removeEventListener(`click`, this._onFilterClick);
     }
     get template() {
-        return `<a href="#${this._href}" class="main-navigation__item">${this._nameFilter}<span class="main-navigation__item-count">${this._amount}</span></a>`;
+        return `<a href="#${this._href}" class="main-navigation__item">${this._nameFilter} ${this._nameFilter !== `All movies` ? (`<span class="main-navigation__item-count">${this._amount}</span>`) : ``}</a>`
     }
 };
 export{Filter};
