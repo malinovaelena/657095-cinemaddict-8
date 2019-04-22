@@ -37,24 +37,24 @@ class Popup extends Component {
       this._onDeleteComment = this._onDeleteComment.bind(this);
       this._deleteLastComment = this._deleteLastComment.bind(this);
   }
-  _processForm(formData) {
+  _processForm(formData, type = `update`) {
     const entry = {
-      personalRating: this._myPersonalRating,
+      personalRating: this._personalRating,
       userComments: this._userComments,
       alreadyWatched: false,
       watchlist: false,
       favorite: false,
     };
-    const filmDetailsMapper = Popup.createMapper(entry);
+    const filmDetailsMapper = Popup.createMapper(entry, type);
     for (let pair of formData.entries()) {
       let [property, value] = pair;
       if (filmDetailsMapper[property]) {
         filmDetailsMapper[property](value);
-      };
-    };
+      }
+    }
     return entry;
   }
-  static createMapper(target) {
+  static createMapper(target, type = `update`) {
     this._comment = undefined;
     return {
       'watchlist': (value) => (target.watchlist = (value === `on`)),
@@ -62,26 +62,32 @@ class Popup extends Component {
       'favorite': (value) => (target.favorite = (value === `on`)),
       'score': (value) => (target.personalRating = +value),
       'comment': (value) => {
-        if (this._comment) {
-          let emoji = this._comment.emotion;
-          this._comment.comment = value;
-          target.userComments.push({author: `Me`, emotion: emoji, comment: value, date: moment().valueOf()});
-        } else {
-          this._comment = {author: `Me`, emotion: undefined, comment: value, date: moment().valueOf()};
+        if (type !== `delete`) {
+          if (this._comment) {
+            let emoji = this._comment.emotion;
+            this._comment.comment = value;
+            target.userComments.push({author: `Me`, emotion: emoji, comment: value, date: moment().valueOf()});
+          } else {
+            this._comment = {author: `Me`, emotion: undefined, comment: value, date: moment().valueOf()};
+          }
         }
       },
       'comment-emoji': (value) => {
-        if (this._comment) {
-          let comment = this._comment.comment;
-          let emoji = value;
-          this._comment.emotion = value;
-          target.userComments.push({author: `Me`, emotion: emoji, comment, date: moment().valueOf()});
-        } else {
-          this._comment = {author: `Me`, emotion: value, comment: undefined, date: moment().valueOf()};
+        if (type !== `delete`) {
+          if (this._comment) {
+            let comment = this._comment.comment;
+            let emoji = value;
+            this._comment.emotion = value;
+            target.userComments.push({author: `Me`, emotion: emoji, comment, date: moment().valueOf()});
+          } else {
+            this._comment = {author: `Me`, emotion: value, comment: undefined, date: moment().valueOf()};
+          }
         }
       }
     };
   }
+
+
   update(data) {
     this._myPersonalRating = data.personalRating;
     this._towatchlist = data.watchlist;
@@ -95,16 +101,7 @@ class Popup extends Component {
   set onClose(fn) {
     this._onClose = fn;
   }
-  _onSubmitButtonClick(evt) {
-    if (evt.keyCode === (13 && 17)) {
-      const formData = new FormData(this._element.querySelector(`.film-details__inner`));
-      const newData = this._processForm(formData);
-      if (typeof this._onSubmit === `function`) {
-        this._onSubmit(newData);
-      }
-      this.update(newData);
-    }
-  }
+
   _onCloseButtonClick(evt) {
     if (evt.key === `Escape` || evt.target.classList[0] === `film-details__close-btn`) {
       return typeof this._onClose === `function` && this._onClose();
@@ -169,9 +166,9 @@ class Popup extends Component {
   clearFrom() {
       this._element.querySelector(`.film-details__comment-input`).value = ``;
   }
-  _onSubmitClick(evt) {
+  _onSubmitButtonClick(evt) {
     document.querySelector(`.film-details__watched-reset`).classList.add(`visually-hidden`);
-    if (evt.ctrlKey && evt.keyCode === 13) {
+    if (evt.keyCode === (13 && 17)) {
       const formData = new FormData(this._element.querySelector(`.film-details__inner`));
       const newData = this._processForm(formData);
       if (typeof this._onSubmit === `function`) {
