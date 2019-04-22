@@ -21,7 +21,7 @@ class Popup extends Component {
       
       this._towatchlist = data.watchlist;
       this._tofavorite = data.favorite;
-      this._towatched = data.alreadyWatched;
+      this._alreadyWatched = data.alreadyWatched;
 
       this._actors = data.actors;
       this._director = data.director;
@@ -278,7 +278,7 @@ class Popup extends Component {
       <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${this._towatchlist === 'checked'}>
       <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${this._towatched === 'checked'}>
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${this._alreadyWatched === 'checked'}>
       <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
       <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${this._tofavorite === 'checked'}>

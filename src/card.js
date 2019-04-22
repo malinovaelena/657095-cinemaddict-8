@@ -13,7 +13,7 @@ class Card extends Component {
       this._description = data.description;
       this._comments = data.comments;
       this._towatchlist = data.towatchlist;
-      this._towatched = data.towatched;
+      
       this._dateOfFilm = data.dateOfFilm;
       this._userComments = data.userComments;
       this._alreadyWatched = data.alreadyWatched;

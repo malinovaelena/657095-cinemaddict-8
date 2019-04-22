@@ -79,7 +79,7 @@ const showMoreCards = (cards) => {
 };
 const renderFilters = (cards) => {
   filterContainer.innerHTML = `<a href="#stats" class="main-navigation__item main-navigation__item--additional">Stats</a>`;
-  let amountHistory = Array.from(cards).filter((it) => it.towatched || it.alreadyWatched === true).length;
+  let amountHistory = Array.from(cards).filter((it) => it.alreadyWatched || it.alreadyWatched === true).length;
   let amountFavorite = Array.from(cards).filter((it) => it.favorite || it.favorite === true).length;
   let amountWatchlist = Array.from(cards).filter((it) => it.towatchlist || it.watchlist === true).length;
 
@@ -191,9 +191,8 @@ const renderFilms = (cards) => {
           popUpElement.update(newData);
         });
       api.getCards()
-      .then(() => {
+      .then((cards) => {
         renderFilters(cards);
-        renderStatistic(cards);
       });
     };
 
@@ -205,7 +204,7 @@ const renderFilms = (cards) => {
           renderFilters(cards);
         });
       api.getCards()
-        .then(() => {
+        .then((cards) => {
           renderFilters(cards);
           renderStatistic(cards);
         });
@@ -217,9 +216,8 @@ const renderFilms = (cards) => {
           popUpElement.update(newData);
         });
       api.getCards()
-        .then(() => {
+        .then((cards) => {
           renderFilters(cards);
-          renderStatistic(cards);
         });
     };
     popUpElement.onSubmit = (newData, type = `add`) => {
