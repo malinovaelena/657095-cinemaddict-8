@@ -33755,495 +33755,6 @@ module.exports = function(module) {
 
 /***/ }),
 
-/***/ "./src/Card.js":
-/*!*********************!*\
-  !*** ./src/Card.js ***!
-  \*********************/
-/*! exports provided: Card */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Card", function() { return Card; });
-/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./component */ "./src/component.js");
-
-
-class Card extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
-  constructor(data) {
-    super();
-      this._title = data.title;
-      this._rating = data.rating;
-      this._year = data.year;
-      this._duration = data.duration;
-      this._genre = data.genre;
-      this._poster = data.poster;
-      this._description = data.description;
-      this._comments = data.comments;
-      this._towatchlist = data.towatchlist;
-      this._towatched = data.towatched;
-      this._dateOfFilm = data.dateOfFilm;
-      this._userComments = data.userComments;
-      this._alreadyWatched = data.alreadyWatched;
-      this._favorite = data.favorite;
-      this._watchlist = data.watchlist;
-
-      this._onOpenButtonClick = this._onOpenButtonClick.bind(this);
-      this._onAddToWatchList = this._onAddToWatchList.bind(this);
-      this._onMarkAsWatched = this._onMarkAsWatched.bind(this);
-      this._onMarkAsFavorite = this._onMarkAsFavorite.bind(this);
-  }
-  set onClick(fn) {
-    this._onClick = fn;
-  }
-  set onAddToWatchList(fn) {
-    this._onAddToWatchList = fn;
-  }
-  set onMarkAsWatched(fn) {
-    this._onMarkAsWatched = fn;
-  }
-  set onMarkAsFavorite(fn) {
-    this._onMarkAsFavorite = fn;
-  }
-
-  _onOpenButtonClick() {
-    return typeof this._onClick === `function` && this._onClick();
-  }
-  _onMarkAsWatched(event) {
-    event.preventDefault();
-    return typeof this._onMarkAsWatched === `function` && this._onMarkAsWatched();
-  }
-  _onAddToWatchList(event) {
-    event.preventDefault();
-    return typeof this._onAddToWatchList === `function` && this._onAddToWatchList();
-  }
-  _onMarkAsFavorite(event) {
-    event.preventDefault();
-    return typeof this._onMarkAsFavorite === `function` && this._onMarkAsFavorite();
-  }
-
-  bind() {
-    this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
-    this._element.querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._onAddToWatchList.bind(this));
-    this._element.querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, this._onMarkAsWatched.bind(this));
-    this._element.querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, this._onMarkAsFavorite.bind(this));
-  }
-  unbind() {
-    this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
-    this._element.querySelector(`.film-card__controls-item--add-to-watchlist`).removeEventListener(`click`, this._onAddToWatchList.bind(this));
-    this._element.querySelector(`.film-card__controls-item--mark-as-watched`).removeEventListener(`click`, this._onMarkAsWatched.bind(this));
-    this._element.querySelector(`.film-card__controls-item--favorite`).removeEventListener(`click`, this._onMarkAsFavorite.bind(this));
-  }
-  update(data) {
-    this._alreadyWatched = data.alreadyWatched;
-    this._watchlist = data.watchlist;
-    this._favorite = data.favorite;
-    this._userComments = data.userComments;
-  }
-  
-  get template() {
-    return `<article class="film-card">
-      <h3 class="film-card__title">${this._title}</h3>
-    <p class="film-card__rating">${this._rating}</p>
-      <p class="film-card__info">
-      <span class="film-card__year">${moment(this._dateOfFilm).year()}</span>
-      <span class="film-card__duration">${Math.round(this._duration / 60)} h ${this._duration % 60} m</span>
-    <span class="film-card__genre">${this._genre}</span>
-      </p>
-      <img src="${this._poster}" alt="" class="film-card__poster">
-      <p class="film-card__description">${this._description}</p>
-    <button class="film-card__comments">${this._userComments.length} comments</button>
-
-    <form class="film-card__controls">
-      <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist"><!--Add to watchlist--> WL</button>
-    <button class="film-card__controls-item button film-card__controls-item--mark-as-watched"><!--Mark as watched-->WTCHD</button>
-      <button class="film-card__controls-item button film-card__controls-item--favorite"><!--Mark as favorite-->FAV</button>
-      </form>
-      </article>`;
-  }
-}
-
-
-
-
-/***/ }),
-
-/***/ "./src/Filter.js":
-/*!***********************!*\
-  !*** ./src/Filter.js ***!
-  \***********************/
-/*! exports provided: Filter */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Filter", function() { return Filter; });
-/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./component */ "./src/component.js");
-
-
-class Filter extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {  
-    constructor([nameFilter,href,amount]) {
-    super();
-        this._href = href;
-        this._nameFilter = nameFilter;
-        this._amount = amount;
-        this._onFilterClick = this._onFilterClick.bind(this);
-    }
-    set onFilter(fn) {
-        this._onFilter = fn;
-    }
-    update(amount) {
-        this._amount = amount;
-    }
-
-    _onFilterClick(event) {
-        event.preventDefault();
-        return typeof this._onFilter === `function` && this._onFilter();
-    }
-
-    bind() {
-        this._element.addEventListener(`click`, this._onFilterClick);
-    }
-    unbind() {
-        this._element.removeEventListener(`click`, this._onFilterClick);
-    }
-    get template() {
-        return `<a href="#${this._href}" class="main-navigation__item">${this._nameFilter}<span class="main-navigation__item-count">${this._amount}</span></a>`;
-    }
-};
-
-
-/***/ }),
-
-/***/ "./src/Pop-up.js":
-/*!***********************!*\
-  !*** ./src/Pop-up.js ***!
-  \***********************/
-/*! exports provided: Popup */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Popup", function() { return Popup; });
-/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./component */ "./src/component.js");
-
-
-const Emoji = {
-  'grinning': `😀`,
-  'neutral-face': `😐`,
-  'sleeping': `😴`
-};
-
-class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
-  constructor(data) {
-    super();
-      this._title = data.title;
-      this._userrating = data.userrating;
-      this._rating = data.rating;
-      this._ageRating = data.age_rating;
-      this._year = data.year;
-      this._duration = data.duration;
-      this._genre = data.genre;
-      this._poster = data.poster;
-      this._description = data.description;
-      
-      this._towatchlist = data.watchlist;
-      this._tofavorite = data.favorite;
-      this._towatched = data.alreadyWatched;
-
-      this._actors = data.actors;
-      this._director = data.director;
-      this._writers = data.writers;
-      this._country = data.country;
-      this._dateOfFilm = data.dateOfFilm;
-      this._alternativeTitle = data.alternativeTitle;
-      this._myPersonalRating = data.personalRating;
-      this._userComments = data.userComments;
-
-      this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
-      this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
-  }
-  _processForm(formData) {
-    const entry = {
-      personalRating: this._myPersonalRating,
-      userComments: this._userComments,
-      alreadyWatched: false,
-      watchlist: false,
-      favorite: false,
-    };
-    const filmDetailsMapper = Popup.createMapper(entry);
-    for (let pair of formData.entries()) {
-      let [property, value] = pair;
-      if (filmDetailsMapper[property]) {
-        filmDetailsMapper[property](value);
-      }
-    }
-    return entry;
-  }
-  static createMapper(target) {
-    this._comment = undefined;
-    return {
-      'watchlist': (value) => (target.watchlist = (value === `on`)),
-      'watched': (value) => (target.alreadyWatched = (value === `on`)),
-      'favorite': (value) => (target.favorite = (value === `on`)),
-      'score': (value) => (target.personalRating = +value),
-      'comment': (value) => {
-        if (this._comment) {
-          let emoji = this._comment.emotion;
-          this._comment.comment = value;
-          target.userComments.push({author: `Me`, emotion: emoji, comment: value, date: moment().valueOf()});
-        } else {
-          this._comment = {author: `Me`, emotion: undefined, comment: value, date: moment().valueOf()};
-        }
-      },
-      'comment-emoji': (value) => {
-        if (this._comment) {
-          let comment = this._comment.comment;
-          let emoji = value;
-          this._comment.emotion = value;
-          target.userComments.push({author: `Me`, emotion: emoji, comment, date: moment().valueOf()});
-        } else {
-          this._comment = {author: `Me`, emotion: value, comment: undefined, date: moment().valueOf()};
-        }
-      }
-    };
-  }
-  update(data) {
-    this._myPersonalRating = data.personalRating;
-    this._towatchlist = data.watchlist;
-    this._favorite = data.favorite;
-    this._userComments = data.userComments;
-  }
-  set onSubmit(fn) {
-    this._onSubmit = fn;
-  }
-  set onClose(fn) {
-    this._onClose = fn;
-  }
-  _onSubmitButtonClick(evt) {
-    if (evt.keyCode === ( true && 17)) {
-      const formData = new FormData(this._element.querySelector(`.film-details__inner`));
-      const newData = this._processForm(formData);
-      if (typeof this._onSubmit === `function`) {
-        this._onSubmit(newData);
-      }
-      this.update(newData);
-    }
-  }
-  _onCloseButtonClick() {
-    return typeof this._onClose === `function` && this._onClose();
-  }
-  render() {
-    this._element = _component__WEBPACK_IMPORTED_MODULE_0__["Component"].createElement(this.template);
-    this.bind();
-    return this._element;
-  }
-
-  unrender() {
-    this.unbind();
-    this._element.remove();
-    this._element = null;
-  }
-
-  get element() {
-    return this._element;
-  }
-  
-  bind() {
-    this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick);  
-    this._element.querySelector(`.film-details__inner`).addEventListener(`keydown`, this._onSubmitButtonClick);
-    //this._element.querySelector(`.film-details__comment-input`).addEventListener(`keydown`, this._onSubmitButtonClick.bind(this));
-  }
-  unbind() {
-    this._element.querySelector(`.film-details__close-btn`).removeEventListener(`click`, this._onCloseButtonClick);
-    this._element.querySelector(`.film-details__inner`).removeEventListener(`keydown`, this._onSubmitButtonClick);
-    //this._element.querySelector(`.film-details__comment-input`).removeEventListener(`keydown`, this._onSubmitButtonClick.bind(this));
-  }
-  shake() {
-    const ANIMATION_TIMEOUT = 600;
-    this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`
-    
-    setTimeout(() => {
-      this._element.style.animation = ``
-    }, ANIMATION_TIMEOUT);
-  }
-
-  get template() {
-    return `<section class="film-details">
-  <form class="film-details__inner" action="" method="get">
-    <div class="film-details__close">
-      <button class="film-details__close-btn" type="button">close</button>
-    </div>
-    <div class="film-details__info-wrap">
-      <div class="film-details__poster">
-        <img class="film-details__poster-img" src="${this._poster}" alt="incredables-2">
-
-        <p class="film-details__age">${this._ageRating}</p>
-      </div>
-
-      <div class="film-details__info">
-        <div class="film-details__info-head">
-          <div class="film-details__title-wrap">
-            <h3 class="film-details__title">${this._title}</h3>
-            <p class="film-details__title-original">${this._alternativeTitle}</p>
-          </div>
-
-          <div class="film-details__rating">
-            <p class="film-details__total-rating">${this._rating}</p>
-            <p class="film-details__user-rating">Your rate ${this._myPersonalRating}</p>
-          </div>
-        </div>
-
-        <table class="film-details__table">
-          <tr class="film-details__row">
-            <td class="film-details__term">Director</td>
-            <td class="film-details__cell">${this._director}</td>
-          </tr>
-          <tr class="film-details__row">
-            <td class="film-details__term">Writers</td>
-            <td class="film-details__cell">${this._writers}</td>
-          </tr>
-          <tr class="film-details__row">
-            <td class="film-details__term">Actors</td>
-            <td class="film-details__cell">${this._actors}</td>
-          </tr>
-          <tr class="film-details__row">
-            <td class="film-details__term">Release Date</td>
-            <td class="film-details__cell">${moment(this._dateOfFilm).year()}</td>
-          </tr>
-          <tr class="film-details__row">
-            <td class="film-details__term">Runtime</td>
-            <td class="film-details__cell">${Math.round(this._duration / 60)} h ${this._duration % 60} m</td>
-          </tr>
-          <tr class="film-details__row">
-            <td class="film-details__term">Country</td>
-            <td class="film-details__cell">${this._country}</td>
-          </tr>
-          <tr class="film-details__row">
-            <td class="film-details__term">Genres</td>
-            <td class="film-details__cell">
-            ${this._genre.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``)}
-            </td>
-          </tr>
-        </table>
-
-        <p class="film-details__film-description">${this._description}</p>
-      </div>
-    </div>
-
-    <section class="film-details__controls">
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${this._towatchlist === 'checked'}>
-      <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
-
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${this._towatched === 'checked'}>
-      <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
-
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${this._tofavorite === 'checked'}>
-      <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
-    </section>
-
-    <section class="film-details__comments-wrap">
-      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._userComments.length}</span></h3>
-
-      <ul class="film-details__comments-list">
-      ${this._userComments.map((comment) => {
-        return `
-        <li class="film-details__comment">
-            <span class="film-details__comment-emoji">${Emoji[comment.emotion]}</span>
-          <div>
-          <p class="film-details__comment-text">${comment.comment}</p>
-          <p class="film-details__comment-info">
-            <span class="film-details__comment-author">${comment.author}</span>
-          <span class="film-details__comment-day">${moment(comment.date).fromNow()}</span>
-          </p>
-          </div>
-          </li>
-          `;
-      }
-      ).join(``)}
-      </ul>
-
-      <div class="film-details__new-comment">
-        <div>
-          <label for="add-emoji" class="film-details__add-emoji-label">😐</label>
-          <input type="checkbox" class="film-details__add-emoji visually-hidden" id="add-emoji">
-
-          <div class="film-details__emoji-list">
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
-            <label class="film-details__emoji-label" for="emoji-sleeping">😴</label>
-
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-neutral-face" value="neutral-face" checked>
-            <label class="film-details__emoji-label" for="emoji-neutral-face">😐</label>
-
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-grinning" value="grinning">
-            <label class="film-details__emoji-label" for="emoji-grinning">😀</label>
-          </div>
-        </div>
-        <label class="film-details__comment-label">
-          <textarea class="film-details__comment-input" placeholder="← Select reaction, add comment here" name="comment"></textarea>
-        </label>
-      </div>
-    </section>
-
-    <section class="film-details__user-rating-wrap">
-      <div class="film-details__user-rating-controls">
-        <span class="film-details__watched-status ${this._alreadyWatched && `film-details__watched-status--active`}">Already watched</span>
-        <button class="film-details__watched-reset" type="button">undo</button>
-      </div>
-
-      <div class="film-details__user-score">
-        <div class="film-details__user-rating-poster">
-          <img src="${this._poster}" alt="film-poster" class="film-details__user-rating-img">
-        </div>
-
-        <section class="film-details__user-rating-inner">
-          <h3 class="film-details__user-rating-title">${this._title}</h3>
-
-          <p class="film-details__user-rating-feelings">How you feel it?</p>
-
-          <div class="film-details__user-rating-score">
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1" ${this._myPersonalRating === `1` && 'checked'} >
-            <label class="film-details__user-rating-label" for="rating-1">1</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2" ${this._myPersonalRating === `2` && 'checked'}>
-            <label class="film-details__user-rating-label" for="rating-2">2</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3" ${this._myPersonalRating === `3` && 'checked'}>
-            <label class="film-details__user-rating-label" for="rating-3">3</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4" ${this._myPersonalRating === `4` && 'checked'}>
-            <label class="film-details__user-rating-label" for="rating-4">4</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5" ${this._myPersonalRating === `5` && 'checked'}>
-            <label class="film-details__user-rating-label" for="rating-5">5</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6" ${this._myPersonalRating === `6` && 'checked'}>
-            <label class="film-details__user-rating-label" for="rating-6">6</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7" ${this._myPersonalRating === `7` && 'checked'}>
-            <label class="film-details__user-rating-label" for="rating-7">7</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8" ${this._myPersonalRating === `8` && 'checked'}>
-            <label class="film-details__user-rating-label" for="rating-8">8</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9" ${this._myPersonalRating === `9` && 'checked'}>
-            <label class="film-details__user-rating-label" for="rating-9">9</label>
-
-          </div>
-        </section>
-      </div>
-    </section>
-  </form>
-</section>`;
-  };
-
-}
-
-
-
-
-
-/***/ }),
-
 /***/ "./src/api.js":
 /*!********************!*\
   !*** ./src/api.js ***!
@@ -34331,6 +33842,123 @@ class API {
 
 /***/ }),
 
+/***/ "./src/card.js":
+/*!*********************!*\
+  !*** ./src/card.js ***!
+  \*********************/
+/*! exports provided: Card */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Card", function() { return Card; });
+/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./component */ "./src/component.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_1__);
+
+
+
+class Card extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
+  constructor(data) {
+    super();
+      this._title = data.title;
+      this._rating = data.rating;
+      this._year = data.year;
+      this._duration = data.duration;
+      this._genre = data.genre;
+      this._poster = data.poster;
+      this._description = data.description;
+      this._comments = data.comments;
+      this._towatchlist = data.towatchlist;
+      this._towatched = data.towatched;
+      this._dateOfFilm = data.dateOfFilm;
+      this._userComments = data.userComments;
+      this._alreadyWatched = data.alreadyWatched;
+      this._favorite = data.favorite;
+      this._watchlist = data.watchlist;
+
+      this._onOpenButtonClick = this._onOpenButtonClick.bind(this);
+      this._onAddToWatchList = this._onAddToWatchList.bind(this);
+      this._onMarkAsWatched = this._onMarkAsWatched.bind(this);
+      this._onMarkAsFavorite = this._onMarkAsFavorite.bind(this);
+  }
+  set onClick(fn) {
+    this._onClick = fn;
+  }
+  set onAddToWatchList(fn) {
+    this._onAddToWatchList = fn;
+  }
+  set onMarkAsWatched(fn) {
+    this._onMarkAsWatched = fn;
+  }
+  set onMarkAsFavorite(fn) {
+    this._onMarkAsFavorite = fn;
+  }
+
+  _onOpenButtonClick() {
+    return typeof this._onClick === `function` && this._onClick();
+  }
+  _onMarkAsWatched(event) {
+    event.preventDefault();
+    return typeof this._onMarkAsWatched === `function` && this._onMarkAsWatched();
+  }
+  _onAddToWatchList(event) {
+    event.preventDefault();
+    return typeof this._onAddToWatchList === `function` && this._onAddToWatchList();
+  }
+  _onMarkAsFavorite(event) {
+    event.preventDefault();
+    return typeof this._onMarkAsFavorite === `function` && this._onMarkAsFavorite();
+  }
+
+  bind() {
+    this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
+    this._element.querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._onAddToWatchList.bind(this));
+    this._element.querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, this._onMarkAsWatched.bind(this));
+    this._element.querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, this._onMarkAsFavorite.bind(this));
+  }
+  unbind() {
+    this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
+    this._element.querySelector(`.film-card__controls-item--add-to-watchlist`).removeEventListener(`click`, this._onAddToWatchList.bind(this));
+    this._element.querySelector(`.film-card__controls-item--mark-as-watched`).removeEventListener(`click`, this._onMarkAsWatched.bind(this));
+    this._element.querySelector(`.film-card__controls-item--favorite`).removeEventListener(`click`, this._onMarkAsFavorite.bind(this));
+  }
+  update(data) {
+    this._alreadyWatched = data.alreadyWatched;
+    this._watchlist = data.watchlist;
+    this._favorite = data.favorite;
+    this._userComments = data.userComments;
+  }
+  
+  get template() {
+    const filmDuration = moment__WEBPACK_IMPORTED_MODULE_1___default.a.duration(this._duration, `m`);
+    return `<article class="film-card">
+      <h3 class="film-card__title">${this._title}</h3>
+    <p class="film-card__rating">${this._rating}</p>
+      <p class="film-card__info">
+      <span class="film-card__year">${moment__WEBPACK_IMPORTED_MODULE_1___default()(this._dateOfFilm).year()}</span>
+      <span class="film-card__duration">${filmDuration.hours()}:${filmDuration.minutes()}</span>
+     
+    <span class="film-card__genre">${this._genre}</span>
+      </p>
+      <img src="${this._poster}" alt="" class="film-card__poster">
+      <p class="film-card__description">${this._description}</p>
+    <button class="film-card__comments">${this._userComments.length} comments</button>
+
+    <form class="film-card__controls">
+      <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist"><!--Add to watchlist--> WL</button>
+    <button class="film-card__controls-item button film-card__controls-item--mark-as-watched"><!--Mark as watched-->WTCHD</button>
+      <button class="film-card__controls-item button film-card__controls-item--favorite"><!--Mark as favorite-->FAV</button>
+      </form>
+      </article>`;
+  }
+}
+
+
+
+
+/***/ }),
+
 /***/ "./src/component.js":
 /*!**************************!*\
   !*** ./src/component.js ***!
@@ -34376,6 +34004,53 @@ class Component {
 
 /***/ }),
 
+/***/ "./src/filter.js":
+/*!***********************!*\
+  !*** ./src/filter.js ***!
+  \***********************/
+/*! exports provided: Filter */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Filter", function() { return Filter; });
+/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./component */ "./src/component.js");
+
+
+class Filter extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {  
+    constructor([nameFilter,href,amount]) {
+    super();
+        this._href = href;
+        this._nameFilter = nameFilter;
+        this._amount = amount;
+        this._onFilterClick = this._onFilterClick.bind(this);
+    }
+    set onFilter(fn) {
+        this._onFilter = fn;
+    }
+    update(amount) {
+        this._amount = amount;
+    }
+
+    _onFilterClick(event) {
+        event.preventDefault();
+        return typeof this._onFilter === `function` && this._onFilter();
+    }
+
+    bind() {
+        this._element.addEventListener(`click`, this._onFilterClick);
+    }
+    unbind() {
+        this._element.removeEventListener(`click`, this._onFilterClick);
+    }
+    get template() {
+        return `<a href="#${this._href}" class="main-navigation__item">${this._nameFilter} ${this._nameFilter !== `All movies` ? (`<span class="main-navigation__item-count">${this._amount}</span>`) : ``}</a>`
+    }
+};
+
+
+/***/ }),
+
 /***/ "./src/main.js":
 /*!*********************!*\
   !*** ./src/main.js ***!
@@ -34385,21 +34060,30 @@ class Component {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Filter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Filter */ "./src/Filter.js");
-/* harmony import */ var _Pop_up__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Pop-up */ "./src/Pop-up.js");
-/* harmony import */ var _Card__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Card */ "./src/Card.js");
+/* harmony import */ var _filter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./filter */ "./src/filter.js");
+/* harmony import */ var _pop_up__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pop-up */ "./src/pop-up.js");
+/* harmony import */ var _card__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./card */ "./src/card.js");
 /* harmony import */ var _statistic__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./statistic */ "./src/statistic.js");
 /* harmony import */ var _api__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./api */ "./src/api.js");
+/* harmony import */ var _search__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./search */ "./src/search.js");
 
 
 
 
 
 
-const filmContainer = document.querySelector(`.films-list__container`);
-const filterContainer = document.querySelector(`.main-navigation`);
+
 const body = document.querySelector(`body`);
+const filmContainer = document.querySelectorAll(`.films-list__container`);
+const filterContainer = document.querySelector(`.main-navigation`);
+const searchContainer = document.querySelector(`.header__search`);
+const showMoreButton = document.querySelector(`.films-list__show-more`);
+const profileUserContainer = document.querySelector(`.profile__rating`);
+const footerStatistic = document.querySelector(`.footer__statistics > p`);
 
+
+let cardToRenderPosition = 5;
+let dataToRender;
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
 const api = new _api__WEBPACK_IMPORTED_MODULE_4__["API"]({endPoint: END_POINT, authorization: AUTHORIZATION});
@@ -34423,151 +34107,366 @@ const filterFilms = (nameFilter, dataForFilters) => {
       return dataForFilters;
   }
 };
-const filterAmount = (nameFilter, dataForFilters) => {
-  switch (nameFilter) {
-    case `All movies`:
-      return dataForFilters.length;
+const searchCards = (data, value) => {
+  if (value === ``) {
+    return data;
+  }
+  return data.filter((it) => it.title.toUpperCase().includes(value.toUpperCase()));
+};
+const showProfileRating = (value) => {
+  if (value < 10) {
+    return `novice`;
+  } else if (value <= 18) {
+    return `fan`;
+  } else {
+    return `movie buff`;
+  }
+};
 
-    case `History`:
-      return dataForFilters.filter((it) => it.towatched || it.alreadyWatched === true).length;
+const renderSearch = (cards) => {
+  const searchElement = new _search__WEBPACK_IMPORTED_MODULE_5__["Search"]();
+  searchElement.render();
+  searchContainer.appendChild(searchElement.element);
+  searchElement.onSearch = () => {
+    const searchValue = searchElement.element.value;
+    if (searchValue !== ``) {
+      const searchResult = searchCards(cards, searchValue);
+      renderFilms(searchResult);
+    }
+  };
+};
+const onShowMoreButtonClick = () => showMoreCards(dataToRender);
 
-    case `Watchlist`:
-      return dataForFilters.filter((it) => it.towatchlist || it.watchlist === true).length;
+const showMoreCards = (cards) => {
+  renderFilms(cards.slice(0, cardToRenderPosition));
+  if (cardToRenderPosition >= cards.length) {
+    showMoreButton.removeEventListener(`click`, onShowMoreButtonClick);
+    showMoreButton.classList.add(`visually-hidden`);
+  }
+  cardToRenderPosition += 5;
+};
+const renderFilters = (cards) => {
+  filterContainer.innerHTML = `<a href="#stats" class="main-navigation__item main-navigation__item--additional">Stats</a>`;
+  let amountHistory = Array.from(cards).filter((it) => it.towatched || it.alreadyWatched === true).length;
+  let amountFavorite = Array.from(cards).filter((it) => it.favorite || it.favorite === true).length;
+  let amountWatchlist = Array.from(cards).filter((it) => it.towatchlist || it.watchlist === true).length;
 
-    case `Favorites`:
-      return dataForFilters.filter((it) => it.favorite || it.favorite === true).length;
+  const arrOfFilters = [[`Favorites`, `favorites`, amountFavorite], [`Watchlist`, `watchlist`, amountWatchlist], [`History`, `history`, amountHistory], [`All movies`, `all`, ``]];
 
-    default:
-      return dataForFilters.length;
+  const NameOfUser = showProfileRating(amountHistory);
+  profileUserContainer.innerHTML = NameOfUser;
+
+  for (let filter of arrOfFilters) {
+
+    const filterItem = new _filter__WEBPACK_IMPORTED_MODULE_0__["Filter"](filter);
+    filterItem.render();
+    filterContainer.insertAdjacentElement(`afterBegin`, filterItem.element);
+
+    filterItem.onFilter = () => {
+      const cardsForThisFilter = filterFilms(filter[0], cards);
+      showMoreButton.classList.remove(`visually-hidden`);
+      dataToRender = cardsForThisFilter;
+      showMoreButton.removeEventListener(`click`, onShowMoreButtonClick);
+      showMoreButton.addEventListener(`click`, onShowMoreButtonClick);
+      cardToRenderPosition = 5;
+      showMoreCards(dataToRender);
+    };
+  }
+};
+
+const renderStatistic = (cards) => {
+  let lastWeekArr = cards.filter((it) => {
+    return (Date.now() - it.watchingDate) <= 604800016;
+  });
+  let lastDayArr = cards.filter((it) => {
+    return (Date.now() - it.watchingDate) <= 86400000;
+  });
+  let lastMonthArr = cards.filter((it) => {
+    return (Date.now() - it.watchingDate) <= 2629800000;
+  });
+  let lastYEarArr = cards.filter((it) => {
+    return (Date.now() - it.watchingDate) <= 31536000000;
+  });
+  const statistic = new _statistic__WEBPACK_IMPORTED_MODULE_3__["Statistic"](cards);
+  statistic.bind();
+  statistic.onStatisticRender = () => {
+    filmContainer[0].innerHTML = ``;
+    statistic.render();
+    filmContainer[0].appendChild(statistic.element);
+    statistic.grauphStatistic();
+    statistic.bindData();
+
+    statistic.onStatisticWeekClick = () => {
+      statistic.unrender();
+      statistic.update(lastWeekArr);
+      statistic.render();
+      filmContainer[0].appendChild(statistic.element);
+      statistic.grauphStatistic();
+      statistic.bindData();
+    };
+    statistic.onStatisticMonthClick = () => {
+      statistic.unrender();
+      statistic.update(lastMonthArr);
+      statistic.render();
+      filmContainer[0].appendChild(statistic.element);
+      statistic.grauphStatistic();
+      statistic.bindData();
+    };
+    statistic.onStatisticDayClick = () => {
+      statistic.unrender();
+      statistic.update(lastDayArr);
+      statistic.render();
+      filmContainer[0].appendChild(statistic.element);
+      statistic.grauphStatistic();
+      statistic.bindData();
+    };
+    statistic.onStatisticYearClick = () => {
+      statistic.unrender();
+      statistic.update(lastYEarArr);
+      statistic.render();
+      filmContainer[0].appendChild(statistic.element);
+      statistic.grauphStatistic();
+      statistic.bindData();
+    };
+    statistic.onStatisticClick = () => {
+      statistic.unrender();
+      statistic.update(cards);
+      statistic.render();
+      filmContainer[0].appendChild(statistic.element);
+      statistic.grauphStatistic();
+      statistic.bindData();
+    };
+  };
+};
+const renderFilms = (cards) => {
+  filmContainer[0].innerHTML = ``;
+  for (let dataOneCard of cards) {
+    const cardElement = new _card__WEBPACK_IMPORTED_MODULE_2__["Card"](dataOneCard);
+    const popUpElement = new _pop_up__WEBPACK_IMPORTED_MODULE_1__["Popup"](dataOneCard);
+
+    cardElement.render();
+    filmContainer[0].appendChild(cardElement.element);
+
+    cardElement.onClick = () => {
+      popUpElement.render();
+      body.appendChild(popUpElement.element);
+    };
+
+    cardElement.onAddToWatchList = () => {
+      dataOneCard.watchlist = !dataOneCard.watchlist;
+      api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
+        .then((newData) => {
+          popUpElement.update(newData);
+        });
+      api.getCards()
+      .then(() => {
+        renderFilters(cards);
+        renderStatistic(cards);
+      });
+    };
+
+    cardElement.onMarkAsWatched = () => {
+      dataOneCard.alreadyWatched = !dataOneCard.alreadyWatched;
+      api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
+        .then((newData) => {
+          popUpElement.update(newData);
+          renderFilters(cards);
+        });
+      api.getCards()
+        .then(() => {
+          renderFilters(cards);
+          renderStatistic(cards);
+        });
+    };
+    cardElement.onMarkAsFavorite = () => {
+      dataOneCard.favorite = !dataOneCard.favorite;
+      api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
+        .then((newData) => {
+          popUpElement.update(newData);
+        });
+      api.getCards()
+        .then(() => {
+          renderFilters(cards);
+          renderStatistic(cards);
+        });
+    };
+    popUpElement.onSubmit = (newData, type = `add`) => {
+      const block = () => {
+        popUpElement.element.querySelector(`.film-details__comment-input`).disabled = true;
+        popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = true;
+      };
+      const unblock = () => {
+        popUpElement.element.querySelector(`.film-details__comment-input`).disabled = false;
+        popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = false;
+      };
+      const inputRedWarning = () => {
+        popUpElement.element.querySelector(`.film-details__comment-input`).style.borderColor = `#FF0000`;
+        popUpElement.element.querySelector(`.film-details__user-rating-label`).style.backgroundColor = `#FF0000`;
+      };
+      block();
+      const load = (isSuccess) => {
+        return new Promise((res, rej) => {
+          setTimeout(isSuccess ? res : rej, 1000);
+        });
+      };
+      Object.assign(dataOneCard, newData);
+      api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()});
+      load(true)
+        .then(() => {
+          unblock();
+          popUpElement.renderCommentsList(dataOneCard.userComments);
+          let oldFilm = cardElement.element;
+          cardElement.render();
+          filmContainer[0].replaceChild(cardElement.element, oldFilm);
+          popUpElement.clearFrom();
+          popUpElement.enableForm();
+          if (type === `add`) {
+            popUpElement.onSubmitSuccess();
+          }
+        })
+        .catch(() => {
+          popUpElement.shake();
+          inputRedWarning();
+          unblock();
+        });
+    };
+
+    popUpElement.onClose = () => {
+      popUpElement.unrender();
+    };
+  }
+};
+const renderMostCommented = (cards) => {
+  const mostCommentedContainer = filmContainer[2];
+  const mostCommented = cards.sort((a, b) => b.userComments.length - a.userComments.length).slice(0, 2);
+
+  for (let dataOneCard of mostCommented) {
+    const cardElement = new _card__WEBPACK_IMPORTED_MODULE_2__["Card"](dataOneCard);
+    const popUpElement = new _pop_up__WEBPACK_IMPORTED_MODULE_1__["Popup"](dataOneCard);
+
+    cardElement.render();
+    mostCommentedContainer.appendChild(cardElement.element);
+    cardElement.onClick = () => {
+      popUpElement.render();
+      body.appendChild(popUpElement.element);
+      cardElement.unbind();
+    };
+    popUpElement.onSubmit = (newData) => {
+      const block = () => {
+        popUpElement.element.querySelector(`.film-details__comment-input`).disabled = true;
+        popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = true;
+      };
+      const unblock = () => {
+        popUpElement.element.querySelector(`.film-details__comment-input`).disabled = false;
+        popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = false;
+      };
+      const inputRedWarning = () => {
+        popUpElement.element.querySelector(`.film-details__comment-input`).style.borderColor = `#FF0000`;
+        popUpElement.element.querySelector(`.film-details__user-rating-label`).style.backgroundColor = `#FF0000`;
+      };
+      block();
+      const load = (isSuccess) => {
+        return new Promise((res, rej) => {
+          setTimeout(isSuccess ? res : rej, 1000);
+        });
+      };
+      Object.assign(dataOneCard, newData);
+      api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()});
+      load(true)
+        .then(() => {
+          unblock();
+          popUpElement.unrender();
+          let oldFilm = cardElement.element;
+          filmContainer[0].replaceChild(cardElement.element, oldFilm);
+        })
+        .catch(() => {
+          popUpElement.shake();
+          inputRedWarning();
+          unblock();
+        });
+    };
+
+    popUpElement.onClose = () => {
+      popUpElement.unrender();
+    };
+  }
+};
+const renderTopRated = (cards) => {
+  const TopRatedContainer = filmContainer[1];
+  const topRated = cards.sort((a, b) => b.rating - a.rating).slice(0, 2);
+  for (let dataOneCard of topRated) {
+    const cardElement = new _card__WEBPACK_IMPORTED_MODULE_2__["Card"](dataOneCard);
+    const popUpElement = new _pop_up__WEBPACK_IMPORTED_MODULE_1__["Popup"](dataOneCard);
+    cardElement.render();
+    TopRatedContainer.appendChild(cardElement.element);
+
+    cardElement.onClick = () => {
+      popUpElement.render();
+      body.appendChild(popUpElement.element);
+      cardElement.unbind();
+    };
+
+    popUpElement.onSubmit = (newData) => {
+      const block = () => {
+        popUpElement.element.querySelector(`.film-details__comment-input`).disabled = true;
+        popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = true;
+      };
+      const unblock = () => {
+        popUpElement.element.querySelector(`.film-details__comment-input`).disabled = false;
+        popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = false;
+      };
+      const inputRedWarning = () => {
+        popUpElement.element.querySelector(`.film-details__comment-input`).style.borderColor = `#FF0000`;
+        popUpElement.element.querySelector(`.film-details__user-rating-label`).style.backgroundColor = `#FF0000`;
+      };
+      block();
+      const load = (isSuccess) => {
+        return new Promise((res, rej) => {
+          setTimeout(isSuccess ? res : rej, 1000);
+        });
+      };
+      Object.assign(dataOneCard, newData);
+      api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()});
+      load(true)
+        .then(() => {
+          unblock();
+          popUpElement.unrender();
+          let oldFilm = cardElement.element;
+          filmContainer[0].replaceChild(cardElement.element, oldFilm);
+        })
+        .catch(() => {
+          popUpElement.shake();
+          inputRedWarning();
+          unblock();
+        });
+    };
+
+    popUpElement.onClose = () => {
+      popUpElement.unrender();
+    };
   }
 };
 
 const renderAll = () => {
-  //filmContainer.innerHTML = `Loading movies...`;
   api.getCards()
     .then((movies) => {
-      //filmContainer.innerHTML = `Loading movies...`;
+      dataToRender = movies;
       renderFilters(movies);
-      //filmContainer.innerHTML = `Loading movies...`;
       renderFilms(movies);
+      renderSearch(movies);
+      renderMostCommented(movies);
+      renderTopRated(movies);
+      renderStatistic(movies);
+      showMoreCards(dataToRender);
+      showMoreButton.addEventListener(`click`, onShowMoreButtonClick);
+      footerStatistic.innerHTML = `${movies.length} movies inside`;
     })
     .catch((movies) => {
       renderFilters(movies);
-      filmContainer.innerHTML = `Something went wrong while loading movies. Check your connection or try again later`;
+      filmContainer[0].innerHTML = `Something went wrong while loading movies. Check your connection or try again later`;
     });
-
-  const renderFilters = (dataForFilters) => {
-    let amountHistory = dataForFilters.filter((it) => it.towatched || it.alreadyWatched === true).length;
-    let amountFavorite = dataForFilters.filter((it) => it.favorite || it.favorite === true).length;
-    let amountWatchlist = dataForFilters.filter((it) => it.towatchlist || it.watchlist === true).length;
-
-    const arrOfFilters = [[`Favorites`, `favorites`, amountFavorite], [`Watchlist`, `watchlist`, amountWatchlist], [`History`, `history`, amountHistory], [`All movies`, `all`, dataForFilters.length]];
-
-    for (let filter of arrOfFilters) {
-      const filterItem = new _Filter__WEBPACK_IMPORTED_MODULE_0__["Filter"](filter);
-      filterItem.render();
-      filterContainer.insertAdjacentElement(`afterBegin`, filterItem.element);
-
-      filterItem.onFilter = () => {
-        const amountforEach = filterAmount(filter[0], dataForFilters);
-        filterItem.update(amountforEach);
-        const cardsForThisFilter = filterFilms(filter[0], dataForFilters);
-        renderFilms(cardsForThisFilter);
-      };
-    }
-  };
-
-  const renderFilms = (cards) => {
-    filmContainer.innerHTML = ``;
-
-    const statistic = new _statistic__WEBPACK_IMPORTED_MODULE_3__["Statistic"](cards);
-    statistic.bind();
-    statistic.onStatisticRender = () => {
-      filmContainer.innerHTML = ``;
-      statistic.render();
-      filmContainer.appendChild(statistic.element);
-      statistic.grauphStatistic();
-    };
-
-    for (let dataOneCard of cards) {
-      const cardElement = new _Card__WEBPACK_IMPORTED_MODULE_2__["Card"](dataOneCard);
-      const popUpElement = new _Pop_up__WEBPACK_IMPORTED_MODULE_1__["Popup"](dataOneCard);
-
-      cardElement.render();
-      filmContainer.appendChild(cardElement.element);
-
-      cardElement.onClick = () => {
-        popUpElement.render();
-        body.appendChild(popUpElement.element);
-      };
-
-      cardElement.onAddToWatchList = () => {
-        dataOneCard.watchlist = !dataOneCard.watchlist;
-        api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
-        .then((newData) => {
-          popUpElement.update(newData);
-        });
-      };
-
-      cardElement.onMarkAsWatched = () => {
-        dataOneCard.alreadyWatched = !dataOneCard.alreadyWatched;
-        api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
-        .then((newData) => {
-          popUpElement.update(newData);
-          statistic.update(cards);
-        });
-      };
-
-      cardElement.onMarkAsFavorite = () => {
-        dataOneCard.favorite = !dataOneCard.favorite;
-        api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
-        .then((newData) => {
-          popUpElement.update(newData);
-        });
-      };
-      popUpElement.onSubmit = (newData) => {
-        const block = () => {
-          popUpElement.element.querySelector(`.film-details__comment-input`).disabled = true;
-          popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = true;
-        };
-        const unblock = () => {
-          popUpElement.element.querySelector(`.film-details__comment-input`).disabled = false;
-          popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = false;
-        };
-        const inputRedWarning = () => {
-          popUpElement.element.querySelector(`.film-details__comment-input`).style.borderColor = `#FF0000`;
-          popUpElement.element.querySelector(`.film-details__user-rating-label`).style.backgroundColor = `#FF0000`;
-        };
-        block();
-        const load = (isSuccess) => {
-          return new Promise((res, rej) => {
-            setTimeout(isSuccess ? res : rej, 1000);
-          });
-        };
-        Object.assign(dataOneCard, newData);
-        api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()});
-        load(true)
-          .then(() => {
-            unblock();
-            popUpElement.unrender();
-            let oldFilm = cardElement.element;
-            filmContainer.replaceChild(cardElement.element, oldFilm);
-          })
-          .catch(() => {
-            popUpElement.shake();
-            inputRedWarning();
-            unblock();
-          });
-      };
-
-      popUpElement.onClose = () => {
-        popUpElement.unrender();
-      };
-    }
-  };
 };
 renderAll();
-
 
 
 /***/ }),
@@ -34598,7 +34497,7 @@ class ModelCards {
       this.duration = data.film_info[`runtime`];
       this.dateOfFilm = data.film_info.release[`date`];
       this.country = data.film_info.release[`release_country`];
-
+      this.watchingDate = data.user_details[`watching_date`];
       this.comments = data.user_details[`Usercomments`];
       this.userComments = data[`comments`];
 
@@ -34633,6 +34532,432 @@ class ModelCards {
 
 /***/ }),
 
+/***/ "./src/pop-up.js":
+/*!***********************!*\
+  !*** ./src/pop-up.js ***!
+  \***********************/
+/*! exports provided: Popup */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Popup", function() { return Popup; });
+/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./component */ "./src/component.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_1__);
+
+
+
+const Emoji = {
+  'grinning': `😀`,
+  'neutral-face': `😐`,
+  'sleeping': `😴`
+};
+
+class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
+  constructor(data) {
+    super();
+      this._title = data.title;
+      this._userrating = data.userrating;
+      this._rating = data.rating;
+      this._ageRating = data.age_rating;
+      this._duration = data.duration;
+      this._genre = data.genre;
+      this._poster = data.poster;
+      this._description = data.description;
+      
+      this._towatchlist = data.watchlist;
+      this._tofavorite = data.favorite;
+      this._towatched = data.alreadyWatched;
+
+      this._actors = data.actors;
+      this._director = data.director;
+      this._writers = data.writers;
+      this._country = data.country;
+      this._dateOfFilm = data.dateOfFilm;
+      this._alternativeTitle = data.alternativeTitle;
+      this._myPersonalRating = data.personalRating;
+      this._userComments = data.userComments;
+
+      this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
+      this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
+      this._onDeleteComment = this._onDeleteComment.bind(this);
+      this._deleteLastComment = this._deleteLastComment.bind(this);
+  }
+  _processForm(formData) {
+    const entry = {
+      personalRating: this._myPersonalRating,
+      userComments: this._userComments,
+      alreadyWatched: false,
+      watchlist: false,
+      favorite: false,
+    };
+    const filmDetailsMapper = Popup.createMapper(entry);
+    for (let pair of formData.entries()) {
+      let [property, value] = pair;
+      if (filmDetailsMapper[property]) {
+        filmDetailsMapper[property](value);
+      };
+    };
+    return entry;
+  }
+  static createMapper(target) {
+    this._comment = undefined;
+    return {
+      'watchlist': (value) => (target.watchlist = (value === `on`)),
+      'watched': (value) => (target.alreadyWatched = (value === `on`)),
+      'favorite': (value) => (target.favorite = (value === `on`)),
+      'score': (value) => (target.personalRating = +value),
+      'comment': (value) => {
+        if (this._comment) {
+          let emoji = this._comment.emotion;
+          this._comment.comment = value;
+          target.userComments.push({author: `Me`, emotion: emoji, comment: value, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()});
+        } else {
+          this._comment = {author: `Me`, emotion: undefined, comment: value, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()};
+        }
+      },
+      'comment-emoji': (value) => {
+        if (this._comment) {
+          let comment = this._comment.comment;
+          let emoji = value;
+          this._comment.emotion = value;
+          target.userComments.push({author: `Me`, emotion: emoji, comment, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()});
+        } else {
+          this._comment = {author: `Me`, emotion: value, comment: undefined, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()};
+        }
+      }
+    };
+  }
+  update(data) {
+    this._myPersonalRating = data.personalRating;
+    this._towatchlist = data.watchlist;
+    this._favorite = data.favorite;
+    this._userComments = data.userComments;
+    this._alreadyWatched = data.alreadyWatched;
+  }
+  set onSubmit(fn) {
+    this._onSubmit = fn;
+  }
+  set onClose(fn) {
+    this._onClose = fn;
+  }
+  _onSubmitButtonClick(evt) {
+    if (evt.keyCode === ( true && 17)) {
+      const formData = new FormData(this._element.querySelector(`.film-details__inner`));
+      const newData = this._processForm(formData);
+      if (typeof this._onSubmit === `function`) {
+        this._onSubmit(newData);
+      }
+      this.update(newData);
+    }
+  }
+  _onCloseButtonClick(evt) {
+    if (evt.key === `Escape` || evt.target.classList[0] === `film-details__close-btn`) {
+      return typeof this._onClose === `function` && this._onClose();
+    }
+    return null;
+  }
+  render() {
+    this._element = _component__WEBPACK_IMPORTED_MODULE_0__["Component"].createElement(this.template);
+    this.bind();
+    this.renderCommentsList();
+    return this._element;
+  }
+
+  unrender() {
+    this.unbind();
+    this._element.remove();
+    this._element = null;
+  }
+  get element() {
+    return this._element;
+  }
+  
+  bind() {
+    this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick); 
+    this._element.querySelector(`.film-details__comment-input`).addEventListener(`keydown`, this._onSubmitButtonClick);
+    this._element.querySelector(`.film-details__inner`).addEventListener(`keydown`, this._onCloseButtonClick);
+    this._element.querySelector(`.film-details__watched-reset`).addEventListener(`click`, this._onDeleteComment);
+  }
+  unbind() {
+    this._element.querySelector(`.film-details__close-btn`).removeEventListener(`click`, this._onCloseButtonClick);
+    this._element.querySelector(`.film-details__comment-input`).removeEventListener(`keydown`, this._onSubmitButtonClick);
+    this._element.querySelector(`.film-details__inner`).removeEventListener(`keydown`, this._onCloseButtonClick);
+    this._element.querySelector(`.film-details__watched-reset`).removeEventListener(`click`, this._onDeleteComment);
+  }
+  shake() {
+    const ANIMATION_TIMEOUT = 600;
+    this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {this._element.style.animation = ``}, ANIMATION_TIMEOUT);
+  }
+  enableForm() {
+    this._element.querySelector(`.film-details__comment-input`).removeAttribute(`disabled`);
+    this._element.querySelector(`.film-details__comment-input`).classList.remove(`film-details__comment-input--error`);
+    this._element.querySelector(`.film-details__add-emoji`).checked = false;
+  }
+  renderCommentsList(comments = this._userComments) {
+    const html = comments.map((comment) => {
+      return `<li class="film-details__comment">
+    <span class="film-details__comment-emoji">${Emoji[comment.emotion]}</span>
+      <div>
+      <p class="film-details__comment-text">${comment.comment}</p>
+        <p class="film-details__comment-info">
+        <span class="film-details__comment-author">${comment.author}</span>
+        <span class="film-details__comment-day">${moment__WEBPACK_IMPORTED_MODULE_1___default()(comment.date).fromNow()}</span>
+        </p>
+        </div>
+        </li>`;
+    }
+    ).join(``);
+    this._element.querySelector(`.film-details__comments-list`).innerHTML = html;
+    this._element.querySelector(`.film-details__comments-title .film-details__comments-count`).innerHTML = comments.length;
+  }
+  clearFrom() {
+      this._element.querySelector(`.film-details__comment-input`).value = ``;
+  }
+  _onSubmitClick(evt) {
+    document.querySelector(`.film-details__watched-reset`).classList.add(`visually-hidden`);
+    if (evt.ctrlKey && evt.keyCode === 13) {
+      const formData = new FormData(this._element.querySelector(`.film-details__inner`));
+      const newData = this._processForm(formData);
+      if (typeof this._onSubmit === `function`) {
+        this.update(newData);
+        this._onSubmit(newData);
+      }
+    }
+  }
+  set onDelete(fn) {
+    this._onDelete = fn;
+  }
+  onSubmitSuccess() {
+    document.querySelector(`.film-details__watched-status`).innerHTML = `Comment added`;
+    document.querySelector(`.film-details__watched-reset`).classList.remove(`visually-hidden`);
+  }
+  onDeleteSuccess() {
+    document.querySelector(`.film-details__watched-status`).innerHTML = `Comment deleted`;
+    document.querySelector(`.film-details__watched-reset`).classList.add(`visually-hidden`);
+  }
+  removeComment() {
+    this._userComments.pop();
+  }
+  _deleteLastComment() {
+    const lastComment = (this._userComments[this._userComments.length - 1]);
+    if (lastComment.author === `Me`) {
+      this.removeComment();
+      const formData = new FormData(this._element.querySelector(`.film-details__inner`));
+      const newData = this._processForm(formData, `delete`);
+      if (typeof this._onSubmit === `function`) {
+        this.update(newData);
+        this._onSubmit(newData, `delete`);
+      }
+    }
+  }
+  _onDeleteComment() {
+    this._deleteLastComment();
+    if (typeof this._onDelete === `function`) {
+      this._onDelete();
+    }
+  }
+  get template() {
+    return `<section class="film-details">
+  <form class="film-details__inner" action="" method="get">
+    <div class="film-details__close">
+      <button class="film-details__close-btn" type="button">close</button>
+    </div>
+    <div class="film-details__info-wrap">
+      <div class="film-details__poster">
+        <img class="film-details__poster-img" src="${this._poster}" alt="incredables-2">
+
+        <p class="film-details__age">${this._ageRating}</p>
+      </div>
+
+      <div class="film-details__info">
+        <div class="film-details__info-head">
+          <div class="film-details__title-wrap">
+            <h3 class="film-details__title">${this._title}</h3>
+            <p class="film-details__title-original">${this._alternativeTitle}</p>
+          </div>
+
+          <div class="film-details__rating">
+            <p class="film-details__total-rating">${this._rating}</p>
+            <p class="film-details__user-rating">Your rate ${this._myPersonalRating}</p>
+          </div>
+        </div>
+        <table class="film-details__table">
+          <tr class="film-details__row">
+            <td class="film-details__term">Director</td>
+            <td class="film-details__cell">${this._director}</td>
+          </tr>
+          <tr class="film-details__row">
+            <td class="film-details__term">Writers</td>
+            <td class="film-details__cell">${this._writers}</td>
+          </tr>
+          <tr class="film-details__row">
+            <td class="film-details__term">Actors</td>
+            <td class="film-details__cell">${this._actors}</td>
+          </tr>
+          <tr class="film-details__row">
+            <td class="film-details__term">Release Date</td>
+            <td class="film-details__cell">${moment__WEBPACK_IMPORTED_MODULE_1___default()(this._dateOfFilm).format(`d MMMM YYYY`)} </td>
+          </tr>
+          <tr class="film-details__row">
+            <td class="film-details__term">Runtime</td>
+            <td class="film-details__cell">${this._duration} min</td>
+          </tr>
+          <tr class="film-details__row">
+            <td class="film-details__term">Country</td>)
+            <td class="film-details__cell">${this._country}</td>
+          </tr>
+          <tr class="film-details__row">
+            <td class="film-details__term">Genres</td>
+            <td class="film-details__cell">
+            ${this._genre.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``)}
+            </td>
+          </tr>
+        </table>
+
+        <p class="film-details__film-description">${this._description}</p>
+      </div>
+    </div>
+
+    <section class="film-details__controls">
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${this._towatchlist === 'checked'}>
+      <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
+
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${this._towatched === 'checked'}>
+      <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
+
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${this._tofavorite === 'checked'}>
+      <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
+    </section>
+
+    <section class="film-details__comments-wrap">
+      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._userComments.length}</span></h3>
+
+      <ul class="film-details__comments-list">
+      </ul>
+
+      <div class="film-details__new-comment">
+        <div>
+          <label for="add-emoji" class="film-details__add-emoji-label">😐</label>
+          <input type="checkbox" class="film-details__add-emoji visually-hidden" id="add-emoji">
+
+          <div class="film-details__emoji-list">
+            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
+            <label class="film-details__emoji-label" for="emoji-sleeping">😴</label>
+
+            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-neutral-face" value="neutral-face" checked>
+            <label class="film-details__emoji-label" for="emoji-neutral-face">😐</label>
+
+            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-grinning" value="grinning">
+            <label class="film-details__emoji-label" for="emoji-grinning">😀</label>
+          </div>
+        </div>
+        <label class="film-details__comment-label">
+          <textarea class="film-details__comment-input" placeholder="← Select reaction, add comment here" name="comment"></textarea>
+        </label>
+      </div>
+    </section>
+
+    <section class="film-details__user-rating-wrap">
+      <div class="film-details__user-rating-controls">
+        <span class="film-details__watched-status">Already watched</span>
+        <button class="film-details__watched-reset visually-hidden" type="button">undo</button>
+      </div>
+
+      <div class="film-details__user-score">
+        <div class="film-details__user-rating-poster">
+          <img src="${this._poster}" alt="film-poster" class="film-details__user-rating-img">
+        </div>
+
+        <section class="film-details__user-rating-inner">
+          <h3 class="film-details__user-rating-title">${this._title}</h3>
+
+          <p class="film-details__user-rating-feelings">How you feel it?</p>
+
+          <div class="film-details__user-rating-score">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1" ${this._myPersonalRating === `1` && 'checked'} >
+            <label class="film-details__user-rating-label" for="rating-1">1</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2" ${this._myPersonalRating === `2` && 'checked'}>
+            <label class="film-details__user-rating-label" for="rating-2">2</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3" ${this._myPersonalRating === `3` && 'checked'}>
+            <label class="film-details__user-rating-label" for="rating-3">3</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4" ${this._myPersonalRating === `4` && 'checked'}>
+            <label class="film-details__user-rating-label" for="rating-4">4</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5" ${this._myPersonalRating === `5` && 'checked'}>
+            <label class="film-details__user-rating-label" for="rating-5">5</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6" ${this._myPersonalRating === `6` && 'checked'}>
+            <label class="film-details__user-rating-label" for="rating-6">6</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7" ${this._myPersonalRating === `7` && 'checked'}>
+            <label class="film-details__user-rating-label" for="rating-7">7</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8" ${this._myPersonalRating === `8` && 'checked'}>
+            <label class="film-details__user-rating-label" for="rating-8">8</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9" ${this._myPersonalRating === `9` && 'checked'}>
+            <label class="film-details__user-rating-label" for="rating-9">9</label>
+
+          </div>
+        </section>
+      </div>
+    </section>
+  </form>
+</section>`;
+  };
+}
+
+
+
+
+
+/***/ }),
+
+/***/ "./src/search.js":
+/*!***********************!*\
+  !*** ./src/search.js ***!
+  \***********************/
+/*! exports provided: Search */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Search", function() { return Search; });
+/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./component */ "./src/component.js");
+
+
+class Search extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
+    constructor() {
+    super();
+        this._onSearchButtonClick = this._onSearchButtonClick.bind(this);
+    }
+    _onSearchButtonClick() {
+        return typeof this._onClick === `function` && this._onClick();
+    }
+    set onSearch(fn) {
+        this._onClick = fn;
+    }
+    
+    bind() {
+        this._element.addEventListener(`keyup`, this._onSearchButtonClick);
+    }
+    unbind() {
+        this._element.removeEventListener(`keyup`, this._onSearchButtonClick);
+    }
+    get template() {
+        return `<input type="text" name="search" class="search__field" placeholder="Search">`;
+    }
+};
+
+
+/***/ }),
+
 /***/ "./src/statistic.js":
 /*!**************************!*\
   !*** ./src/statistic.js ***!
@@ -34657,10 +34982,15 @@ class Statistic extends _component__WEBPACK_IMPORTED_MODULE_2__["Component"] {
         super();
         this._towatched = arrOfData.filter((it) => it.alreadyWatched === true);
         this._onStatisticRender = this._onStatisticRender.bind(this);
+        this._onStatisticWeekClick = this._onStatisticWeekClick.bind(this);
+        this._onStatisticDayClick = this._onStatisticDayClick.bind(this);
+        this._onStatisticMonthClick = this._onStatisticMonthClick.bind(this);
+        this._onStatisticYearClick = this._onStatisticYearClick.bind(this);
+        this._onStatisticClick = this._onStatisticClick.bind(this);
         this._totalDuration = this._towatched.reduce((acc,item) => acc + item.duration, 0);
     }
 
-    grauphStatistic() {
+    grauphStatistic(_towatched) {
         const genreMap = {};
         for (let film of this._towatched) {
             for (let genre of film.genre) {
@@ -34751,11 +35081,79 @@ class Statistic extends _component__WEBPACK_IMPORTED_MODULE_2__["Component"] {
         event.preventDefault();
         return typeof this._onStatisticRender === `function` && this._onStatisticRender();
     }
+
+
+    set onStatisticDayClick(fn) {
+        this._onStatisticDayClick = fn;
+    }
+    _onStatisticDayClick() { 
+        return typeof this._onStatisticDayClick === `function` && this._onStatisticDayClick();
+    }
+
+
+
+    set onStatisticWeekClick(fn) {
+        this._onStatisticWeekClick = fn;
+    }
+    _onStatisticWeekClick() {
+        return typeof this._onStatisticWeekClick === `function` && this._onStatisticWeekClick();
+    }
+
+
+
+    set onStatisticMonthClick(fn) {
+        this._onStatisticMonthClick = fn;
+    }
+    _onStatisticMonthClick() {
+        return typeof this._onStatisticMonthClick === `function` && this._onStatisticMonthClick();
+    }
+
+
+    set onStatisticYearClick(fn) {
+        this._onStatisticYearClick = fn;
+    }
+    _onStatisticYearClick() {
+        return typeof this._onStatisticYearClick === `function` && this._onStatisticYearClick();
+    }
+
+    set onStatisticClick(fn) {
+        this._onStatisticClick = fn;
+    }   
+    _onStatisticClick() {
+        return typeof this._onStatisticClick === `function` && this._onStatisticClick();
+    }
+    render() {
+        this._element = _component__WEBPACK_IMPORTED_MODULE_2__["Component"].createElement(this.template);
+        this.bind();
+        return this._element;
+    }
+    unrender() {
+        this.unbind();
+        this._element.remove();
+        this._element = null;
+    }
+    get element() {
+        return this._element;
+    }
     bind() {
-        document.querySelector(`.main-navigation__item--additional`).addEventListener(`click`, this._onStatisticRender);
+        document.querySelector(`.main-navigation__item--additional`).addEventListener(`click`, this._onStatisticRender);  
     }
     unbind() {
         document.querySelector(`.main-navigation__item--additional`).removeEventListener(`click`, this._onStatisticRender);
+    }
+    bindData() {
+        this._element.querySelector(`#statistic-all-time`).addEventListener(`click`, this._onStatisticClick);
+        this._element.querySelector(`#statistic-month`).addEventListener(`click`, this._onStatisticMonthClick);
+        this._element.querySelector(`#statistic-week`).addEventListener(`click`, this._onStatisticWeekClick);
+        this._element.querySelector(`#statistic-today`).addEventListener(`click`,this._onStatisticDayClick);
+        this._element.querySelector(`#statistic-year`).addEventListener(`click`,this._onStatisticYearClick);
+    }
+    unbindData() {
+        this._element.querySelector(`#statistic-all-time`).removeEventListener(`click`, this._onStatisticClick);
+        this._element.querySelector(`#statistic-month`).removeEventListener(`click`, this._onStatisticMonthClick);
+        this._element.querySelector(`#statistic-week`).removeEventListener(`click`, this._onStatisticWeekClick);
+        this._element.querySelector(`#statistic-today`).removeEventListener(`click`,this._onStatisticDayClick);
+        this._element.querySelector(`#statistic-year`).removeEventListener(`click`,this._onStatisticYearClick);
     }
     update(arrOfData) {
         this._towatched = arrOfData.filter((it) => it.alreadyWatched === true);
@@ -34774,21 +35172,34 @@ class Statistic extends _component__WEBPACK_IMPORTED_MODULE_2__["Component"] {
         const newArr = arrGenreMap.sort((a,b) => {
             return b[1] - a[1];
         });
-            const arrayOfKeys = [];
-            const arrayOfValues = [];
-            newArr.forEach((item)=> {
-                arrayOfKeys.push(item[0]);
-                arrayOfValues.push(item[1]);
-            });
-      }
+        const arrayOfKeys = [];
+        const arrayOfValues = [];
+        newArr.forEach((item)=> {
+            arrayOfKeys.push(item[0]);
+             arrayOfValues.push(item[1]);
+        });
+    }
+
+
     get template() {
+        const genreMap = {};
+        for (let film of this._towatched) {
+            for (let genre of film.genre) {
+                if (genreMap[genre] === undefined) {
+                    genreMap[genre] = 1;
+                } else {
+                    genreMap[genre] += 1;
+                }
+            }
+        }
+        const genreMapKeys = Object.keys(genreMap);
         return `<section class="statistic">
         <p class="statistic__rank">Your rank <span class="statistic__rank-label">Sci-Fighter</span></p>
       
         <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
           <p class="statistic__filters-description">Show stats:</p>
       
-          <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
+          <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time"}>
           <label for="statistic-all-time" class="statistic__filters-label">All time</label>
       
           <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
@@ -34815,7 +35226,7 @@ class Statistic extends _component__WEBPACK_IMPORTED_MODULE_2__["Component"] {
           </li>
           <li class="statistic__text-item">
             <h4 class="statistic__item-title">Top genre</h4>
-            <p class="statistic__item-text">1</p>
+            <p class="statistic__item-text">${genreMapKeys[0]}</p>
           </li>
         </ul>
       
