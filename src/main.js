@@ -27,13 +27,13 @@ const filterFilms = (nameFilter, dataForFilters) => {
       return dataForFilters;
 
     case `History`:
-      return dataForFilters.filter((it) => it.towatched || it.alreadyWatched === true);
+      return Array.from(dataForFilters).filter((it) => it.towatched || it.alreadyWatched === true);
 
     case `Watchlist`:
-      return dataForFilters.filter((it) => it.towatchlist || it.watchlist === true);
+      return Array.from(dataForFilters).filter((it) => it.towatchlist || it.watchlist === true);
 
     case `Favorites`:
-      return dataForFilters.filter((it) => it.favorite || it.favorite === true);
+      return Array.from(dataForFilters).filter((it) => it.favorite || it.favorite === true);
 
     default:
       return dataForFilters;

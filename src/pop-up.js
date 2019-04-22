@@ -105,36 +105,16 @@ class Popup extends Component {
       this.update(newData);
     }
   }
-  _processForm(formData) {
-    const entry = {
-      text: ``,
-      score: ``
-    };
-    const popUpMapper = Popup.createMapper(entry);
-
-    for (const pair of formData.entries()) {
-      const [property, value] = pair;
-      popUpMapper[property] && popUpMapper[property](value);
+  _onCloseButtonClick(evt) {
+    if (evt.key === `Escape` || evt.target.classList[0] === `film-details__close-btn`) {
+      return typeof this._onClose === `function` && this._onClose();
     }
-    
-    return entry;
+    return null;
   }
-
-  _onSubmitButtonClick(evt) {
-    if (evt.keyCode === (13 && 17)) {
-      const formData = new FormData(this._element.querySelector(`.film-details__inner`));
-      const newData = this._processForm(formData);
-      typeof this._onSubmit === `function` && this._onSubmit(newData);
-
-      this.update(newData);
-    };
-  }
-  update(data) {
-    this._text = data.text;
-    this._userrating = data.userrating;
-  }
-
-  get element() {
+  render() {
+    this._element = Component.createElement(this.template);
+    this.bind();
+    this.renderCommentsList();
     return this._element;
   }
 
@@ -384,7 +364,6 @@ class Popup extends Component {
   </form>
 </section>`;
   };
-};
+}
 export {Popup};
-
 
