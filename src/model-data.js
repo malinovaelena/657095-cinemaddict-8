@@ -15,14 +15,11 @@ class ModelCards {
       this.dateOfFilm = data.film_info.release[`date`];
       this.country = data.film_info.release[`release_country`];
       this.watchingDate = data.user_details[`watching_date`];
-      this.comments = data.user_details[`Usercomments`];
       this.userComments = data[`comments`];
-
       this.alreadyWatched = data.user_details[`already_watched`];
       this.favorite = data.user_details[`favorite`];
       this.watchlist = data.user_details[`watchlist`];
       this.personalRating = data.user_details[`personal_rating`];
-      this.userDetails = data[`user_details`];
     }
     toRAW() {
         return {

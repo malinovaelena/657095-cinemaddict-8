@@ -33863,38 +33863,23 @@ class Card extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
     super();
       this._title = data.title;
       this._rating = data.rating;
-      this._year = data.year;
       this._duration = data.duration;
       this._genre = data.genre;
       this._poster = data.poster;
       this._description = data.description;
-      this._comments = data.comments;
-      this._towatchlist = data.towatchlist;
-      this._towatched = data.towatched;
       this._dateOfFilm = data.dateOfFilm;
       this._userComments = data.userComments;
+      /*
       this._alreadyWatched = data.alreadyWatched;
       this._favorite = data.favorite;
       this._watchlist = data.watchlist;
+      */
 
       this._onOpenButtonClick = this._onOpenButtonClick.bind(this);
       this._onAddToWatchList = this._onAddToWatchList.bind(this);
       this._onMarkAsWatched = this._onMarkAsWatched.bind(this);
       this._onMarkAsFavorite = this._onMarkAsFavorite.bind(this);
   }
-  set onClick(fn) {
-    this._onClick = fn;
-  }
-  set onAddToWatchList(fn) {
-    this._onAddToWatchList = fn;
-  }
-  set onMarkAsWatched(fn) {
-    this._onMarkAsWatched = fn;
-  }
-  set onMarkAsFavorite(fn) {
-    this._onMarkAsFavorite = fn;
-  }
-
   _onOpenButtonClick() {
     return typeof this._onClick === `function` && this._onClick();
   }
@@ -33911,6 +33896,19 @@ class Card extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
     return typeof this._onMarkAsFavorite === `function` && this._onMarkAsFavorite();
   }
 
+  set onClick(fn) {
+    this._onClick = fn;
+  }
+  set onAddToWatchList(fn) {
+    this._onAddToWatchList = fn;
+  }
+  set onMarkAsWatched(fn) {
+    this._onMarkAsWatched = fn;
+  }
+  set onMarkAsFavorite(fn) {
+    this._onMarkAsFavorite = fn;
+  }
+
   bind() {
     this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
     this._element.querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._onAddToWatchList.bind(this));
@@ -33918,18 +33916,18 @@ class Card extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
     this._element.querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, this._onMarkAsFavorite.bind(this));
   }
   unbind() {
-    this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
+    this._element.querySelector(`.film-card__comments`).removeEventListener(`click`, this._onOpenButtonClick.bind(this));
     this._element.querySelector(`.film-card__controls-item--add-to-watchlist`).removeEventListener(`click`, this._onAddToWatchList.bind(this));
     this._element.querySelector(`.film-card__controls-item--mark-as-watched`).removeEventListener(`click`, this._onMarkAsWatched.bind(this));
     this._element.querySelector(`.film-card__controls-item--favorite`).removeEventListener(`click`, this._onMarkAsFavorite.bind(this));
   }
+  /*
   update(data) {
     this._alreadyWatched = data.alreadyWatched;
     this._watchlist = data.watchlist;
     this._favorite = data.favorite;
     this._userComments = data.userComments;
-  }
-  
+  }*/
   get template() {
     const filmDuration = moment__WEBPACK_IMPORTED_MODULE_1___default.a.duration(this._duration, `m`);
     return `<article class="film-card">
@@ -34073,21 +34071,36 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const body = document.querySelector(`body`);
-const filmContainer = document.querySelectorAll(`.films-list__container`);
-const filterContainer = document.querySelector(`.main-navigation`);
-const searchContainer = document.querySelector(`.header__search`);
-const showMoreButton = document.querySelector(`.films-list__show-more`);
-const profileUserContainer = document.querySelector(`.profile__rating`);
-const footerStatistic = document.querySelector(`.footer__statistics > p`);
-
-
-let cardToRenderPosition = 5;
-let dataToRender;
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
 const api = new _api__WEBPACK_IMPORTED_MODULE_4__["API"]({endPoint: END_POINT, authorization: AUTHORIZATION});
 
+const body = document.querySelector(`body`);
+const filmContainers = document.querySelectorAll(`.films-list__container`);
+const mainFilmContainer = filmContainers[0];
+const filterContainer = document.querySelector(`.main-navigation`);
+const searchContainer = document.querySelector(`.header__search`);
+const TopRatedContainer = filmContainers[1];
+const mostCommentedContainer = filmContainers[2];
+const profileUserContainer = document.querySelector(`.profile__rating`);
+
+const showMoreButton = document.querySelector(`.films-list__show-more`);
+const footerStatistic = document.querySelector(`.footer__statistics > p`);
+const AMOUNT_FOR_RENDER_CARDS = 5;
+
+const UserName = {
+  NOVICE: 10,
+  FAN: 18
+};
+const AmountOfMillisecond = {
+  INDAY: 86400000,
+  INWEEK: 604800016,
+  INMONTH: 2629800000,
+  INYEAR: 31536000000,
+  FORPAUSE: 1000
+};
+let cardToRenderPosition = AMOUNT_FOR_RENDER_CARDS;
+let dataToRender;
 
 const filterFilms = (nameFilter, dataForFilters) => {
   switch (nameFilter) {
@@ -34095,13 +34108,13 @@ const filterFilms = (nameFilter, dataForFilters) => {
       return dataForFilters;
 
     case `History`:
-      return dataForFilters.filter((it) => it.towatched || it.alreadyWatched === true);
+      return Array.from(dataForFilters).filter((it) => it.alreadyWatched || it.alreadyWatched === true);
 
     case `Watchlist`:
-      return dataForFilters.filter((it) => it.towatchlist || it.watchlist === true);
+      return Array.from(dataForFilters).filter((it) => it.towatchlist || it.watchlist === true);
 
     case `Favorites`:
-      return dataForFilters.filter((it) => it.favorite || it.favorite === true);
+      return Array.from(dataForFilters).filter((it) => it.favorite || it.favorite === true);
 
     default:
       return dataForFilters;
@@ -34114,9 +34127,9 @@ const searchCards = (data, value) => {
   return data.filter((it) => it.title.toUpperCase().includes(value.toUpperCase()));
 };
 const showProfileRating = (value) => {
-  if (value < 10) {
+  if (value < UserName.NOVICE) {
     return `novice`;
-  } else if (value <= 18) {
+  } else if (value <= UserName.FAN) {
     return `fan`;
   } else {
     return `movie buff`;
@@ -34132,9 +34145,13 @@ const renderSearch = (cards) => {
     if (searchValue !== ``) {
       const searchResult = searchCards(cards, searchValue);
       renderFilms(searchResult);
+    } else {
+      cardToRenderPosition = AMOUNT_FOR_RENDER_CARDS;
+      showMoreCards(cards);
     }
   };
 };
+
 const onShowMoreButtonClick = () => showMoreCards(dataToRender);
 
 const showMoreCards = (cards) => {
@@ -34143,11 +34160,11 @@ const showMoreCards = (cards) => {
     showMoreButton.removeEventListener(`click`, onShowMoreButtonClick);
     showMoreButton.classList.add(`visually-hidden`);
   }
-  cardToRenderPosition += 5;
+  cardToRenderPosition += AMOUNT_FOR_RENDER_CARDS;
 };
 const renderFilters = (cards) => {
   filterContainer.innerHTML = `<a href="#stats" class="main-navigation__item main-navigation__item--additional">Stats</a>`;
-  let amountHistory = Array.from(cards).filter((it) => it.towatched || it.alreadyWatched === true).length;
+  let amountHistory = Array.from(cards).filter((it) => it.alreadyWatched || it.alreadyWatched === true).length;
   let amountFavorite = Array.from(cards).filter((it) => it.favorite || it.favorite === true).length;
   let amountWatchlist = Array.from(cards).filter((it) => it.towatchlist || it.watchlist === true).length;
 
@@ -34168,7 +34185,7 @@ const renderFilters = (cards) => {
       dataToRender = cardsForThisFilter;
       showMoreButton.removeEventListener(`click`, onShowMoreButtonClick);
       showMoreButton.addEventListener(`click`, onShowMoreButtonClick);
-      cardToRenderPosition = 5;
+      cardToRenderPosition = AMOUNT_FOR_RENDER_CARDS;
       showMoreCards(dataToRender);
     };
   }
@@ -34176,23 +34193,23 @@ const renderFilters = (cards) => {
 
 const renderStatistic = (cards) => {
   let lastWeekArr = cards.filter((it) => {
-    return (Date.now() - it.watchingDate) <= 604800016;
+    return (Date.now() - it.watchingDate) <= AmountOfMillisecond.INWEEK;
   });
   let lastDayArr = cards.filter((it) => {
-    return (Date.now() - it.watchingDate) <= 86400000;
+    return (Date.now() - it.watchingDate) <= AmountOfMillisecond.INDAY;
   });
   let lastMonthArr = cards.filter((it) => {
-    return (Date.now() - it.watchingDate) <= 2629800000;
+    return (Date.now() - it.watchingDate) <= AmountOfMillisecond.INMONTH;
   });
   let lastYEarArr = cards.filter((it) => {
-    return (Date.now() - it.watchingDate) <= 31536000000;
+    return (Date.now() - it.watchingDate) <= AmountOfMillisecond.INYEAR;
   });
   const statistic = new _statistic__WEBPACK_IMPORTED_MODULE_3__["Statistic"](cards);
   statistic.bind();
   statistic.onStatisticRender = () => {
-    filmContainer[0].innerHTML = ``;
+    mainFilmContainer.innerHTML = ``;
     statistic.render();
-    filmContainer[0].appendChild(statistic.element);
+    mainFilmContainer.appendChild(statistic.element);
     statistic.grauphStatistic();
     statistic.bindData();
 
@@ -34200,7 +34217,7 @@ const renderStatistic = (cards) => {
       statistic.unrender();
       statistic.update(lastWeekArr);
       statistic.render();
-      filmContainer[0].appendChild(statistic.element);
+      mainFilmContainer.appendChild(statistic.element);
       statistic.grauphStatistic();
       statistic.bindData();
     };
@@ -34208,7 +34225,7 @@ const renderStatistic = (cards) => {
       statistic.unrender();
       statistic.update(lastMonthArr);
       statistic.render();
-      filmContainer[0].appendChild(statistic.element);
+      mainFilmContainer.appendChild(statistic.element);
       statistic.grauphStatistic();
       statistic.bindData();
     };
@@ -34216,7 +34233,7 @@ const renderStatistic = (cards) => {
       statistic.unrender();
       statistic.update(lastDayArr);
       statistic.render();
-      filmContainer[0].appendChild(statistic.element);
+      mainFilmContainer.appendChild(statistic.element);
       statistic.grauphStatistic();
       statistic.bindData();
     };
@@ -34224,7 +34241,7 @@ const renderStatistic = (cards) => {
       statistic.unrender();
       statistic.update(lastYEarArr);
       statistic.render();
-      filmContainer[0].appendChild(statistic.element);
+      mainFilmContainer.appendChild(statistic.element);
       statistic.grauphStatistic();
       statistic.bindData();
     };
@@ -34232,24 +34249,25 @@ const renderStatistic = (cards) => {
       statistic.unrender();
       statistic.update(cards);
       statistic.render();
-      filmContainer[0].appendChild(statistic.element);
+      mainFilmContainer.appendChild(statistic.element);
       statistic.grauphStatistic();
       statistic.bindData();
     };
   };
 };
 const renderFilms = (cards) => {
-  filmContainer[0].innerHTML = ``;
+  mainFilmContainer.innerHTML = ``;
   for (let dataOneCard of cards) {
     const cardElement = new _card__WEBPACK_IMPORTED_MODULE_2__["Card"](dataOneCard);
     const popUpElement = new _pop_up__WEBPACK_IMPORTED_MODULE_1__["Popup"](dataOneCard);
 
     cardElement.render();
-    filmContainer[0].appendChild(cardElement.element);
+    mainFilmContainer.appendChild(cardElement.element);
 
     cardElement.onClick = () => {
       popUpElement.render();
       body.appendChild(popUpElement.element);
+      cardElement.unbind();
     };
 
     cardElement.onAddToWatchList = () => {
@@ -34259,9 +34277,9 @@ const renderFilms = (cards) => {
           popUpElement.update(newData);
         });
       api.getCards()
-      .then(() => {
-        renderFilters(cards);
-        renderStatistic(cards);
+      .then((newCards) => {
+        renderFilters(newCards);
+        renderStatistic(newCards);
       });
     };
 
@@ -34270,12 +34288,11 @@ const renderFilms = (cards) => {
       api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
         .then((newData) => {
           popUpElement.update(newData);
-          renderFilters(cards);
         });
       api.getCards()
-        .then(() => {
-          renderFilters(cards);
-          renderStatistic(cards);
+        .then((newCards) => {
+          renderFilters(newCards);
+          renderStatistic(newCards);
         });
     };
     cardElement.onMarkAsFavorite = () => {
@@ -34285,39 +34302,27 @@ const renderFilms = (cards) => {
           popUpElement.update(newData);
         });
       api.getCards()
-        .then(() => {
-          renderFilters(cards);
-          renderStatistic(cards);
+        .then((newCards) => {
+          renderFilters(newCards);
+          renderStatistic(newCards);
         });
     };
     popUpElement.onSubmit = (newData, type = `add`) => {
-      const block = () => {
-        popUpElement.element.querySelector(`.film-details__comment-input`).disabled = true;
-        popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = true;
-      };
-      const unblock = () => {
-        popUpElement.element.querySelector(`.film-details__comment-input`).disabled = false;
-        popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = false;
-      };
-      const inputRedWarning = () => {
-        popUpElement.element.querySelector(`.film-details__comment-input`).style.borderColor = `#FF0000`;
-        popUpElement.element.querySelector(`.film-details__user-rating-label`).style.backgroundColor = `#FF0000`;
-      };
-      block();
+      popUpElement.block();
       const load = (isSuccess) => {
         return new Promise((res, rej) => {
-          setTimeout(isSuccess ? res : rej, 1000);
+          setTimeout(isSuccess ? res : rej, AmountOfMillisecond.FORPAUSE);
         });
       };
       Object.assign(dataOneCard, newData);
       api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()});
       load(true)
         .then(() => {
-          unblock();
+          popUpElement.unblock();
           popUpElement.renderCommentsList(dataOneCard.userComments);
           let oldFilm = cardElement.element;
           cardElement.render();
-          filmContainer[0].replaceChild(cardElement.element, oldFilm);
+          mainFilmContainer.replaceChild(cardElement.element, oldFilm);
           popUpElement.clearFrom();
           popUpElement.enableForm();
           if (type === `add`) {
@@ -34326,8 +34331,8 @@ const renderFilms = (cards) => {
         })
         .catch(() => {
           popUpElement.shake();
-          inputRedWarning();
-          unblock();
+          popUpElement.inputRedWarning();
+          popUpElement.unblock();
         });
     };
 
@@ -34337,7 +34342,6 @@ const renderFilms = (cards) => {
   }
 };
 const renderMostCommented = (cards) => {
-  const mostCommentedContainer = filmContainer[2];
   const mostCommented = cards.sort((a, b) => b.userComments.length - a.userComments.length).slice(0, 2);
 
   for (let dataOneCard of mostCommented) {
@@ -34352,37 +34356,25 @@ const renderMostCommented = (cards) => {
       cardElement.unbind();
     };
     popUpElement.onSubmit = (newData) => {
-      const block = () => {
-        popUpElement.element.querySelector(`.film-details__comment-input`).disabled = true;
-        popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = true;
-      };
-      const unblock = () => {
-        popUpElement.element.querySelector(`.film-details__comment-input`).disabled = false;
-        popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = false;
-      };
-      const inputRedWarning = () => {
-        popUpElement.element.querySelector(`.film-details__comment-input`).style.borderColor = `#FF0000`;
-        popUpElement.element.querySelector(`.film-details__user-rating-label`).style.backgroundColor = `#FF0000`;
-      };
-      block();
+      popUpElement.block();
       const load = (isSuccess) => {
         return new Promise((res, rej) => {
-          setTimeout(isSuccess ? res : rej, 1000);
+          setTimeout(isSuccess ? res : rej, AmountOfMillisecond.FORPAUSE);
         });
       };
       Object.assign(dataOneCard, newData);
       api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()});
       load(true)
         .then(() => {
-          unblock();
+          popUpElement.unblock();
           popUpElement.unrender();
           let oldFilm = cardElement.element;
-          filmContainer[0].replaceChild(cardElement.element, oldFilm);
+          mainFilmContainer.replaceChild(cardElement.element, oldFilm);
         })
         .catch(() => {
           popUpElement.shake();
-          inputRedWarning();
-          unblock();
+          popUpElement.inputRedWarning();
+          popUpElement.unblock();
         });
     };
 
@@ -34392,7 +34384,6 @@ const renderMostCommented = (cards) => {
   }
 };
 const renderTopRated = (cards) => {
-  const TopRatedContainer = filmContainer[1];
   const topRated = cards.sort((a, b) => b.rating - a.rating).slice(0, 2);
   for (let dataOneCard of topRated) {
     const cardElement = new _card__WEBPACK_IMPORTED_MODULE_2__["Card"](dataOneCard);
@@ -34407,38 +34398,30 @@ const renderTopRated = (cards) => {
     };
 
     popUpElement.onSubmit = (newData) => {
-      const block = () => {
-        popUpElement.element.querySelector(`.film-details__comment-input`).disabled = true;
-        popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = true;
-      };
-      const unblock = () => {
-        popUpElement.element.querySelector(`.film-details__comment-input`).disabled = false;
-        popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = false;
-      };
-      const inputRedWarning = () => {
-        popUpElement.element.querySelector(`.film-details__comment-input`).style.borderColor = `#FF0000`;
-        popUpElement.element.querySelector(`.film-details__user-rating-label`).style.backgroundColor = `#FF0000`;
-      };
-      block();
+      popUpElement.block();
       const load = (isSuccess) => {
         return new Promise((res, rej) => {
-          setTimeout(isSuccess ? res : rej, 1000);
+          setTimeout(isSuccess ? res : rej, AmountOfMillisecond.FORPAUSE);
         });
       };
       Object.assign(dataOneCard, newData);
       api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()});
       load(true)
         .then(() => {
-          unblock();
+          popUpElement.unblock();
           popUpElement.unrender();
           let oldFilm = cardElement.element;
-          filmContainer[0].replaceChild(cardElement.element, oldFilm);
+          mainFilmContainer.replaceChild(cardElement.element, oldFilm);
         })
         .catch(() => {
           popUpElement.shake();
-          inputRedWarning();
-          unblock();
+          popUpElement.inputRedWarning();
+          popUpElement.unblock();
         });
+    };
+
+    popUpElement.onDelete = () => {
+      popUpElement.onDeleteSuccess();
     };
 
     popUpElement.onClose = () => {
@@ -34463,7 +34446,7 @@ const renderAll = () => {
     })
     .catch((movies) => {
       renderFilters(movies);
-      filmContainer[0].innerHTML = `Something went wrong while loading movies. Check your connection or try again later`;
+      mainFilmContainer.innerHTML = `Something went wrong while loading movies. Check your connection or try again later`;
     });
 };
 renderAll();
@@ -34498,14 +34481,11 @@ class ModelCards {
       this.dateOfFilm = data.film_info.release[`date`];
       this.country = data.film_info.release[`release_country`];
       this.watchingDate = data.user_details[`watching_date`];
-      this.comments = data.user_details[`Usercomments`];
       this.userComments = data[`comments`];
-
       this.alreadyWatched = data.user_details[`already_watched`];
       this.favorite = data.user_details[`favorite`];
       this.watchlist = data.user_details[`watchlist`];
       this.personalRating = data.user_details[`personal_rating`];
-      this.userDetails = data[`user_details`];
     }
     toRAW() {
         return {
@@ -34558,7 +34538,6 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   constructor(data) {
     super();
       this._title = data.title;
-      this._userrating = data.userrating;
       this._rating = data.rating;
       this._ageRating = data.age_rating;
       this._duration = data.duration;
@@ -34566,9 +34545,9 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
       this._poster = data.poster;
       this._description = data.description;
       
-      this._towatchlist = data.watchlist;
-      this._tofavorite = data.favorite;
-      this._towatched = data.alreadyWatched;
+      this._watchlist = data.watchlist;
+      this._favorite = data.favorite;
+      this._alreadyWatched = data.alreadyWatched;
 
       this._actors = data.actors;
       this._director = data.director;
@@ -34584,24 +34563,24 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
       this._onDeleteComment = this._onDeleteComment.bind(this);
       this._deleteLastComment = this._deleteLastComment.bind(this);
   }
-  _processForm(formData) {
+  _processForm(formData, type = `update`) {
     const entry = {
-      personalRating: this._myPersonalRating,
+      personalRating: this._personalRating,
       userComments: this._userComments,
       alreadyWatched: false,
       watchlist: false,
       favorite: false,
     };
-    const filmDetailsMapper = Popup.createMapper(entry);
+    const filmDetailsMapper = Popup.createMapper(entry, type);
     for (let pair of formData.entries()) {
       let [property, value] = pair;
       if (filmDetailsMapper[property]) {
         filmDetailsMapper[property](value);
-      };
-    };
+      }
+    }
     return entry;
   }
-  static createMapper(target) {
+  static createMapper(target, type = `update`) {
     this._comment = undefined;
     return {
       'watchlist': (value) => (target.watchlist = (value === `on`)),
@@ -34609,29 +34588,35 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
       'favorite': (value) => (target.favorite = (value === `on`)),
       'score': (value) => (target.personalRating = +value),
       'comment': (value) => {
-        if (this._comment) {
-          let emoji = this._comment.emotion;
-          this._comment.comment = value;
-          target.userComments.push({author: `Me`, emotion: emoji, comment: value, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()});
-        } else {
-          this._comment = {author: `Me`, emotion: undefined, comment: value, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()};
+        if (type !== `delete`) {
+          if (this._comment) {
+            let emoji = this._comment.emotion;
+            this._comment.comment = value;
+            target.userComments.push({author: `Me`, emotion: emoji, comment: value, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()});
+          } else {
+            this._comment = {author: `Me`, emotion: undefined, comment: value, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()};
+          }
         }
       },
       'comment-emoji': (value) => {
-        if (this._comment) {
-          let comment = this._comment.comment;
-          let emoji = value;
-          this._comment.emotion = value;
-          target.userComments.push({author: `Me`, emotion: emoji, comment, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()});
-        } else {
-          this._comment = {author: `Me`, emotion: value, comment: undefined, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()};
+        if (type !== `delete`) {
+          if (this._comment) {
+            let comment = this._comment.comment;
+            let emoji = value;
+            this._comment.emotion = value;
+            target.userComments.push({author: `Me`, emotion: emoji, comment, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()});
+          } else {
+            this._comment = {author: `Me`, emotion: value, comment: undefined, date: moment__WEBPACK_IMPORTED_MODULE_1___default()().valueOf()};
+          }
         }
       }
     };
   }
+
+
   update(data) {
     this._myPersonalRating = data.personalRating;
-    this._towatchlist = data.watchlist;
+    this._watchlist = data.watchlist;
     this._favorite = data.favorite;
     this._userComments = data.userComments;
     this._alreadyWatched = data.alreadyWatched;
@@ -34642,21 +34627,26 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   set onClose(fn) {
     this._onClose = fn;
   }
-  _onSubmitButtonClick(evt) {
-    if (evt.keyCode === ( true && 17)) {
-      const formData = new FormData(this._element.querySelector(`.film-details__inner`));
-      const newData = this._processForm(formData);
-      if (typeof this._onSubmit === `function`) {
-        this._onSubmit(newData);
-      }
-      this.update(newData);
-    }
+  set onDelete(fn) {
+    this._onDelete = fn;
   }
+
   _onCloseButtonClick(evt) {
     if (evt.key === `Escape` || evt.target.classList[0] === `film-details__close-btn`) {
       return typeof this._onClose === `function` && this._onClose();
     }
     return null;
+  }
+  _onSubmitButtonClick(evt) {
+    const popUpForm = this._element.querySelector(`.film-details__inner`);
+    if (evt.keyCode === ( true && 17)) {
+      const formData = new FormData(popUpForm);
+      const newData = this._processForm(formData);
+      if (typeof this._onSubmit === `function`) {
+        this.update(newData);
+        this._onSubmit(newData);
+      }
+    }
   }
   render() {
     this._element = _component__WEBPACK_IMPORTED_MODULE_0__["Component"].createElement(this.template);
@@ -34664,7 +34654,6 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
     this.renderCommentsList();
     return this._element;
   }
-
   unrender() {
     this.unbind();
     this._element.remove();
@@ -34686,11 +34675,25 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
     this._element.querySelector(`.film-details__inner`).removeEventListener(`keydown`, this._onCloseButtonClick);
     this._element.querySelector(`.film-details__watched-reset`).removeEventListener(`click`, this._onDeleteComment);
   }
+
   shake() {
     const ANIMATION_TIMEOUT = 600;
     this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
     setTimeout(() => {this._element.style.animation = ``}, ANIMATION_TIMEOUT);
   }
+  block() {
+    this._element.querySelector(`.film-details__comment-input`).disabled = true;
+    this._element.querySelector(`.film-details__user-rating-score`).disabled = true;
+  }
+  unblock() {
+    this._element.querySelector(`.film-details__comment-input`).disabled = false;
+    this._element.querySelector(`.film-details__user-rating-score`).disabled = false;
+  }
+  inputRedWarning() {
+    this._element.querySelector(`.film-details__comment-input`).style.borderColor = `#FF0000`;
+    this._element.querySelector(`.film-details__user-rating-label`).style.backgroundColor = `#FF0000`;
+  }
+
   enableForm() {
     this._element.querySelector(`.film-details__comment-input`).removeAttribute(`disabled`);
     this._element.querySelector(`.film-details__comment-input`).classList.remove(`film-details__comment-input--error`);
@@ -34716,20 +34719,8 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   clearFrom() {
       this._element.querySelector(`.film-details__comment-input`).value = ``;
   }
-  _onSubmitClick(evt) {
-    document.querySelector(`.film-details__watched-reset`).classList.add(`visually-hidden`);
-    if (evt.ctrlKey && evt.keyCode === 13) {
-      const formData = new FormData(this._element.querySelector(`.film-details__inner`));
-      const newData = this._processForm(formData);
-      if (typeof this._onSubmit === `function`) {
-        this.update(newData);
-        this._onSubmit(newData);
-      }
-    }
-  }
-  set onDelete(fn) {
-    this._onDelete = fn;
-  }
+  
+  
   onSubmitSuccess() {
     document.querySelector(`.film-details__watched-status`).innerHTML = `Comment added`;
     document.querySelector(`.film-details__watched-reset`).classList.remove(`visually-hidden`);
@@ -34822,13 +34813,13 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
     </div>
 
     <section class="film-details__controls">
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${this._towatchlist === 'checked'}>
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${this._watchlist && 'checked'}>
       <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${this._towatched === 'checked'}>
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${this._alreadyWatched && 'checked'}>
       <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${this._tofavorite === 'checked'}>
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${this._favorite && 'checked'}>
       <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
     </section>
 
@@ -34912,7 +34903,6 @@ class Popup extends _component__WEBPACK_IMPORTED_MODULE_0__["Component"] {
 </section>`;
   };
 }
-
 
 
 

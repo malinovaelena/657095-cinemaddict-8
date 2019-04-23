@@ -5,21 +5,36 @@ import {Statistic} from './statistic';
 import {API} from './api';
 import {Search} from './search';
 
-const body = document.querySelector(`body`);
-const filmContainer = document.querySelectorAll(`.films-list__container`);
-const filterContainer = document.querySelector(`.main-navigation`);
-const searchContainer = document.querySelector(`.header__search`);
-const showMoreButton = document.querySelector(`.films-list__show-more`);
-const profileUserContainer = document.querySelector(`.profile__rating`);
-const footerStatistic = document.querySelector(`.footer__statistics > p`);
-
-
-let cardToRenderPosition = 5;
-let dataToRender;
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
 const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
 
+const body = document.querySelector(`body`);
+const filmContainers = document.querySelectorAll(`.films-list__container`);
+const mainFilmContainer = filmContainers[0];
+const filterContainer = document.querySelector(`.main-navigation`);
+const searchContainer = document.querySelector(`.header__search`);
+const TopRatedContainer = filmContainers[1];
+const mostCommentedContainer = filmContainers[2];
+const profileUserContainer = document.querySelector(`.profile__rating`);
+
+const showMoreButton = document.querySelector(`.films-list__show-more`);
+const footerStatistic = document.querySelector(`.footer__statistics > p`);
+const AMOUNT_FOR_RENDER_CARDS = 5;
+
+const UserName = {
+  NOVICE: 10,
+  FAN: 18
+};
+const AmountOfMillisecond = {
+  INDAY: 86400000,
+  INWEEK: 604800016,
+  INMONTH: 2629800000,
+  INYEAR: 31536000000,
+  FORPAUSE: 1000
+};
+let cardToRenderPosition = AMOUNT_FOR_RENDER_CARDS;
+let dataToRender;
 
 const filterFilms = (nameFilter, dataForFilters) => {
   switch (nameFilter) {
@@ -27,7 +42,7 @@ const filterFilms = (nameFilter, dataForFilters) => {
       return dataForFilters;
 
     case `History`:
-      return Array.from(dataForFilters).filter((it) => it.towatched || it.alreadyWatched === true);
+      return Array.from(dataForFilters).filter((it) => it.alreadyWatched || it.alreadyWatched === true);
 
     case `Watchlist`:
       return Array.from(dataForFilters).filter((it) => it.towatchlist || it.watchlist === true);
@@ -46,9 +61,9 @@ const searchCards = (data, value) => {
   return data.filter((it) => it.title.toUpperCase().includes(value.toUpperCase()));
 };
 const showProfileRating = (value) => {
-  if (value < 10) {
+  if (value < UserName.NOVICE) {
     return `novice`;
-  } else if (value <= 18) {
+  } else if (value <= UserName.FAN) {
     return `fan`;
   } else {
     return `movie buff`;
@@ -64,9 +79,13 @@ const renderSearch = (cards) => {
     if (searchValue !== ``) {
       const searchResult = searchCards(cards, searchValue);
       renderFilms(searchResult);
+    } else {
+      cardToRenderPosition = AMOUNT_FOR_RENDER_CARDS;
+      showMoreCards(cards);
     }
   };
 };
+
 const onShowMoreButtonClick = () => showMoreCards(dataToRender);
 
 const showMoreCards = (cards) => {
@@ -75,7 +94,7 @@ const showMoreCards = (cards) => {
     showMoreButton.removeEventListener(`click`, onShowMoreButtonClick);
     showMoreButton.classList.add(`visually-hidden`);
   }
-  cardToRenderPosition += 5;
+  cardToRenderPosition += AMOUNT_FOR_RENDER_CARDS;
 };
 const renderFilters = (cards) => {
   filterContainer.innerHTML = `<a href="#stats" class="main-navigation__item main-navigation__item--additional">Stats</a>`;
@@ -100,7 +119,7 @@ const renderFilters = (cards) => {
       dataToRender = cardsForThisFilter;
       showMoreButton.removeEventListener(`click`, onShowMoreButtonClick);
       showMoreButton.addEventListener(`click`, onShowMoreButtonClick);
-      cardToRenderPosition = 5;
+      cardToRenderPosition = AMOUNT_FOR_RENDER_CARDS;
       showMoreCards(dataToRender);
     };
   }
@@ -108,23 +127,23 @@ const renderFilters = (cards) => {
 
 const renderStatistic = (cards) => {
   let lastWeekArr = cards.filter((it) => {
-    return (Date.now() - it.watchingDate) <= 604800016;
+    return (Date.now() - it.watchingDate) <= AmountOfMillisecond.INWEEK;
   });
   let lastDayArr = cards.filter((it) => {
-    return (Date.now() - it.watchingDate) <= 86400000;
+    return (Date.now() - it.watchingDate) <= AmountOfMillisecond.INDAY;
   });
   let lastMonthArr = cards.filter((it) => {
-    return (Date.now() - it.watchingDate) <= 2629800000;
+    return (Date.now() - it.watchingDate) <= AmountOfMillisecond.INMONTH;
   });
   let lastYEarArr = cards.filter((it) => {
-    return (Date.now() - it.watchingDate) <= 31536000000;
+    return (Date.now() - it.watchingDate) <= AmountOfMillisecond.INYEAR;
   });
   const statistic = new Statistic(cards);
   statistic.bind();
   statistic.onStatisticRender = () => {
-    filmContainer[0].innerHTML = ``;
+    mainFilmContainer.innerHTML = ``;
     statistic.render();
-    filmContainer[0].appendChild(statistic.element);
+    mainFilmContainer.appendChild(statistic.element);
     statistic.grauphStatistic();
     statistic.bindData();
 
@@ -132,7 +151,7 @@ const renderStatistic = (cards) => {
       statistic.unrender();
       statistic.update(lastWeekArr);
       statistic.render();
-      filmContainer[0].appendChild(statistic.element);
+      mainFilmContainer.appendChild(statistic.element);
       statistic.grauphStatistic();
       statistic.bindData();
     };
@@ -140,7 +159,7 @@ const renderStatistic = (cards) => {
       statistic.unrender();
       statistic.update(lastMonthArr);
       statistic.render();
-      filmContainer[0].appendChild(statistic.element);
+      mainFilmContainer.appendChild(statistic.element);
       statistic.grauphStatistic();
       statistic.bindData();
     };
@@ -148,7 +167,7 @@ const renderStatistic = (cards) => {
       statistic.unrender();
       statistic.update(lastDayArr);
       statistic.render();
-      filmContainer[0].appendChild(statistic.element);
+      mainFilmContainer.appendChild(statistic.element);
       statistic.grauphStatistic();
       statistic.bindData();
     };
@@ -156,7 +175,7 @@ const renderStatistic = (cards) => {
       statistic.unrender();
       statistic.update(lastYEarArr);
       statistic.render();
-      filmContainer[0].appendChild(statistic.element);
+      mainFilmContainer.appendChild(statistic.element);
       statistic.grauphStatistic();
       statistic.bindData();
     };
@@ -164,24 +183,25 @@ const renderStatistic = (cards) => {
       statistic.unrender();
       statistic.update(cards);
       statistic.render();
-      filmContainer[0].appendChild(statistic.element);
+      mainFilmContainer.appendChild(statistic.element);
       statistic.grauphStatistic();
       statistic.bindData();
     };
   };
 };
 const renderFilms = (cards) => {
-  filmContainer[0].innerHTML = ``;
+  mainFilmContainer.innerHTML = ``;
   for (let dataOneCard of cards) {
     const cardElement = new Card(dataOneCard);
     const popUpElement = new Popup(dataOneCard);
 
     cardElement.render();
-    filmContainer[0].appendChild(cardElement.element);
+    mainFilmContainer.appendChild(cardElement.element);
 
     cardElement.onClick = () => {
       popUpElement.render();
       body.appendChild(popUpElement.element);
+      cardElement.unbind();
     };
 
     cardElement.onAddToWatchList = () => {
@@ -191,8 +211,9 @@ const renderFilms = (cards) => {
           popUpElement.update(newData);
         });
       api.getCards()
-      .then((cards) => {
-        renderFilters(cards);
+      .then((newCards) => {
+        renderFilters(newCards);
+        renderStatistic(newCards);
       });
     };
 
@@ -201,12 +222,11 @@ const renderFilms = (cards) => {
       api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()})
         .then((newData) => {
           popUpElement.update(newData);
-          renderFilters(cards);
         });
       api.getCards()
-        .then((cards) => {
-          renderFilters(cards);
-          renderStatistic(cards);
+        .then((newCards) => {
+          renderFilters(newCards);
+          renderStatistic(newCards);
         });
     };
     cardElement.onMarkAsFavorite = () => {
@@ -216,38 +236,27 @@ const renderFilms = (cards) => {
           popUpElement.update(newData);
         });
       api.getCards()
-        .then((cards) => {
-          renderFilters(cards);
+        .then((newCards) => {
+          renderFilters(newCards);
+          renderStatistic(newCards);
         });
     };
     popUpElement.onSubmit = (newData, type = `add`) => {
-      const block = () => {
-        popUpElement.element.querySelector(`.film-details__comment-input`).disabled = true;
-        popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = true;
-      };
-      const unblock = () => {
-        popUpElement.element.querySelector(`.film-details__comment-input`).disabled = false;
-        popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = false;
-      };
-      const inputRedWarning = () => {
-        popUpElement.element.querySelector(`.film-details__comment-input`).style.borderColor = `#FF0000`;
-        popUpElement.element.querySelector(`.film-details__user-rating-label`).style.backgroundColor = `#FF0000`;
-      };
-      block();
+      popUpElement.block();
       const load = (isSuccess) => {
         return new Promise((res, rej) => {
-          setTimeout(isSuccess ? res : rej, 1000);
+          setTimeout(isSuccess ? res : rej, AmountOfMillisecond.FORPAUSE);
         });
       };
       Object.assign(dataOneCard, newData);
       api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()});
       load(true)
         .then(() => {
-          unblock();
+          popUpElement.unblock();
           popUpElement.renderCommentsList(dataOneCard.userComments);
           let oldFilm = cardElement.element;
           cardElement.render();
-          filmContainer[0].replaceChild(cardElement.element, oldFilm);
+          mainFilmContainer.replaceChild(cardElement.element, oldFilm);
           popUpElement.clearFrom();
           popUpElement.enableForm();
           if (type === `add`) {
@@ -256,18 +265,18 @@ const renderFilms = (cards) => {
         })
         .catch(() => {
           popUpElement.shake();
-          inputRedWarning();
-          unblock();
+          popUpElement.inputRedWarning();
+          popUpElement.unblock();
         });
     };
 
     popUpElement.onClose = () => {
       popUpElement.unrender();
+      cardElement.bind();
     };
   }
 };
 const renderMostCommented = (cards) => {
-  const mostCommentedContainer = filmContainer[2];
   const mostCommented = cards.sort((a, b) => b.userComments.length - a.userComments.length).slice(0, 2);
 
   for (let dataOneCard of mostCommented) {
@@ -282,47 +291,35 @@ const renderMostCommented = (cards) => {
       cardElement.unbind();
     };
     popUpElement.onSubmit = (newData) => {
-      const block = () => {
-        popUpElement.element.querySelector(`.film-details__comment-input`).disabled = true;
-        popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = true;
-      };
-      const unblock = () => {
-        popUpElement.element.querySelector(`.film-details__comment-input`).disabled = false;
-        popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = false;
-      };
-      const inputRedWarning = () => {
-        popUpElement.element.querySelector(`.film-details__comment-input`).style.borderColor = `#FF0000`;
-        popUpElement.element.querySelector(`.film-details__user-rating-label`).style.backgroundColor = `#FF0000`;
-      };
-      block();
+      popUpElement.block();
       const load = (isSuccess) => {
         return new Promise((res, rej) => {
-          setTimeout(isSuccess ? res : rej, 1000);
+          setTimeout(isSuccess ? res : rej, AmountOfMillisecond.FORPAUSE);
         });
       };
       Object.assign(dataOneCard, newData);
       api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()});
       load(true)
         .then(() => {
-          unblock();
+          popUpElement.unblock();
           popUpElement.unrender();
           let oldFilm = cardElement.element;
-          filmContainer[0].replaceChild(cardElement.element, oldFilm);
+          mainFilmContainer.replaceChild(cardElement.element, oldFilm);
         })
         .catch(() => {
           popUpElement.shake();
-          inputRedWarning();
-          unblock();
+          popUpElement.inputRedWarning();
+          popUpElement.unblock();
         });
     };
 
     popUpElement.onClose = () => {
       popUpElement.unrender();
+      cardElement.bind();
     };
   }
 };
 const renderTopRated = (cards) => {
-  const TopRatedContainer = filmContainer[1];
   const topRated = cards.sort((a, b) => b.rating - a.rating).slice(0, 2);
   for (let dataOneCard of topRated) {
     const cardElement = new Card(dataOneCard);
@@ -337,42 +334,35 @@ const renderTopRated = (cards) => {
     };
 
     popUpElement.onSubmit = (newData) => {
-      const block = () => {
-        popUpElement.element.querySelector(`.film-details__comment-input`).disabled = true;
-        popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = true;
-      };
-      const unblock = () => {
-        popUpElement.element.querySelector(`.film-details__comment-input`).disabled = false;
-        popUpElement.element.querySelector(`.film-details__user-rating-score`).disabled = false;
-      };
-      const inputRedWarning = () => {
-        popUpElement.element.querySelector(`.film-details__comment-input`).style.borderColor = `#FF0000`;
-        popUpElement.element.querySelector(`.film-details__user-rating-label`).style.backgroundColor = `#FF0000`;
-      };
-      block();
+      popUpElement.block();
       const load = (isSuccess) => {
         return new Promise((res, rej) => {
-          setTimeout(isSuccess ? res : rej, 1000);
+          setTimeout(isSuccess ? res : rej, AmountOfMillisecond.FORPAUSE);
         });
       };
       Object.assign(dataOneCard, newData);
       api.updateCard({id: dataOneCard.id, data: dataOneCard.toRAW()});
       load(true)
         .then(() => {
-          unblock();
+          popUpElement.unblock();
           popUpElement.unrender();
           let oldFilm = cardElement.element;
-          filmContainer[0].replaceChild(cardElement.element, oldFilm);
+          mainFilmContainer.replaceChild(cardElement.element, oldFilm);
         })
         .catch(() => {
           popUpElement.shake();
-          inputRedWarning();
-          unblock();
+          popUpElement.inputRedWarning();
+          popUpElement.unblock();
         });
+    };
+
+    popUpElement.onDelete = () => {
+      popUpElement.onDeleteSuccess();
     };
 
     popUpElement.onClose = () => {
       popUpElement.unrender();
+      cardElement.bind();
     };
   }
 };
@@ -393,7 +383,7 @@ const renderAll = () => {
     })
     .catch((movies) => {
       renderFilters(movies);
-      filmContainer[0].innerHTML = `Something went wrong while loading movies. Check your connection or try again later`;
+      mainFilmContainer.innerHTML = `Something went wrong while loading movies. Check your connection or try again later`;
     });
 };
 renderAll();

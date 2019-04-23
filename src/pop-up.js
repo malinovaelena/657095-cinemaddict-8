@@ -11,7 +11,6 @@ class Popup extends Component {
   constructor(data) {
     super();
       this._title = data.title;
-      this._userrating = data.userrating;
       this._rating = data.rating;
       this._ageRating = data.age_rating;
       this._duration = data.duration;
@@ -19,8 +18,8 @@ class Popup extends Component {
       this._poster = data.poster;
       this._description = data.description;
       
-      this._towatchlist = data.watchlist;
-      this._tofavorite = data.favorite;
+      this._watchlist = data.watchlist;
+      this._favorite = data.favorite;
       this._alreadyWatched = data.alreadyWatched;
 
       this._actors = data.actors;
@@ -90,7 +89,7 @@ class Popup extends Component {
 
   update(data) {
     this._myPersonalRating = data.personalRating;
-    this._towatchlist = data.watchlist;
+    this._watchlist = data.watchlist;
     this._favorite = data.favorite;
     this._userComments = data.userComments;
     this._alreadyWatched = data.alreadyWatched;
@@ -101,6 +100,9 @@ class Popup extends Component {
   set onClose(fn) {
     this._onClose = fn;
   }
+  set onDelete(fn) {
+    this._onDelete = fn;
+  }
 
   _onCloseButtonClick(evt) {
     if (evt.key === `Escape` || evt.target.classList[0] === `film-details__close-btn`) {
@@ -108,13 +110,23 @@ class Popup extends Component {
     }
     return null;
   }
+  _onSubmitButtonClick(evt) {
+    const popUpForm = this._element.querySelector(`.film-details__inner`);
+    if (evt.keyCode === (13 && 17)) {
+      const formData = new FormData(popUpForm);
+      const newData = this._processForm(formData);
+      if (typeof this._onSubmit === `function`) {
+        this.update(newData);
+        this._onSubmit(newData);
+      }
+    }
+  }
   render() {
     this._element = Component.createElement(this.template);
     this.bind();
     this.renderCommentsList();
     return this._element;
   }
-
   unrender() {
     this.unbind();
     this._element.remove();
@@ -136,11 +148,25 @@ class Popup extends Component {
     this._element.querySelector(`.film-details__inner`).removeEventListener(`keydown`, this._onCloseButtonClick);
     this._element.querySelector(`.film-details__watched-reset`).removeEventListener(`click`, this._onDeleteComment);
   }
+
   shake() {
     const ANIMATION_TIMEOUT = 600;
     this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
     setTimeout(() => {this._element.style.animation = ``}, ANIMATION_TIMEOUT);
   }
+  block() {
+    this._element.querySelector(`.film-details__comment-input`).disabled = true;
+    this._element.querySelector(`.film-details__user-rating-score`).disabled = true;
+  }
+  unblock() {
+    this._element.querySelector(`.film-details__comment-input`).disabled = false;
+    this._element.querySelector(`.film-details__user-rating-score`).disabled = false;
+  }
+  inputRedWarning() {
+    this._element.querySelector(`.film-details__comment-input`).style.borderColor = `#FF0000`;
+    this._element.querySelector(`.film-details__user-rating-label`).style.backgroundColor = `#FF0000`;
+  }
+
   enableForm() {
     this._element.querySelector(`.film-details__comment-input`).removeAttribute(`disabled`);
     this._element.querySelector(`.film-details__comment-input`).classList.remove(`film-details__comment-input--error`);
@@ -166,20 +192,8 @@ class Popup extends Component {
   clearFrom() {
       this._element.querySelector(`.film-details__comment-input`).value = ``;
   }
-  _onSubmitButtonClick(evt) {
-    document.querySelector(`.film-details__watched-reset`).classList.add(`visually-hidden`);
-    if (evt.keyCode === (13 && 17)) {
-      const formData = new FormData(this._element.querySelector(`.film-details__inner`));
-      const newData = this._processForm(formData);
-      if (typeof this._onSubmit === `function`) {
-        this.update(newData);
-        this._onSubmit(newData);
-      }
-    }
-  }
-  set onDelete(fn) {
-    this._onDelete = fn;
-  }
+  
+  
   onSubmitSuccess() {
     document.querySelector(`.film-details__watched-status`).innerHTML = `Comment added`;
     document.querySelector(`.film-details__watched-reset`).classList.remove(`visually-hidden`);
@@ -272,13 +286,13 @@ class Popup extends Component {
     </div>
 
     <section class="film-details__controls">
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${this._towatchlist === 'checked'}>
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${this._watchlist && 'checked'}>
       <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${this._alreadyWatched === 'checked'}>
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${this._alreadyWatched && 'checked'}>
       <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${this._tofavorite === 'checked'}>
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${this._favorite && 'checked'}>
       <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
     </section>
 
@@ -360,7 +374,7 @@ class Popup extends Component {
     </section>
   </form>
 </section>`;
-  };
-}
+  }
+};
 export {Popup};
 

@@ -6,38 +6,22 @@ class Card extends Component {
     super();
       this._title = data.title;
       this._rating = data.rating;
-      this._year = data.year;
       this._duration = data.duration;
       this._genre = data.genre;
       this._poster = data.poster;
       this._description = data.description;
-      this._comments = data.comments;
-      this._towatchlist = data.towatchlist;
-      
       this._dateOfFilm = data.dateOfFilm;
       this._userComments = data.userComments;
+      
       this._alreadyWatched = data.alreadyWatched;
       this._favorite = data.favorite;
       this._watchlist = data.watchlist;
-
+    
       this._onOpenButtonClick = this._onOpenButtonClick.bind(this);
       this._onAddToWatchList = this._onAddToWatchList.bind(this);
       this._onMarkAsWatched = this._onMarkAsWatched.bind(this);
       this._onMarkAsFavorite = this._onMarkAsFavorite.bind(this);
   }
-  set onClick(fn) {
-    this._onClick = fn;
-  }
-  set onAddToWatchList(fn) {
-    this._onAddToWatchList = fn;
-  }
-  set onMarkAsWatched(fn) {
-    this._onMarkAsWatched = fn;
-  }
-  set onMarkAsFavorite(fn) {
-    this._onMarkAsFavorite = fn;
-  }
-
   _onOpenButtonClick() {
     return typeof this._onClick === `function` && this._onClick();
   }
@@ -54,6 +38,19 @@ class Card extends Component {
     return typeof this._onMarkAsFavorite === `function` && this._onMarkAsFavorite();
   }
 
+  set onClick(fn) {
+    this._onClick = fn;
+  }
+  set onAddToWatchList(fn) {
+    this._onAddToWatchList = fn;
+  }
+  set onMarkAsWatched(fn) {
+    this._onMarkAsWatched = fn;
+  }
+  set onMarkAsFavorite(fn) {
+    this._onMarkAsFavorite = fn;
+  }
+
   bind() {
     this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
     this._element.querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._onAddToWatchList.bind(this));
@@ -61,17 +58,12 @@ class Card extends Component {
     this._element.querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, this._onMarkAsFavorite.bind(this));
   }
   unbind() {
-    this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onOpenButtonClick.bind(this));
+    this._element.querySelector(`.film-card__comments`).removeEventListener(`click`, this._onOpenButtonClick.bind(this));
     this._element.querySelector(`.film-card__controls-item--add-to-watchlist`).removeEventListener(`click`, this._onAddToWatchList.bind(this));
     this._element.querySelector(`.film-card__controls-item--mark-as-watched`).removeEventListener(`click`, this._onMarkAsWatched.bind(this));
     this._element.querySelector(`.film-card__controls-item--favorite`).removeEventListener(`click`, this._onMarkAsFavorite.bind(this));
   }
-  update(data) {
-    this._alreadyWatched = data.alreadyWatched;
-    this._watchlist = data.watchlist;
-    this._favorite = data.favorite;
-    this._userComments = data.userComments;
-  }
+
   get template() {
     const filmDuration = moment.duration(this._duration, `m`);
     return `<article class="film-card">
@@ -94,6 +86,6 @@ class Card extends Component {
       </form>
       </article>`;
   }
-}
+};
 export {Card};
 
